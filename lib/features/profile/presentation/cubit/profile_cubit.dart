@@ -12,6 +12,7 @@ part 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileState());
   final ImagePicker _picker = ImagePicker();
+  final PageController pageController = PageController();
 
   Future<void> pickImage() async {
     //duplicated with core/utils
@@ -25,6 +26,22 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
+    }
+  }
+
+  void nextPage() {
+    if (state.currentPage < 2) {
+      int next = state.currentPage + 1;
+      emit(state.copyWith(currentPage: next));
+      pageController.jumpToPage(next);
+    }
+  }
+
+  void previousPage() {
+    if (state.currentPage > 0) {
+      int prev = state.currentPage - 1;
+      emit(state.copyWith(currentPage: prev));
+      pageController.jumpToPage(prev);
     }
   }
 }

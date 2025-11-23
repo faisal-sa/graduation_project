@@ -6,7 +6,7 @@ class SegmentedProgressBar extends StatelessWidget {
   final double progress;
   const SegmentedProgressBar({
     super.key,
-    this.totalSegment = 4,
+    this.totalSegment = 3,
     this.progress = 0.25,
   });
 
