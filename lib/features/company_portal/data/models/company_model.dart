@@ -36,4 +36,21 @@ class CompanyModel with CompanyModelMappable {
     required this.created_at,
     required this.updated_at,
   });
+
+  CompanyEntity toEntity() => CompanyEntity(
+    id: id,
+    userId: user_id,
+    companyName: company_name,
+    industry: industry,
+    description: description,
+    city: city,
+    address: address,
+    companySize: company_size,
+    website: website,
+    email: email,
+    phone: phone,
+    logoUrl: logo_url,
+    createdAt: DateTime.parse(created_at),
+    updatedAt: DateTime.parse(updated_at),
+  );
 }
