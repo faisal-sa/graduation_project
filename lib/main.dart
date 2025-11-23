@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/core/router/router.dart';
 import 'package:graduation_project/core/theme/theme.dart';
-import 'package:graduation_project/features/authentication/presentation/cubit/authentication_cubit.dart';
+import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,10 +23,7 @@ class MainApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) => BlocProvider(
-        create: (context) =>
-            serviceLocator<
-              AuthenticationCubit
-            >(), //put the authentication cubit here!
+        create: (context) => serviceLocator<AuthCubit>(),
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
           theme: appTheme,
