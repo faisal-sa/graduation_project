@@ -15,11 +15,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<User, Failure>> signUp({
     required String email,
     required String password,
+    required String role,
   }) async {
     try {
       final userModel = await remoteDataSource.signUp(
         email: email,
         password: password,
+        role: role,
       );
       return Success(userModel.toEntity());
     } catch (e) {
@@ -99,4 +101,3 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 }
-

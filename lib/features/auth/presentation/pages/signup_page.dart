@@ -4,26 +4,37 @@ import 'package:go_router/go_router.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
+  State<SignupPage> createState() => _SignupPageState();
+}
 
+class _SignupPageState extends State<SignupPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  String selectedRole = 'Individual';
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is OTPSent) {
           context.push('/otp-verification', extra: state.email);
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         }
       },
@@ -134,6 +145,40 @@ class SignupPage extends StatelessWidget {
                             return null;
                           },
                         ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedRole,
+                          decoration: const InputDecoration(
+                            labelText: 'Role',
+                            labelStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          style: const TextStyle(color: Colors.white),
+                          dropdownColor: const Color(0xFF1a1a1a),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Individual',
+                              child: Text('Individual'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Company',
+                              child: Text('Company'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                selectedRole = value;
+                              });
+                            }
+                          },
+                        ),
                         const SizedBox(height: 24),
                         ElevatedButton(
                           onPressed: state is AuthLoading
@@ -141,9 +186,10 @@ class SignupPage extends StatelessWidget {
                               : () {
                                   if (formKey.currentState!.validate()) {
                                     context.read<AuthCubit>().signUpUser(
-                                          email: emailController.text.trim(),
-                                          password: passwordController.text,
-                                        );
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text,
+                                      role: selectedRole,
+                                    );
                                   }
                                 },
                           style: ElevatedButton.styleFrom(
@@ -191,4 +237,3 @@ class SignupPage extends StatelessWidget {
     );
   }
 }
-

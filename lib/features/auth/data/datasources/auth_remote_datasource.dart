@@ -6,12 +6,10 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> signUp({
     required String email,
     required String password,
+    required String role,
   });
 
-  Future<UserModel> signIn({
-    required String email,
-    required String password,
-  });
+  Future<UserModel> signIn({required String email, required String password});
 
   Future<void> signOut();
 
@@ -19,10 +17,7 @@ abstract class AuthRemoteDataSource {
 
   Future<void> resendOTP({required String email});
 
-  Future<UserModel> verifyOTP({
-    required String email,
-    required String token,
-  });
+  Future<UserModel> verifyOTP({required String email, required String token});
 
   Future<UserModel?> getCurrentUser();
 }
@@ -37,11 +32,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel> signUp({
     required String email,
     required String password,
+    required String role,
   }) async {
     final response = await _supabase.auth.signUp(
       email: email,
       password: password,
       emailRedirectTo: null,
+      data: {'role': role},
     );
 
     if (response.user == null) {
@@ -52,6 +49,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       id: response.user!.id,
       email: response.user!.email ?? email,
       phone: response.user!.phone,
+      role: role,
     );
   }
 
@@ -69,10 +67,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw Exception('Sign in failed: User is null');
     }
 
+    final userMetadata = response.user!.userMetadata;
+    final appMetadata = response.user!.appMetadata;
+    final role =
+        (userMetadata?['role'] ?? appMetadata['role']) as String? ??
+        'Individual';
+
     return UserModel(
       id: response.user!.id,
       email: response.user!.email ?? email,
       phone: response.user!.phone,
+      role: role,
     );
   }
 
@@ -83,18 +88,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> sendOTP({required String email}) async {
-    await _supabase.auth.signInWithOtp(
-      email: email,
-      emailRedirectTo: null,
-    );
+    await _supabase.auth.signInWithOtp(email: email, emailRedirectTo: null);
   }
 
   @override
   Future<void> resendOTP({required String email}) async {
-    await _supabase.auth.resend(
-      type: OtpType.signup,
-      email: email,
-    );
+    await _supabase.auth.resend(type: OtpType.signup, email: email);
   }
 
   @override
@@ -112,10 +111,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw Exception('OTP verification failed: User is null');
     }
 
+    final userMetadata = response.user!.userMetadata;
+    final appMetadata = response.user!.appMetadata;
+    final role =
+        (userMetadata?['role'] ?? appMetadata['role']) as String? ??
+        'Individual';
+
     return UserModel(
       id: response.user!.id,
       email: response.user!.email ?? email,
       phone: response.user!.phone,
+      role: role,
     );
   }
 
@@ -124,11 +130,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final user = _supabase.auth.currentUser;
     if (user == null) return null;
 
+    final userMetadata = user.userMetadata;
+    final appMetadata = user.appMetadata;
+    final role =
+        (userMetadata?['role'] ?? appMetadata['role']) as String? ??
+        'Individual';
+
     return UserModel(
       id: user.id,
       email: user.email ?? '',
       phone: user.phone,
+      role: role,
     );
   }
 }
-

@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecasesAbstract/no_params.dart';
-import '../../domain/usecases/sign_in.dart';
+import '../../domain/usecases/login.dart';
 import '../../domain/usecases/sign_out.dart';
 import '../../domain/usecases/sign_up.dart';
 import '../../domain/usecases/send_otp.dart';
@@ -14,7 +14,7 @@ import 'auth_state.dart';
 @injectable
 class AuthCubit extends Cubit<AuthState> {
   final SignUp signUp;
-  final SignIn signIn;
+  final Login login;
   final SignOut signOut;
   final GetCurrentUser getCurrentUser;
   final SendOTP sendOTP;
@@ -23,7 +23,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   AuthCubit({
     required this.signUp,
-    required this.signIn,
+    required this.login,
     required this.signOut,
     required this.getCurrentUser,
     required this.sendOTP,
@@ -62,10 +62,11 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signUpUser({
     required String email,
     required String password,
+    required String role,
   }) async {
     emit(AuthLoading());
 
-    final result = await signUp(SignUpParams(email: email, password: password));
+    final result = await signUp(SignUpParams(email: email, password: password, role: role));
 
     result.when(
       (success) {
@@ -84,7 +85,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
 
-    final result = await signIn(SignInParams(email: email, password: password));
+    final result = await login(LoginParams(email: email, password: password));
 
     result.when(
       (user) {

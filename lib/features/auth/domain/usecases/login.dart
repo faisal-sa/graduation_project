@@ -5,21 +5,22 @@ import '../../../../core/usecasesAbstract/usecase.dart';
 import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
 
-class SignInParams {
+class LoginParams {
   final String email;
   final String password;
 
-  SignInParams({required this.email, required this.password});
+  LoginParams({required this.email, required this.password});
 }
 
 @injectable
-class SignIn implements UseCase<User, SignInParams> {
+class Login implements UseCase<User, LoginParams> {
   final AuthRepository repository;
 
-  SignIn(this.repository);
+  Login(this.repository);
 
   @override
-  Future<Result<User, Failure>> call(SignInParams params) {
+  Future<Result<User, Failure>> call(LoginParams params) {
     return repository.signIn(email: params.email, password: params.password);
   }
 }
+

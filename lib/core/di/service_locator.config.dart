@@ -19,9 +19,9 @@ import '../../features/auth/data/repositories/auth_repository_impl.dart'
     as _i153;
 import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
 import '../../features/auth/domain/usecases/get_current_user.dart' as _i111;
+import '../../features/auth/domain/usecases/login.dart' as _i428;
 import '../../features/auth/domain/usecases/resend_otp.dart' as _i152;
 import '../../features/auth/domain/usecases/send_otp.dart' as _i727;
-import '../../features/auth/domain/usecases/sign_in.dart' as _i920;
 import '../../features/auth/domain/usecases/sign_out.dart' as _i568;
 import '../../features/auth/domain/usecases/sign_up.dart' as _i190;
 import '../../features/auth/domain/usecases/verify_otp.dart' as _i975;
@@ -51,11 +51,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i111.GetCurrentUser>(
       () => _i111.GetCurrentUser(gh<_i787.AuthRepository>()),
     );
+    gh.factory<_i428.Login>(() => _i428.Login(gh<_i787.AuthRepository>()));
     gh.factory<_i152.ResendOTP>(
       () => _i152.ResendOTP(gh<_i787.AuthRepository>()),
     );
     gh.factory<_i727.SendOTP>(() => _i727.SendOTP(gh<_i787.AuthRepository>()));
-    gh.factory<_i920.SignIn>(() => _i920.SignIn(gh<_i787.AuthRepository>()));
     gh.factory<_i568.SignOut>(() => _i568.SignOut(gh<_i787.AuthRepository>()));
     gh.factory<_i190.SignUp>(() => _i190.SignUp(gh<_i787.AuthRepository>()));
     gh.factory<_i975.VerifyOTP>(
@@ -64,7 +64,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i117.AuthCubit>(
       () => _i117.AuthCubit(
         signUp: gh<_i190.SignUp>(),
-        signIn: gh<_i920.SignIn>(),
+        login: gh<_i428.Login>(),
         signOut: gh<_i568.SignOut>(),
         getCurrentUser: gh<_i111.GetCurrentUser>(),
         sendOTP: gh<_i727.SendOTP>(),
