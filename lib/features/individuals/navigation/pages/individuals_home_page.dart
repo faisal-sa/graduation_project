@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/core/theme/theme.dart';
+import 'package:graduation_project/core/usecasesAbstract/no_params.dart';
+import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 
 class IndividualsHomePage extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -76,7 +79,13 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
             backgroundColor: AppColors.blueLight,
             child: Icon(Icons.person, color: AppColors.bluePrimary),
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.exit_to_app)),
+          IconButton(
+            onPressed: () {
+              serviceLocator.get<AuthCubit>().signOut.call(NoParams());
+              context.go("/");
+            },
+            icon: Icon(Icons.exit_to_app),
+          ),
         ],
       ),
     );
