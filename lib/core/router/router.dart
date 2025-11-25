@@ -8,6 +8,7 @@ import 'package:graduation_project/features/company_portal/presentation/screens/
 import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_scanner_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_search_page.dart';
 import 'package:graduation_project/features/individuals/chat/presentation/pages/chats_tab.dart';
+import 'package:graduation_project/features/individuals/features/basic_information/presentation/pages/basic_info_page.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/pages/insights_tab.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/cubit/profile_cubit.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/pages/profile_tab.dart';
@@ -74,11 +75,11 @@ final GoRouter router = GoRouter(
               path: '/profile',
               builder: (context, state) => const ProfileTab(),
               routes: [
-                // GoRoute(
-                //   path: 'basic-info',
-                //   parentNavigatorKey: _rootNavigatorKey,
-                //   builder: (context, state) => const BasicInfoPage(),
-                // ),
+                GoRoute(
+                  path: 'basic-info',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => BasicInfoPage(),
+                ),
                 // GoRoute(
                 //   path: 'work-experience',
                 //   parentNavigatorKey: _rootNavigatorKey,
