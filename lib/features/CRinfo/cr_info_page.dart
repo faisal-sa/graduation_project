@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
-//==================  cr info model  ===================
+//  ==================  cr info model  =================== //
 class CrInfoModel {
   final String crNationalNumber;
   final String crNumber;
@@ -73,7 +73,7 @@ class CrInfoModel {
   }
 }
 
-//==================  entity type model  ===================
+//  ==================  entity type model  =================== //
 
 class EntityType {
   final int id;
@@ -105,7 +105,7 @@ class EntityType {
   }
 }
 
-//==================  character model  ===================
+//  ==================  character model  =================== //
 
 class Character {
   final int id;
@@ -121,7 +121,7 @@ class Character {
   }
 }
 
-//==================  status model  ===================
+//  ==================  status model  =================== //
 class Status {
   final int id;
   final String name;
@@ -136,7 +136,7 @@ class Status {
   }
 }
 
-//==================  activity model  ===================
+//  ==================  activity model  =================== //
 
 class Activity {
   final String id;
@@ -152,7 +152,7 @@ class Activity {
   }
 }
 
-//==================  services  ===================
+//  ==================  services  =================== //
 
 class WathqService {
   final Dio dio = Dio(
@@ -205,7 +205,7 @@ class WathqService {
   }
 }
 
-//==================  page features  ===================
+//  ==================  page features  =================== //
 
 class CrInfoPage extends StatefulWidget {
   const CrInfoPage({super.key});
@@ -355,6 +355,7 @@ class _CrInfoPageState extends State<CrInfoPage> {
     );
   }
 
+  // ==================  item builder  =================== //
   Widget _item(String title, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
