@@ -10,18 +10,25 @@ class UserState extends Equatable {
     int total = 0;
     int filled = 0;
 
-    void check(String? val) {
+    void checkString(String? val) {
       total++;
       if (val != null && val.isNotEmpty) filled++;
     }
 
-    check(user.firstName);
-    check(user.lastName);
-    check(user.jobTitle);
-    check(user.location);
-    check(user.email);
-    check(user.phoneNumber);
-    check(user.summary);
+    void checkList(List? list) {
+      total++;
+      if (list != null && list.isNotEmpty) filled++;
+    }
+
+    checkString(user.firstName);
+    checkString(user.lastName);
+    checkString(user.jobTitle);
+    checkString(user.location);
+    checkString(user.email);
+    checkString(user.phoneNumber);
+    checkString(user.summary);
+
+    checkList(user.workExperiences);
 
     return total == 0 ? 0.0 : (filled / total);
   }

@@ -66,6 +66,24 @@ import '../../features/individuals/features/basic_info/domain/usecases/save_basi
     as _i961;
 import '../../features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart'
     as _i37;
+import '../../features/individuals/features/work_experience/data/datasources/work_experience_remote_data_source.dart'
+    as _i271;
+import '../../features/individuals/features/work_experience/data/repositories/work_experience_repository_impl.dart'
+    as _i51;
+import '../../features/individuals/features/work_experience/domain/repositories/work_experience_repository.dart'
+    as _i651;
+import '../../features/individuals/features/work_experience/domain/usecases/add_work_experience_usecase.dart'
+    as _i794;
+import '../../features/individuals/features/work_experience/domain/usecases/delete_work_experience_usecase.dart'
+    as _i176;
+import '../../features/individuals/features/work_experience/domain/usecases/get_work_experiences_usecase.dart'
+    as _i786;
+import '../../features/individuals/features/work_experience/domain/usecases/update_work_experience_usecase.dart'
+    as _i56;
+import '../../features/individuals/features/work_experience/presentation/cubit/form/work_experience_form_cubit.dart'
+    as _i381;
+import '../../features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart'
+    as _i620;
 import '../../features/shared/user_cubit.dart' as _i171;
 import '../env_config/env_config.dart' as _i113;
 
@@ -109,6 +127,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i252.CompanyRemoteDataSource>(),
       ),
     );
+    gh.lazySingleton<_i271.WorkExperienceRemoteDataSource>(
+      () =>
+          _i271.WorkExperienceRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
     gh.lazySingleton<_i25.BasicInfoRemoteDataSource>(
       () => _i25.BasicInfoRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
@@ -135,6 +157,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i533.AddCandidateBookmark>(),
       ),
     );
+    gh.lazySingleton<_i651.WorkExperienceRepository>(
+      () => _i51.WorkExperienceRepositoryImpl(
+        gh<_i271.WorkExperienceRemoteDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i787.AuthRepository>(
       () => _i153.AuthRepositoryImpl(gh<_i161.AuthRemoteDataSource>()),
     );
@@ -146,6 +173,24 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i591.BasicInfoRepository>(
       () => _i500.BasicInfoRepositoryImpl(gh<_i25.BasicInfoRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i794.AddWorkExperienceUseCase>(
+      () =>
+          _i794.AddWorkExperienceUseCase(gh<_i651.WorkExperienceRepository>()),
+    );
+    gh.lazySingleton<_i176.DeleteWorkExperienceUseCase>(
+      () => _i176.DeleteWorkExperienceUseCase(
+        gh<_i651.WorkExperienceRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i786.GetWorkExperiencesUseCase>(
+      () =>
+          _i786.GetWorkExperiencesUseCase(gh<_i651.WorkExperienceRepository>()),
+    );
+    gh.lazySingleton<_i56.UpdateWorkExperienceUseCase>(
+      () => _i56.UpdateWorkExperienceUseCase(
+        gh<_i651.WorkExperienceRepository>(),
+      ),
     );
     gh.factory<_i111.GetCurrentUser>(
       () => _i111.GetCurrentUser(gh<_i787.AuthRepository>()),
@@ -160,11 +205,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i975.VerifyOTP>(
       () => _i975.VerifyOTP(gh<_i787.AuthRepository>()),
     );
+    gh.factory<_i381.WorkExperienceFormCubit>(
+      () => _i381.WorkExperienceFormCubit(
+        gh<_i794.AddWorkExperienceUseCase>(),
+        gh<_i56.UpdateWorkExperienceUseCase>(),
+      ),
+    );
     gh.lazySingleton<_i961.SaveBasicInfoUseCase>(
       () => _i961.SaveBasicInfoUseCase(gh<_i591.BasicInfoRepository>()),
     );
     gh.factory<_i37.BasicInfoCubit>(
       () => _i37.BasicInfoCubit(gh<_i961.SaveBasicInfoUseCase>()),
+    );
+    gh.factory<_i620.WorkExperienceListCubit>(
+      () => _i620.WorkExperienceListCubit(
+        gh<_i786.GetWorkExperiencesUseCase>(),
+        gh<_i176.DeleteWorkExperienceUseCase>(),
+      ),
     );
     gh.factory<_i117.AuthCubit>(
       () => _i117.AuthCubit(

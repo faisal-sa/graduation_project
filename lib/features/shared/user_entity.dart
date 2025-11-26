@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
+import 'package:graduation_project/features/individuals/features/work_experience/presentation/pages/work_experience_page.dart';
 
 class UserEntity extends Equatable {
   final String firstName;
@@ -9,6 +11,7 @@ class UserEntity extends Equatable {
   final String location;
   final String summary;
   final String? videoUrl;
+  final List<WorkExperience> workExperiences;
 
   const UserEntity({
     this.firstName = '',
@@ -19,6 +22,7 @@ class UserEntity extends Equatable {
     this.location = '',
     this.summary = '',
     this.videoUrl,
+    this.workExperiences = const [],
   });
 
   UserEntity copyWith({
@@ -30,6 +34,7 @@ class UserEntity extends Equatable {
     String? location,
     String? summary,
     String? videoUrl,
+    List<WorkExperience>? workExperiences,
   }) {
     return UserEntity(
       firstName: firstName ?? this.firstName,
@@ -40,6 +45,7 @@ class UserEntity extends Equatable {
       location: location ?? this.location,
       summary: summary ?? this.summary,
       videoUrl: videoUrl ?? this.videoUrl,
+      workExperiences: workExperiences ?? this.workExperiences,
     );
   }
 
@@ -53,5 +59,6 @@ class UserEntity extends Equatable {
     location,
     summary,
     videoUrl,
+    workExperiences,
   ];
 }

@@ -1,5 +1,7 @@
 // user_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
+import 'package:graduation_project/features/individuals/features/work_experience/presentation/pages/work_experience_page.dart';
 import 'package:graduation_project/features/shared/user_entity.dart';
 import 'package:graduation_project/features/shared/user_state.dart';
 import 'package:injectable/injectable.dart';
@@ -41,5 +43,24 @@ class UserCubit extends Cubit<UserState> {
 
   void updateUser(UserEntity newUser) {
     emit(state.copyWith(user: newUser));
+  }
+
+  void addWorkExperience(WorkExperience experience) {
+    final currentList = List<WorkExperience>.from(state.user.workExperiences);
+    currentList.add(experience);
+    currentList.sort((a, b) => b.startDate.compareTo(a.startDate));
+
+    emit(
+      state.copyWith(user: state.user.copyWith(workExperiences: currentList)),
+    );
+  }
+
+  void removeWorkExperience(String id) {
+    final currentList = List<WorkExperience>.from(state.user.workExperiences);
+    currentList.removeWhere((element) => element.id == id);
+
+    emit(
+      state.copyWith(user: state.user.copyWith(workExperiences: currentList)),
+    );
   }
 }
