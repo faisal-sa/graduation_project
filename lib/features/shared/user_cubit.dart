@@ -12,7 +12,7 @@ class UserCubit extends Cubit<UserState> {
     emit(state.copyWith(user: user));
   }
 
-  void updateUserProfile({
+  void updateBasicInfo({
     String? firstName,
     String? lastName,
     String? jobTitle,
@@ -20,24 +20,22 @@ class UserCubit extends Cubit<UserState> {
     String? email,
     String? location,
   }) {
-    final updatedUser =
-        state.user?.copyWith(
-          firstName: firstName,
-          lastName: lastName,
-          jobTitle: jobTitle,
-          phoneNumber: phone,
-          email: email,
-          location: location,
-        ) ??
-        UserEntity(
-          firstName: firstName ?? '',
-          lastName: lastName ?? '',
-          jobTitle: jobTitle ?? '',
-          phoneNumber: phone ?? '',
-          email: email ?? '',
-          location: location ?? '',
-        );
+    final updatedUser = state.user.copyWith(
+      firstName: firstName,
+      lastName: lastName,
+      jobTitle: jobTitle,
+      phoneNumber: phone,
+      email: email,
+      location: location,
+    );
+    emit(state.copyWith(user: updatedUser));
+  }
 
+  void updateAboutMe({String? summary, String? videoUrl}) {
+    final updatedUser = state.user.copyWith(
+      summary: summary,
+      videoUrl: videoUrl,
+    );
     emit(state.copyWith(user: updatedUser));
   }
 

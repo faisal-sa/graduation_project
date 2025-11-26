@@ -11,9 +11,9 @@ class UserState extends Equatable {
     int total = 0;
     int filled = 0;
 
-    void check(String val) {
+    void check(String? val) {
       total++;
-      if (val.isNotEmpty) filled++;
+      if (val != null && val.isNotEmpty) filled++;
     }
 
     check(user.firstName);
@@ -22,6 +22,7 @@ class UserState extends Equatable {
     check(user.location);
     check(user.email);
     check(user.phoneNumber);
+    check(user.summary);
 
     return total == 0 ? 0.0 : (filled / total);
   }
@@ -33,12 +34,3 @@ class UserState extends Equatable {
   @override
   List<Object> get props => [user];
 }
-
-// class UserCubit extends Cubit<UserState> {
-//   UserCubit() : super(const UserState());
-
-//   // Call this to update the global app state
-//   void updateUser(UserEntity newUser) {
-//     emit(state.copyWith(user: newUser));
-//   }
-// }

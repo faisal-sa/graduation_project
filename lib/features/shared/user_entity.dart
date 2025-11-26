@@ -7,6 +7,8 @@ class UserEntity extends Equatable {
   final String phoneNumber;
   final String email;
   final String location;
+  final String summary;
+  final String? videoUrl;
 
   const UserEntity({
     this.firstName = '',
@@ -15,6 +17,8 @@ class UserEntity extends Equatable {
     this.phoneNumber = '',
     this.email = '',
     this.location = '',
+    this.summary = '',
+    this.videoUrl,
   });
 
   UserEntity copyWith({
@@ -24,6 +28,8 @@ class UserEntity extends Equatable {
     String? phoneNumber,
     String? email,
     String? location,
+    String? summary,
+    String? videoUrl,
   }) {
     return UserEntity(
       firstName: firstName ?? this.firstName,
@@ -32,6 +38,8 @@ class UserEntity extends Equatable {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       email: email ?? this.email,
       location: location ?? this.location,
+      summary: summary ?? this.summary,
+      videoUrl: videoUrl ?? this.videoUrl,
     );
   }
 
@@ -43,5 +51,7 @@ class UserEntity extends Equatable {
     phoneNumber,
     email,
     location,
+    summary,
+    videoUrl,
   ];
 }

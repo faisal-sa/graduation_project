@@ -321,8 +321,7 @@ class InsightsTab extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  // SIMULATION: for resume parse
-                  context.read<UserCubit>().updateUserProfile(
+                  context.read<UserCubit>().updateBasicInfo(
                     firstName: "Alex",
                     lastName: "Morgan",
                     jobTitle: "Flutter Developer",

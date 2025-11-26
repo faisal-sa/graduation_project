@@ -8,6 +8,8 @@ import 'package:graduation_project/features/company_portal/presentation/screens/
 import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_scanner_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_search_page.dart';
 import 'package:graduation_project/features/individuals/chat/presentation/pages/chats_tab.dart';
+import 'package:graduation_project/features/individuals/features/about_me/presentation/cubit/about_me_cubit.dart';
+import 'package:graduation_project/features/individuals/features/about_me/presentation/pages/about_me_page.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/pages/basic_info_page.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/pages/insights_tab.dart';
@@ -97,11 +99,33 @@ final GoRouter router = GoRouter(
                     );
                   },
                 ),
-                // GoRoute(
-                //   path: 'work-experience',
-                //   parentNavigatorKey: _rootNavigatorKey,
-                //   builder: (context, state) => const WorkExperiencePage(),
-                // ),
+                GoRoute(
+                  path: 'about-me',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    final userCubit = serviceLocator.get<UserCubit>();
+
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(value: userCubit),
+
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = serviceLocator.get<AboutMeCubit>();
+                            final currentUser = userCubit.state.user;
+
+                            cubit.initialize(
+                              currentUser.summary,
+                              currentUser.videoUrl,
+                            );
+                            return cubit;
+                          },
+                        ),
+                      ],
+                      child: const AboutMePage(),
+                    );
+                  },
+                ),
               ],
             ),
           ],

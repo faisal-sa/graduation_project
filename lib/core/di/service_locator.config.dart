@@ -44,6 +44,8 @@ import '../../features/company_portal/domain/usecases/update_company_profile.dar
     as _i923;
 import '../../features/company_portal/presentation/blocs/bloc/company_bloc.dart'
     as _i401;
+import '../../features/individuals/features/about_me/presentation/cubit/about_me_cubit.dart'
+    as _i781;
 import '../../features/individuals/features/basic_info/data/datasources/basic_info_remote_data_source.dart'
     as _i25;
 import '../../features/individuals/features/basic_info/data/repositories/basic_info_repository_impl.dart'
@@ -54,7 +56,6 @@ import '../../features/individuals/features/basic_info/domain/usecases/save_basi
     as _i961;
 import '../../features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart'
     as _i37;
-import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
 import '../../features/shared/user_cubit.dart' as _i171;
 import '../env_config/env_config.dart' as _i113;
 
@@ -71,7 +72,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.supabaseClient,
       preResolve: true,
     );
-    gh.factory<_i36.ProfileCubit>(() => _i36.ProfileCubit());
+    gh.lazySingleton<_i781.SaveAboutMeUseCase>(
+      () => _i781.SaveAboutMeUseCase(),
+    );
     gh.lazySingleton<_i171.UserCubit>(() => _i171.UserCubit());
     gh.lazySingleton<_i252.CompanyRemoteDataSource>(
       () => companyModule.provideRemoteDS(gh<_i454.SupabaseClient>()),
@@ -83,6 +86,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => companyModule.provideCompanyRepository(
         gh<_i252.CompanyRemoteDataSource>(),
       ),
+    );
+    gh.factory<_i781.AboutMeCubit>(
+      () => _i781.AboutMeCubit(gh<_i781.SaveAboutMeUseCase>()),
     );
     gh.lazySingleton<_i25.BasicInfoRemoteDataSource>(
       () => _i25.BasicInfoRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
