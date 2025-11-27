@@ -45,3 +45,9 @@ class CompanyError extends CompanyState {
   @override
   List<Object?> get props => [message];
 }
+
+class CompanyStatusChecked extends CompanyState {
+  final bool hasProfile;
+  final bool hasPaid;
+  const CompanyStatusChecked({required this.hasProfile, required this.hasPaid});
+}

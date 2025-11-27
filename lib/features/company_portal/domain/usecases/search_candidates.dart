@@ -1,5 +1,5 @@
-import 'package:graduation_project/features/company_portal/domain/repositories/company_portal_repository.dart';
 import 'package:multiple_result/multiple_result.dart';
+import '../repositories/company_portal_repository.dart';
 
 class SearchCandidates {
   final CompanyRepository repo;

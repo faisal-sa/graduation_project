@@ -10,7 +10,11 @@ class SignUpParams {
   final String password;
   final String role;
 
-  SignUpParams({required this.email, required this.password, required this.role});
+  SignUpParams({
+    required this.email,
+    required this.password,
+    required this.role,
+  });
 }
 
 @injectable

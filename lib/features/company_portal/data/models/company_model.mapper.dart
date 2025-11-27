@@ -51,20 +51,30 @@ class CompanyModelMapper extends ClassMapperBase<CompanyModel> {
     _$address,
     opt: true,
   );
-  static String _$companySize(CompanyModel v) => v.companySize;
+  static String? _$companySize(CompanyModel v) => v.companySize;
   static const Field<CompanyModel, String> _f$companySize = Field(
     'companySize',
     _$companySize,
+    opt: true,
   );
-  static String _$website(CompanyModel v) => v.website;
+  static String? _$website(CompanyModel v) => v.website;
   static const Field<CompanyModel, String> _f$website = Field(
     'website',
     _$website,
+    opt: true,
   );
-  static String _$email(CompanyModel v) => v.email;
-  static const Field<CompanyModel, String> _f$email = Field('email', _$email);
-  static String _$phone(CompanyModel v) => v.phone;
-  static const Field<CompanyModel, String> _f$phone = Field('phone', _$phone);
+  static String? _$email(CompanyModel v) => v.email;
+  static const Field<CompanyModel, String> _f$email = Field(
+    'email',
+    _$email,
+    opt: true,
+  );
+  static String? _$phone(CompanyModel v) => v.phone;
+  static const Field<CompanyModel, String> _f$phone = Field(
+    'phone',
+    _$phone,
+    opt: true,
+  );
   static String? _$logoUrl(CompanyModel v) => v.logoUrl;
   static const Field<CompanyModel, String> _f$logoUrl = Field(
     'logoUrl',
@@ -217,10 +227,10 @@ class _CompanyModelCopyWithImpl<$R, $Out>
     String? description,
     String? city,
     Object? address = $none,
-    String? companySize,
-    String? website,
-    String? email,
-    String? phone,
+    Object? companySize = $none,
+    Object? website = $none,
+    Object? email = $none,
+    Object? phone = $none,
     Object? logoUrl = $none,
     String? createdAt,
     String? updatedAt,
@@ -233,10 +243,10 @@ class _CompanyModelCopyWithImpl<$R, $Out>
       if (description != null) #description: description,
       if (city != null) #city: city,
       if (address != $none) #address: address,
-      if (companySize != null) #companySize: companySize,
-      if (website != null) #website: website,
-      if (email != null) #email: email,
-      if (phone != null) #phone: phone,
+      if (companySize != $none) #companySize: companySize,
+      if (website != $none) #website: website,
+      if (email != $none) #email: email,
+      if (phone != $none) #phone: phone,
       if (logoUrl != $none) #logoUrl: logoUrl,
       if (createdAt != null) #createdAt: createdAt,
       if (updatedAt != null) #updatedAt: updatedAt,

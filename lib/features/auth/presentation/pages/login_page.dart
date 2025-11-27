@@ -17,6 +17,7 @@ class LoginPage extends StatelessWidget {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           if (state.role == 'Company') {
+<<<<<<< HEAD
             context.go('/company/profile');
           } else {
             context.go('/insights');
@@ -25,6 +26,12 @@ class LoginPage extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
+=======
+            context.go('/company/complete-profile');
+          } else {
+            context.go('/insights'); // صفحة الأفراد
+          }
+>>>>>>> c6361d0281f3ca4ce8f3f47dd988088ee1681533
         }
       },
       builder: (context, state) {

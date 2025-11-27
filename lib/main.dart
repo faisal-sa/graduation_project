@@ -9,7 +9,6 @@ import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.d
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
-
   runApp(const MainApp());
 }
 

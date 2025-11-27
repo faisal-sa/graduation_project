@@ -1,84 +1,89 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/company_model.dart';
-import '../../domain/entities/company_entity.dart';
 
 class CompanyRemoteDataSource {
   final SupabaseClient supabase;
   CompanyRemoteDataSource(this.supabase);
 
-  Future<CompanyEntity> registerCompany(String email, String password) async {
-    final response = await supabase.auth.signUp(
+  // -----------------------------------------------------
+  // Company registration
+  // -----------------------------------------------------
+  Future<Map<String, dynamic>> registerCompany(
+    String email,
+    String password,
+  ) async {
+    // Example: sign‑up the company user
+    final authResponse = await supabase.auth.signUp(
       email: email,
       password: password,
-      data: {'role': 'company'},
     );
-    if (response.user == null) throw Exception('فشل في إنشاء الحساب');
 
-    final user = response.user!;
-    final inserted = await supabase
+    final user = authResponse.user;
+
+    // Create an empty company record tied to this user
+    final response = await supabase
         .from('companies')
-        .insert({
-          'user_id': user.id,
-          'email': email,
-          'company_name': '',
-          'industry': '',
-          'description': '',
-          'city': '',
-          'company_size': '',
-          'website': '',
-          'phone': '',
-          'created_at': DateTime.now().toIso8601String(),
-          'updated_at': DateTime.now().toIso8601String(),
-        })
+        .insert({'user_id': user?.id, 'email': email})
         .select()
         .single();
 
-    return CompanyModelMapper.fromMap(inserted).toEntity();
+    return Map<String, dynamic>.from(response);
   }
 
-  Future<CompanyEntity> getProfile(String userId) async {
-    final data = await supabase
+  // -----------------------------------------------------
+  // Get company profile by user id
+  // -----------------------------------------------------
+  Future<Map<String, dynamic>?> getCompanyProfile(String userId) async {
+    final result = await supabase
         .from('companies')
         .select()
         .eq('user_id', userId)
         .maybeSingle();
-
-    if (data == null) throw Exception('لم يتم العثور على بيانات الشركة');
-    return CompanyModelMapper.fromMap(data).toEntity();
+    return result == null ? null : Map<String, dynamic>.from(result);
   }
 
-  Future<CompanyEntity> updateProfile(CompanyEntity company) async {
-    final model = CompanyModel.fromEntity(company);
-    final res = await supabase
+  // -----------------------------------------------------
+  // Update existing company profile
+  // -----------------------------------------------------
+  Future<Map<String, dynamic>> updateCompanyProfile(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    final result = await supabase
         .from('companies')
-        .update(model.toMap())
-        .eq('id', model.id)
+        .update(data)
+        .eq('id', id)
         .select()
         .single();
-
-    return CompanyModelMapper.fromMap(res).toEntity();
+    return Map<String, dynamic>.from(result);
   }
 
+  // -----------------------------------------------------
+  // Search candidates
+  // -----------------------------------------------------
   Future<List<Map<String, dynamic>>> searchCandidates({
     String? city,
     String? skill,
     String? experience,
   }) async {
-    var query = supabase.from('profiles').select().eq('role', 'jobseeker');
+    final query = supabase.from('candidates').select();
 
     if (city != null && city.isNotEmpty) {
-      query = query.eq('city', city);
+      query.eq('city', city);
     }
     if (skill != null && skill.isNotEmpty) {
-      query = query.ilike('skills', '%$skill%');
+      query.ilike('skills', '%$skill%');
     }
     if (experience != null && experience.isNotEmpty) {
-      query = query.gte('experience', experience);
+      query.ilike('experience', '%$experience%');
     }
 
-    return await query;
+    final result = await query;
+    return List<Map<String, dynamic>>.from(result);
   }
 
+  // -----------------------------------------------------
+  // Bookmark management
+  // -----------------------------------------------------
   Future<void> addCandidateBookmark(
     String companyId,
     String candidateId,
@@ -86,7 +91,16 @@ class CompanyRemoteDataSource {
     await supabase.from('company_bookmarks').insert({
       'company_id': companyId,
       'candidate_id': candidateId,
-      'created_at': DateTime.now().toIso8601String(),
     });
+  }
+
+  Future<List<Map<String, dynamic>>> getCompanyBookmarks(
+    String companyId,
+  ) async {
+    final result = await supabase
+        .from('company_bookmarks')
+        .select('candidate_id, candidates(full_name,skills,city)')
+        .eq('company_id', companyId);
+    return List<Map<String, dynamic>>.from(result);
   }
 }

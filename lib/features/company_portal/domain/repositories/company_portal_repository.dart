@@ -7,17 +7,18 @@ abstract class CompanyRepository {
     required String password,
   });
 
+  Future<Result<CompanyEntity, String>> getCompanyProfile(String userId);
+
   Future<Result<CompanyEntity, String>> updateCompanyProfile(
     CompanyEntity company,
   );
-
-  Future<Result<CompanyEntity, String>> getCompanyProfile(String userId);
 
   Future<Result<List<Map<String, dynamic>>, String>> searchCandidates({
     String? city,
     String? skill,
     String? experience,
   });
+
   Future<Result<void, String>> addCandidateBookmark(
     String companyId,
     String candidateId,

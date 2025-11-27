@@ -12,10 +12,10 @@ class CompanyModel with CompanyModelMappable {
   final String description;
   final String city;
   final String? address;
-  final String companySize;
-  final String website;
-  final String email;
-  final String phone;
+  final String? companySize;
+  final String? website;
+  final String? email;
+  final String? phone;
   final String? logoUrl;
   final String createdAt;
   final String updatedAt;
@@ -28,10 +28,10 @@ class CompanyModel with CompanyModelMappable {
     required this.description,
     required this.city,
     this.address,
-    required this.companySize,
-    required this.website,
-    required this.email,
-    required this.phone,
+    this.companySize,
+    this.website,
+    this.email,
+    this.phone,
     this.logoUrl,
     required this.createdAt,
     required this.updatedAt,
@@ -51,8 +51,8 @@ class CompanyModel with CompanyModelMappable {
     email: email,
     phone: phone,
     logoUrl: logoUrl,
-    createdAt: DateTime.parse(createdAt),
-    updatedAt: DateTime.parse(updatedAt),
+    createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+    updatedAt: DateTime.tryParse(updatedAt) ?? DateTime.now(),
   );
 
   /// Entity → Model
@@ -72,4 +72,7 @@ class CompanyModel with CompanyModelMappable {
     createdAt: entity.createdAt.toIso8601String(),
     updatedAt: entity.updatedAt.toIso8601String(),
   );
+
+  Map<String, dynamic> toMap() =>
+      CompanyModelMapper.ensureInitialized().encodeMap(this);
 }

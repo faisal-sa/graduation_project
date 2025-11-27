@@ -8,10 +8,10 @@ class CompanyEntity extends Equatable {
   final String description;
   final String city;
   final String? address;
-  final String companySize;
-  final String website;
-  final String email;
-  final String phone;
+  final String? companySize;
+  final String? website;
+  final String? email;
+  final String? phone;
   final String? logoUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -24,10 +24,10 @@ class CompanyEntity extends Equatable {
     required this.description,
     required this.city,
     this.address,
-    required this.companySize,
-    required this.website,
-    required this.email,
-    required this.phone,
+    this.companySize,
+    this.website,
+    this.email,
+    this.phone,
     this.logoUrl,
     required this.createdAt,
     required this.updatedAt,

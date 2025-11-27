@@ -110,7 +110,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.user == null) {
       throw Exception('OTP verification failed: User is null');
     }
-
     final userMetadata = response.user!.userMetadata;
     final appMetadata = response.user!.appMetadata;
     final role =
@@ -129,6 +128,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel?> getCurrentUser() async {
     final user = _supabase.auth.currentUser;
     if (user == null) return null;
+    print(2);
 
     final userMetadata = user.userMetadata;
     final appMetadata = user.appMetadata;
