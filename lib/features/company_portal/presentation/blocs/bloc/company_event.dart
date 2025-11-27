@@ -32,3 +32,8 @@ class GetCompanyBookmarksEvent extends CompanyEvent {
   final String companyId;
   const GetCompanyBookmarksEvent(this.companyId);
 }
+
+class CheckCompanyStatusEvent extends CompanyEvent {
+  final String userId;
+  const CheckCompanyStatusEvent(this.userId);
+}

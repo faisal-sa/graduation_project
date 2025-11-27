@@ -30,6 +30,7 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     on<SearchCandidatesEvent>(_onSearchCandidates);
     on<AddCandidateBookmarkEvent>(_onAddCandidateBookmark);
     on<GetCompanyBookmarksEvent>(_onGetBookmarks);
+    on<CheckCompanyStatusEvent>(_onCheckCompanyStatus);
   }
 
   Future<void> _onGetCompanyProfile(
@@ -114,5 +115,39 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
         .eq('company_id', event.companyId);
     final data = List<Map<String, dynamic>>.from(response);
     emit(CompanyBookmarksLoaded(data));
+  }
+
+  Future<void> _onCheckCompanyStatus(
+    CheckCompanyStatusEvent event,
+    Emitter<CompanyState> emit,
+  ) async {
+    emit(const CompanyLoading());
+
+    final client = Supabase.instance.client;
+
+    final companyResponse = await client
+        .from('companies')
+        .select('id')
+        .eq('user_id', event.userId)
+        .maybeSingle();
+
+    final hasProfile = companyResponse != null;
+    final companyId = companyResponse?['id'] as String?;
+
+    bool hasPaid = false;
+
+    if (hasProfile && companyId != null) {
+      // نتحقق إذا دفعت
+      final paymentResponse = await client
+          .from('payments')
+          .select('status')
+          .eq('company_id', companyId)
+          .eq('status', 'paid')
+          .maybeSingle();
+
+      hasPaid = paymentResponse != null;
+    }
+
+    emit(CompanyStatusChecked(hasProfile: hasProfile, hasPaid: hasPaid));
   }
 }

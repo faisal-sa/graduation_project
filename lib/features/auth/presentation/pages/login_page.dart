@@ -16,11 +16,11 @@ class LoginPage extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go('/profile');
-        } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
+          if (state.role == 'Company') {
+            context.go('/company/complete-profile');
+          } else {
+            context.go('/insights'); // صفحة الأفراد
+          }
         }
       },
       builder: (context, state) {

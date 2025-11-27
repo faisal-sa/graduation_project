@@ -32,7 +32,17 @@ class _SignupPageState extends State<SignupPage> {
       listener: (context, state) {
         if (state is OTPSent) {
           context.push('/otp-verification', extra: state.email);
-        } else if (state is AuthError) {
+        }
+
+        if (state is AuthAuthenticated) {
+          if (state.role == 'Company') {
+            context.go('/company/complete-profile');
+          } else {
+            context.go('/insights');
+          }
+        }
+
+        if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );

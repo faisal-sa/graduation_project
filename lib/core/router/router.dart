@@ -1,12 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/advanced_searchpage.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_bookmarks_page.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/company_home_page.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/company_profile_page.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_scanner_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_page.dart';
+
 import 'package:graduation_project/features/company_portal/presentation/screens/company_search_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_settings_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/complete_company_profile_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/payment_page.dart';
+
 import 'package:graduation_project/features/individuals/chat/presentation/pages/chats_tab.dart';
 import 'package:graduation_project/features/individuals/features/basic_information/presentation/pages/basic_info_page.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/pages/insights_tab.dart';
@@ -24,10 +28,11 @@ import 'package:flutter/material.dart';
 // keep it here for now
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final getIt = GetIt.instance;
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/company',
+  initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const LoginPage()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
@@ -91,31 +96,58 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-    // --------------------- Company Routes with Bloc ---------------------
-    ShellRoute(
-      builder: (context, state, child) {
-        return BlocProvider(
-          create: (_) => serviceLocator.get<CompanyBloc>(),
-          child: child,
-        );
-      },
+    // -------------------- COMPANY PORTAL FLOW --------------------
+    GoRoute(
+      path: '/company/complete-profile',
+      name: 'company-complete-profile',
+      builder: (context, state) => BlocProvider(
+        create: (_) => getIt<CompanyBloc>(),
+        child: const CompleteCompanyProfilePage(),
+      ),
+    ),
+    GoRoute(
+      path: '/company/payment',
+      name: 'company-payment',
+      builder: (context, state) => const PaymentPage(),
+    ),
+    GoRoute(
+      path: '/company/search',
+      name: 'company-search',
+      builder: (context, state) => BlocProvider(
+        create: (_) => getIt<CompanyBloc>(),
+        child: const CompanySearchPage(),
+      ),
       routes: [
-        GoRoute(path: '/company', builder: (_, __) => const CompanyHomePage()),
         GoRoute(
-          path: '/company/profile',
-          builder: (_, __) => const CompanyProfilePage(),
+          path: 'advanced',
+          name: 'company-advanced-search',
+          builder: (context, state) => BlocProvider(
+            create: (_) => getIt<CompanyBloc>(),
+            child: const AdvancedSearchPage(),
+          ),
         ),
         GoRoute(
-          path: '/company/search',
-          builder: (_, __) => const CompanySearchPage(),
+          path: '/company/qr',
+          name: 'company-qr',
+          builder: (context, state) => BlocProvider(
+            create: (_) => getIt<CompanyBloc>(),
+            child: const CompanyQRScannerPage(),
+          ),
         ),
         GoRoute(
           path: '/company/bookmarks',
-          builder: (_, __) => const CompanyBookmarksPage(),
+          name: 'company-bookmarks',
+          builder: (context, state) => BlocProvider(
+            create: (_) => getIt<CompanyBloc>(),
+            child: const CompanyBookmarksPage(),
+          ),
         ),
+
+        // صفحة الإعدادات
         GoRoute(
-          path: '/company/scan',
-          builder: (_, __) => const CompanyQrScannerPage(),
+          path: '/company/settings',
+          name: 'company-settings',
+          builder: (context, state) => const CompanySettingsPage(),
         ),
       ],
     ),

@@ -14,11 +14,8 @@ class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final User user;
-
-  const AuthAuthenticated(this.user);
-
-  @override
-  List<Object?> get props => [user];
+  final String? role;
+  const AuthAuthenticated(this.user, {this.role});
 }
 
 class AuthUnauthenticated extends AuthState {}
@@ -49,4 +46,3 @@ class OTPVerified extends AuthState {
   @override
   List<Object?> get props => [user];
 }
-

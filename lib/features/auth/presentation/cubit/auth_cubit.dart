@@ -66,7 +66,9 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
 
-    final result = await signUp(SignUpParams(email: email, password: password, role: role));
+    final result = await signUp(
+      SignUpParams(email: email, password: password, role: role),
+    );
 
     result.when(
       (success) {
@@ -89,7 +91,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.when(
       (user) {
-        emit(AuthAuthenticated(user));
+        emit(AuthAuthenticated(user, role: user.role));
       },
       (error) {
         emit(AuthError(_getErrorMessage(error)));
