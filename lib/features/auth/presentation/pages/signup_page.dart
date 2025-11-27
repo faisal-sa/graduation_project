@@ -30,6 +30,13 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          if (state.role == 'Company') {
+            context.go('/company/complete-profile');
+          } else {
+            context.go('/insights'); // صفحة الأفراد
+          }
+        }
         if (state is OTPSent) {
           context.push('/otp-verification', extra: state.email);
         } else if (state is AuthError) {
