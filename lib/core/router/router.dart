@@ -1,11 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-<<<<<<< HEAD
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/CRinfo/cr_info_page.dart';
-=======
->>>>>>> origin/pages
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/advanced_searchpage.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_bookmarks_page.dart';
