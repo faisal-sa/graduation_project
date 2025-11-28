@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
@@ -40,9 +41,9 @@ class _AddEducationModalState extends State<AddEducationModal> {
   DateTime? _endDate;
   List<String> _activities = [];
 
-  // Mock attachments state
-  bool _hasGradCertificate = false;
-  bool _hasAcademicRecord = false;
+  // File state
+  File? _selectedGradCertificate;
+  File? _selectedAcademicRecord;
 
   @override
   void initState() {
@@ -57,8 +58,8 @@ class _AddEducationModalState extends State<AddEducationModal> {
       _startDate = edu.startDate;
       _endDate = edu.endDate;
       _activities = List.from(edu.activities);
-      _hasGradCertificate = edu.graduationCertificate != null;
-      _hasAcademicRecord = edu.academicRecord != null;
+      // Note: We don't pre-fill File objects from URLs,
+      // but we can use the existence of URLs to show "Existing file" in UI if needed.
     }
   }
 
@@ -69,6 +70,42 @@ class _AddEducationModalState extends State<AddEducationModal> {
     _fieldOfStudyController.dispose();
     _gpaController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickFile(bool isGradCert) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        setState(() {
+          if (isGradCert) {
+            _selectedGradCertificate = File(result.files.single.path!);
+          } else {
+            _selectedAcademicRecord = File(result.files.single.path!);
+          }
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error picking file: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _clearFile(bool isGradCert) {
+    setState(() {
+      if (isGradCert) {
+        _selectedGradCertificate = null;
+      } else {
+        _selectedAcademicRecord = null;
+      }
+    });
   }
 
   void _submit() {
@@ -95,12 +132,14 @@ class _AddEducationModalState extends State<AddEducationModal> {
       endDate: _endDate!,
       gpa: _gpaController.text,
       activities: _activities,
-      // Mocking file paths if selected
-      graduationCertificate: _hasGradCertificate
-          ? File("path/to/grad_cert.pdf")
+      graduationCertificate: _selectedGradCertificate,
+      academicRecord: _selectedAcademicRecord,
+      // Preserve existing URLs if no new file is selected
+      graduationCertificateUrl: _selectedGradCertificate == null
+          ? widget.education?.graduationCertificateUrl
           : null,
-      academicRecord: _hasAcademicRecord
-          ? File("path/to/academic_record.pdf")
+      academicRecordUrl: _selectedAcademicRecord == null
+          ? widget.education?.academicRecordUrl
           : null,
     );
 
@@ -201,31 +240,28 @@ class _AddEducationModalState extends State<AddEducationModal> {
                   ),
                   SizedBox(height: 16.h),
 
-                  // Attachments UI Mock
+                  // Attachments UI
                   const FormLabel("Attachments"),
                   Row(
                     children: [
                       Expanded(
                         child: _FileButton(
                           label: "Graduation Cert.",
-                          isFileSelected: _hasGradCertificate,
-                          onTap: () {
-                            setState(() {
-                              _hasGradCertificate = !_hasGradCertificate;
-                            });
-                          },
+                          file: _selectedGradCertificate,
+                          existingUrl:
+                              widget.education?.graduationCertificateUrl,
+                          onTap: () => _pickFile(true),
+                          onClear: () => _clearFile(true),
                         ),
                       ),
                       SizedBox(width: 12.w),
                       Expanded(
                         child: _FileButton(
                           label: "Academic Record",
-                          isFileSelected: _hasAcademicRecord,
-                          onTap: () {
-                            setState(() {
-                              _hasAcademicRecord = !_hasAcademicRecord;
-                            });
-                          },
+                          file: _selectedAcademicRecord,
+                          existingUrl: widget.education?.academicRecordUrl,
+                          onTap: () => _pickFile(false),
+                          onClear: () => _clearFile(false),
                         ),
                       ),
                     ],
@@ -284,43 +320,78 @@ class _AddEducationModalState extends State<AddEducationModal> {
 
 class _FileButton extends StatelessWidget {
   final String label;
-  final bool isFileSelected;
+  final File? file;
+  final String? existingUrl;
   final VoidCallback onTap;
+  final VoidCallback onClear;
 
   const _FileButton({
     required this.label,
-    required this.isFileSelected,
+    this.file,
+    this.existingUrl,
     required this.onTap,
+    required this.onClear,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
-        decoration: BoxDecoration(
-          color: isFileSelected ? Colors.green.withOpacity(0.1) : Colors.white,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(
-            color: isFileSelected ? Colors.green : Colors.grey[300]!,
-            width: 1,
+    final hasFile =
+        file != null || (existingUrl != null && existingUrl!.isNotEmpty);
+
+    String displayText = label;
+    if (file != null) {
+      displayText = file!.path.split(Platform.pathSeparator).last;
+    } else if (existingUrl != null && existingUrl!.isNotEmpty) {
+      displayText = "File Uploaded";
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+          decoration: BoxDecoration(
+            color: hasFile ? Colors.green.withOpacity(0.1) : Colors.white,
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(
+              color: hasFile ? Colors.green : Colors.grey[300]!,
+              width: 1,
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              isFileSelected ? Icons.check_circle : Icons.upload_file,
-              color: isFileSelected ? Colors.green : Colors.grey[500],
-              size: 20.sp,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              isFileSelected ? "Selected" : label,
-              style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
-              textAlign: TextAlign.center,
-            ),
-          ],
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Icon(
+                    hasFile ? Icons.check_circle : Icons.upload_file,
+                    color: hasFile ? Colors.green : Colors.grey[500],
+                    size: 20.sp,
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    displayText,
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+              if (hasFile)
+                Positioned(
+                  top: -8,
+                  right: -8,
+                  child: IconButton(
+                    icon: Icon(Icons.close, size: 16.sp, color: Colors.red),
+                    onPressed: onClear,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

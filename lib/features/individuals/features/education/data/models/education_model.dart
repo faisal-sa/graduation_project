@@ -23,7 +23,6 @@ class EducationModel extends Education {
       startDate: DateTime.parse(json['start_date']),
       endDate: DateTime.parse(json['end_date']),
       gpa: json['gpa'] as String?,
-      // Supabase returns arrays as List<dynamic>, usually need casting
       activities:
           (json['activities'] as List<dynamic>?)
               ?.map((e) => e.toString())

@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 
-import 'dart:io';
-import 'package:equatable/equatable.dart';
 
 class Education extends Equatable {
   final String id;
