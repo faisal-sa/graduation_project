@@ -11,184 +11,204 @@ class InsightsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCubit, UserState>(
-      builder: (context, state) {
-        final userEntity = state.user;
-        final completionRatio = state.profileCompletion;
-        final completionPercent = (completionRatio * 100).toInt();
-        final isComplete = completionRatio >= 0.8;
+    return BlocListener<UserCubit, UserState>(
+      listener: (context, state) {
+        if (state.resumeError != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.resumeError!),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<UserCubit, UserState>(
+        builder: (context, state) {
+          final userEntity = state.user;
+          final completionRatio = state.profileCompletion;
+          final completionPercent = (completionRatio * 100).toInt();
+          final isComplete = completionRatio >= 0.8;
 
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildWelcomeCard(context, state, isComplete, completionPercent),
-              const SizedBox(height: 24),
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildWelcomeCard(
+                  context,
+                  state,
+                  isComplete,
+                  completionPercent,
+                ),
+                const SizedBox(height: 24),
 
-              const Text(
-                "Your Insights",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: isComplete
-                        ? FeatureCard(
-                            child: Column(
-                              children: [
-                                const Icon(
-                                  Icons.handshake,
-                                  color: Colors.pink,
-                                  size: 32,
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  "78%",
-                                  style: TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppColors.textMain,
+                const Text(
+                  "Your Insights",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: isComplete
+                          ? FeatureCard(
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.handshake,
+                                    color: Colors.pink,
+                                    size: 32,
                                   ),
-                                ),
-                                const Text(
-                                  "Match Strength",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textSub,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.pink.shade50,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    "Great fit!",
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    "78%",
                                     style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.pink.shade700,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w900,
+                                      color: AppColors.textMain,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : const LockedFeatureCard(
-                            icon: Icons.track_changes,
-                            title: "Match Strength",
-                            unlockText: "Complete profile to see scores.",
-                          ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: isComplete
-                        ? FeatureCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Icon(
-                                      Icons.bolt,
-                                      color: Colors.amber,
-                                      size: 28,
+                                  const Text(
+                                    "Match Strength",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSub,
                                     ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                        vertical: 2,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.pink.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      "Great fit!",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.pink.shade700,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.green.shade50,
-                                        borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const LockedFeatureCard(
+                              icon: Icons.track_changes,
+                              title: "Match Strength",
+                              unlockText: "Complete profile to see scores.",
+                            ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: isComplete
+                          ? FeatureCard(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Icon(
+                                        Icons.bolt,
+                                        color: Colors.amber,
+                                        size: 28,
                                       ),
-                                      child: const Text(
-                                        "New",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold,
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade50,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "New",
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    "AI Skill Check",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                const Text(
-                                  "AI Skill Check",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
                                   ),
-                                ),
-                                const Text(
-                                  "Validate top skills",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.textSub,
+                                  const Text(
+                                    "Validate top skills",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: AppColors.textSub,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 12),
-                                const Row(
-                                  children: [
-                                    Text(
-                                      "Start Quiz",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.bluePrimary,
-                                        fontWeight: FontWeight.w600,
+                                  const SizedBox(height: 12),
+                                  const Row(
+                                    children: [
+                                      Text(
+                                        "Start Quiz",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.bluePrimary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      size: 14,
-                                      color: AppColors.bluePrimary,
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      Icon(
+                                        Icons.arrow_forward,
+                                        size: 14,
+                                        color: AppColors.bluePrimary,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const LockedFeatureCard(
+                              icon: Icons.bolt,
+                              title: "AI Quiz",
+                              unlockText: "Generate quiz based on experience.",
                             ),
-                          )
-                        : const LockedFeatureCard(
-                            icon: Icons.bolt,
-                            title: "AI Quiz",
-                            unlockText: "Generate quiz based on experience.",
-                          ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-              const Text(
-                "Recent Activity",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-
-              if (isComplete)
-                _buildAnalyticsSection()
-              else
-                const LockedFeatureCard(
-                  icon: Icons.trending_up,
-                  title: "Advanced Analytics",
-                  unlockText: "Upload resume to track engagement.",
+                    ),
+                  ],
                 ),
-            ],
-          ),
-        );
-      },
+
+                const SizedBox(height: 24),
+                const Text(
+                  "Recent Activity",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+
+                if (isComplete)
+                  _buildAnalyticsSection()
+                else
+                  const LockedFeatureCard(
+                    icon: Icons.trending_up,
+                    title: "Advanced Analytics",
+                    unlockText: "Upload resume to track engagement.",
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -198,7 +218,6 @@ class InsightsTab extends StatelessWidget {
     bool isComplete,
     int progressPercent,
   ) {
-    // Fallback to "User" if firstName is empty
     final displayName = state.user.firstName.isNotEmpty
         ? state.user.firstName
         : "User";
@@ -317,19 +336,15 @@ class InsightsTab extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
+            // 2. Updated Upload Section
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  context.read<UserCubit>().updateBasicInfo(
-                    firstName: "Alex",
-                    lastName: "Morgan",
-                    jobTitle: "Flutter Developer",
-                    email: "alex@example.com",
-                    phone: "555-0123",
-                    location: "Remote",
-                  );
-                },
+                onTap: state.isResumeLoading
+                    ? null // Disable tap while loading
+                    : () {
+                        context.read<UserCubit>().uploadAndExtractResume();
+                      },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: const EdgeInsets.all(12),
@@ -344,73 +359,94 @@ class InsightsTab extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.blueLight,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.upload_file,
-                          color: AppColors.bluePrimary,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  child: state.isResumeLoading
+                      // 3. Loading State UI
+                      ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              "Upload Resume",
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              "Analyzing PDF...",
                               style: TextStyle(
                                 color: AppColors.textMain,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              "Auto-fill 80% of profile",
-                              style: TextStyle(
-                                color: AppColors.textSub,
-                                fontSize: 11,
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.bluePrimary,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: const Row(
+                        )
+                      // Normal UI
+                      : Row(
                           children: [
-                            Icon(
-                              Icons.auto_awesome,
-                              color: Colors.white,
-                              size: 10,
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: AppColors.blueLight,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.upload_file,
+                                color: AppColors.bluePrimary,
+                                size: 20,
+                              ),
                             ),
-                            SizedBox(width: 4),
-                            Text(
-                              "+100%",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Upload Resume",
+                                    style: TextStyle(
+                                      color: AppColors.textMain,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Auto-fill 80% of profile",
+                                    style: TextStyle(
+                                      color: AppColors.textSub,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.bluePrimary,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(
+                                    Icons.auto_awesome,
+                                    color: Colors.white,
+                                    size: 10,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "+100%",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),

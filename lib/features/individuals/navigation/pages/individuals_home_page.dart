@@ -73,7 +73,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       title: Row(
-        mainAxisAlignment: .end,
+        mainAxisAlignment: .spaceBetween,
         children: [
           CircleAvatar(
             backgroundColor: AppColors.blueLight,

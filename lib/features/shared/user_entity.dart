@@ -67,3 +67,11 @@ class UserEntity extends Equatable {
     educations,
   ];
 }
+
+// Simple extension helper for the heuristic string cut
+extension StringExtension on String {
+  String take(int n) {
+    if (this.length <= n) return this;
+    return this.substring(0, n);
+  }
+}

@@ -3,8 +3,14 @@ import 'user_entity.dart';
 
 class UserState extends Equatable {
   final UserEntity user;
+  final bool isResumeLoading;
+  final String? resumeError;
 
-  const UserState({this.user = const UserEntity()});
+  const UserState({
+    this.user = const UserEntity(),
+    this.isResumeLoading = false,
+    this.resumeError,
+  });
 
   double get profileCompletion {
     int total = 0;
@@ -29,15 +35,23 @@ class UserState extends Equatable {
     checkString(user.summary);
 
     checkList(user.workExperiences);
-    checkList(user.educations); // Added check
+    checkList(user.educations);
 
     return total == 0 ? 0.0 : (filled / total);
   }
 
-  UserState copyWith({UserEntity? user}) {
-    return UserState(user: user ?? this.user);
+  UserState copyWith({
+    UserEntity? user,
+    bool? isResumeLoading,
+    String? resumeError,
+  }) {
+    return UserState(
+      user: user ?? this.user,
+      isResumeLoading: isResumeLoading ?? this.isResumeLoading,
+      resumeError: resumeError,
+    );
   }
 
   @override
-  List<Object> get props => [user];
+  List<Object?> get props => [user, isResumeLoading, resumeError];
 }
