@@ -28,45 +28,6 @@ A comprehensive Flutter application connecting individuals and companies, featur
   - [Flutter ScreenUtil](https://pub.dev/packages/flutter_screenutil) for responsiveness.
   - [Google Fonts](https://pub.dev/packages/google_fonts).
 
-## Getting Started
-
-### Prerequisites
-
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (version 3.10.0 or higher)
-- [Dart SDK](https://dart.dev/get-dart)
-- A Supabase project with valid credentials.
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/graduation_project.git
-   cd graduation_project
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Generate code:**
-   This project uses code generation for JSON serialization and dependency injection.
-   ```bash
-   dart run build_runner build --delete-conflicting-outputs
-   ```
-
-4. **Environment Setup:**
-   Create a `.env` file in the root directory and add your Supabase credentials:
-   ```env
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-5. **Run the app:**
-   ```bash
-   flutter run
-   ```
-
 ## Folder Structure
 
 ```
@@ -80,3 +41,7 @@ lib/
 │   └── CRinfo/          # Commercial Registration info
 └── main.dart       # Application entry point
 ```
+
+## Preview 
+
+this project is currently a work in progress..
