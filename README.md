@@ -1,4 +1,4 @@
-# Graduation Project
+# FindMinds
 
 A comprehensive Flutter application connecting individuals and companies, featuring a robust portal for managing professional profiles, job opportunities, and commercial registrations.
 
