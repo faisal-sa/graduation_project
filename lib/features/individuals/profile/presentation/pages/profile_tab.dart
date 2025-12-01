@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/cubit/profile_cubit.dart';
 import 'package:graduation_project/features/shared/user_cubit.dart';
 import 'package:graduation_project/features/shared/user_state.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -85,18 +90,91 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Listen to UserCubit to get the actual data
+    // Helper function to handle the upload logic
+    Future<void> _uploadAvatar(BuildContext context) async {
+      final ImagePicker picker = ImagePicker();
+      final SupabaseClient supabase = serviceLocator.get<SupabaseClient>();
+
+      // 1. Pick Image
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 600, // Compress image for better performance
+        maxHeight: 600,
+      );
+
+      if (image == null) return; // User cancelled
+
+      try {
+        final userId = supabase.auth.currentUser!.id;
+        final imageExtension = image.path.split('.').last;
+        // Create a unique file path: userId/timestamp.jpg
+        final fileName =
+            '$userId/${DateTime.now().millisecondsSinceEpoch}.$imageExtension';
+
+        // 2. Upload to Supabase Storage (Bucket name: 'avatars')
+        await supabase.storage
+            .from('avatars')
+            .upload(
+              fileName,
+              File(image.path),
+              fileOptions: const FileOptions(
+                cacheControl: '3600',
+                upsert: true,
+              ),
+            );
+
+        // 3. Get Public URL
+        final String imageUrl = supabase.storage
+            .from('avatars')
+            .getPublicUrl(fileName);
+
+        // 4. Update Database Profile
+        await supabase
+            .from('profiles')
+            .update({
+              'avatar_url': imageUrl,
+              'updated_at': DateTime.now().toIso8601String(),
+            })
+            .eq('id', userId);
+
+        // 5. Update Local State (UserCubit)
+        // Assuming your UserCubit has an event or method to update the user object locally
+        if (context.mounted) {
+          // Option A: Trigger a reload of the profile
+          // context.read<UserCubit>().loadProfile();
+
+          // Option B: Update specific field (More efficient)
+          context.read<UserCubit>().updateLocalAvatar(imageUrl);
+        }
+      } catch (error) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Upload failed: $error')));
+        }
+      }
+    }
+
     return BlocBuilder<UserCubit, UserState>(
       builder: (context, state) {
         final user = state.user;
 
         // Logic to construct the full name
-        final String fullName = '${user.firstName} ${user.lastName}'.trim();
+        final String fullName = '${user.firstName ?? ''} ${user.lastName ?? ''}'
+            .trim();
+        // Logic to construct the full name
         final bool hasName = fullName.isNotEmpty;
 
         // Logic for Job and Location
         final bool hasJob = user.jobTitle.isNotEmpty;
         final bool hasLocation = user.location.isNotEmpty;
+
+        // Logic for Avatar Image Provider
+        // We check if avatar_url exists, if so use NetworkImage, else null
+        final ImageProvider? avatarImage =
+            (user.avatarUrl != null && user.avatarUrl!.isNotEmpty)
+            ? NetworkImage(user.avatarUrl!)
+            : null;
 
         return Column(
           children: [
@@ -112,22 +190,18 @@ class _ProfileHeader extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 55,
                     backgroundColor: Colors.grey[200],
-                    // Logic: You can add user.profileImage here later
-                    backgroundImage: null,
-                    child: const Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.grey,
-                    ),
+                    backgroundImage: avatarImage,
+                    // Only show the Person Icon if there is no image
+                    child: avatarImage == null
+                        ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                        : null,
                   ),
                 ),
                 Positioned(
                   bottom: 0,
                   right: 0,
                   child: GestureDetector(
-                    onTap: () {
-                      // Trigger Photo Upload
-                    },
+                    onTap: () => _uploadAvatar(context), // Trigger the upload
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: const BoxDecoration(
@@ -150,7 +224,7 @@ class _ProfileHeader extends StatelessWidget {
             const SizedBox(height: 16),
 
             // --- NAME SECTION ---
-            if (hasName)
+            if (fullName.isNotEmpty)
               Text(
                 fullName,
                 textAlign: TextAlign.center,

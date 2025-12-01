@@ -33,6 +33,7 @@ class UserState extends Equatable {
     checkString(user.email);
     checkString(user.phoneNumber);
     checkString(user.summary);
+    checkString(user.avatarUrl); // <--- Added to completion calculation
 
     checkList(user.workExperiences);
     checkList(user.educations);

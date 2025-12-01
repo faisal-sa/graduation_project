@@ -21,6 +21,13 @@ class UserCubit extends Cubit<UserState> {
     emit(state.copyWith(user: user));
   }
 
+  // --- Avatar Logic (NEW) ---
+
+  // Call this method after you successfully get the public URL from Supabase
+  void updateLocalAvatar(String url) {
+    final updatedUser = state.user.copyWith(avatarUrl: url);
+    emit(state.copyWith(user: updatedUser));
+  }
   // --- Resume Upload Logic  ---
 
   Future<void> uploadAndExtractResume() async {
@@ -30,12 +37,28 @@ class UserCubit extends Cubit<UserState> {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
+        withData: true, // This ensures bytes are available
       );
 
-      if (result != null && result.files.single.path != null) {
-        final File file = File(result.files.single.path!);
+      if (result != null) {
+        final platformFile = result.files.single;
 
-        final extractedUser = await _extractDataWithGemini(file);
+        // 1. Get the raw bytes of the file
+        Uint8List? fileBytes;
+
+        if (platformFile.bytes != null) {
+          fileBytes = platformFile.bytes;
+        } else if (platformFile.path != null && !kIsWeb) {
+          final file = File(platformFile.path!);
+          fileBytes = await file.readAsBytes();
+        }
+
+        if (fileBytes == null) {
+          emit(state.copyWith(isResumeLoading: false));
+          return;
+        }
+
+        final extractedUser = await _extractDataWithGemini(fileBytes);
 
         final updatedUser = state.user.copyWith(
           firstName: extractedUser.firstName.isNotEmpty
@@ -69,9 +92,7 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
-  Future<UserEntity> _extractDataWithGemini(File pdfFile) async {
-    final bytes = await pdfFile.readAsBytes();
-
+  Future<UserEntity> _extractDataWithGemini(Uint8List pdfBytes) async {
     final promptText = """
       You are a data extraction assistant. 
       Analyze the attached resume PDF. 
@@ -90,7 +111,7 @@ class UserCubit extends Cubit<UserState> {
 
     final prompt = TextPart(promptText);
 
-    final pdfPart = InlineDataPart('application/pdf', bytes);
+    final pdfPart = InlineDataPart('application/pdf', pdfBytes);
 
     final response = await model.generateContent([
       Content.multi([prompt, pdfPart]),
@@ -118,7 +139,7 @@ class UserCubit extends Cubit<UserState> {
         summary: data['summary'] ?? '',
       );
     } catch (e) {
-      print("Raw AI Response: $responseText"); 
+      print("Raw AI Response: $responseText");
       throw Exception("Failed to parse AI JSON: $e");
     }
   }
