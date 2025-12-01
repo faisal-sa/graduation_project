@@ -27,11 +27,13 @@ class CompanyModelMapper extends ClassMapperBase<CompanyModel> {
   static const Field<CompanyModel, String> _f$userId = Field(
     'userId',
     _$userId,
+    key: r'user_id',
   );
   static String _$companyName(CompanyModel v) => v.companyName;
   static const Field<CompanyModel, String> _f$companyName = Field(
     'companyName',
     _$companyName,
+    key: r'company_name',
   );
   static String _$industry(CompanyModel v) => v.industry;
   static const Field<CompanyModel, String> _f$industry = Field(
@@ -55,6 +57,7 @@ class CompanyModelMapper extends ClassMapperBase<CompanyModel> {
   static const Field<CompanyModel, String> _f$companySize = Field(
     'companySize',
     _$companySize,
+    key: r'company_size',
     opt: true,
   );
   static String? _$website(CompanyModel v) => v.website;
@@ -79,17 +82,20 @@ class CompanyModelMapper extends ClassMapperBase<CompanyModel> {
   static const Field<CompanyModel, String> _f$logoUrl = Field(
     'logoUrl',
     _$logoUrl,
+    key: r'logo_url',
     opt: true,
   );
   static String _$createdAt(CompanyModel v) => v.createdAt;
   static const Field<CompanyModel, String> _f$createdAt = Field(
     'createdAt',
     _$createdAt,
+    key: r'created_at',
   );
   static String _$updatedAt(CompanyModel v) => v.updatedAt;
   static const Field<CompanyModel, String> _f$updatedAt = Field(
     'updatedAt',
     _$updatedAt,
+    key: r'updated_at',
   );
 
   @override

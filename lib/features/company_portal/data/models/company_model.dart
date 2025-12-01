@@ -1,23 +1,31 @@
+// lib/features/company_portal/data/models/company_model.dart
+
 import 'package:dart_mappable/dart_mappable.dart';
 import '../../domain/entities/company_entity.dart';
 
-part 'company_model.mapper.dart';
+part 'company_model.mapper.dart'; // Ensure you run the code generator
 
 @MappableClass()
 class CompanyModel with CompanyModelMappable {
   final String id;
+  @MappableField(key: 'user_id')
   final String userId;
+  @MappableField(key: 'company_name')
   final String companyName;
   final String industry;
   final String description;
   final String city;
   final String? address;
+  @MappableField(key: 'company_size')
   final String? companySize;
   final String? website;
   final String? email;
   final String? phone;
+  @MappableField(key: 'logo_url')
   final String? logoUrl;
+  @MappableField(key: 'created_at')
   final String createdAt;
+  @MappableField(key: 'updated_at')
   final String updatedAt;
 
   const CompanyModel({
@@ -37,7 +45,7 @@ class CompanyModel with CompanyModelMappable {
     required this.updatedAt,
   });
 
-  /// Model → Entity
+  /// Model → Entity: Conversion happens in the Data layer
   CompanyEntity toEntity() => CompanyEntity(
     id: id,
     userId: userId,
@@ -51,26 +59,9 @@ class CompanyModel with CompanyModelMappable {
     email: email,
     phone: phone,
     logoUrl: logoUrl,
-    createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
-    updatedAt: DateTime.tryParse(updatedAt) ?? DateTime.now(),
-  );
-
-  /// Entity → Model
-  static CompanyModel fromEntity(CompanyEntity entity) => CompanyModel(
-    id: entity.id,
-    userId: entity.userId,
-    companyName: entity.companyName,
-    industry: entity.industry,
-    description: entity.description,
-    city: entity.city,
-    address: entity.address,
-    companySize: entity.companySize,
-    website: entity.website,
-    email: entity.email,
-    phone: entity.phone,
-    logoUrl: entity.logoUrl,
-    createdAt: entity.createdAt.toIso8601String(),
-    updatedAt: entity.updatedAt.toIso8601String(),
+    // Robust date parsing for strings from Supabase
+    createdAt: DateTime.tryParse(createdAt) ?? DateTime(1970),
+    updatedAt: DateTime.tryParse(updatedAt) ?? DateTime(1970),
   );
 
   Map<String, dynamic> toMap() =>

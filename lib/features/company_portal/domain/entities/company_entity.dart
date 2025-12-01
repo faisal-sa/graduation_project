@@ -1,3 +1,5 @@
+// lib/features/company_portal/domain/entities/company_entity.dart
+
 import 'package:equatable/equatable.dart';
 
 class CompanyEntity extends Equatable {

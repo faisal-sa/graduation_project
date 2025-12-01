@@ -15,3 +15,19 @@ class ServerFailure extends Failure {
 class CacheFailure extends Failure {
   const CacheFailure(super.message);
 }
+
+class UnknownFailure extends Failure {
+  const UnknownFailure(super.message);
+}
+
+class NotFoundFailure extends Failure {
+  const NotFoundFailure(super.message);
+}
+
+class InvalidInputFailure extends Failure {
+  const InvalidInputFailure(super.message);
+}
+
+class AuthenticationFailure extends Failure {
+  const AuthenticationFailure(super.message);
+}

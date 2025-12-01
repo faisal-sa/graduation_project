@@ -1,4 +1,12 @@
 import 'package:graduation_project/core/exports/app_exports.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/CompanySearchPage.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/advanced_searchpage.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/company_qr_scanner_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/company_settings_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/company_status_wrapper.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/complete_company_profile_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/ompany_bookmarks_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/pages/payment_page.dart';
 
 // keep it here for now
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -160,62 +168,56 @@ final GoRouter router = GoRouter(
       ],
     ),
 
-    // -------------------- COMPANY PORTAL FLOW --------------------
+    // -------------------- 4. COMPANY PORTAL FLOW --------------------
     GoRoute(
-      path: '/company/complete-profile',
-      name: 'company-complete-profile',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<CompanyBloc>(),
-        child: const CompleteCompanyProfilePage(),
-      ),
-    ),
-    GoRoute(
-      path: '/company/payment',
-      name: 'company-payment',
-      builder: (context, state) => const PaymentPage(),
-    ),
-    GoRoute(
-      path: '/company/search',
-      name: 'company-search',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<CompanyBloc>(),
-        child: const CompanySearchPage(),
-      ),
+      path: '/company',
+      name: 'company-root',
+      builder: (context, state) {
+        // Provide the CompanyBloc at the root
+        return BlocProvider(
+          create: (_) => serviceLocator.get<CompanyBloc>(),
+          child: const CompanyStatusWrapper(), // The Gatekeeper
+        );
+      },
       routes: [
+        // 4a. PROFILE COMPLETION (Mandatory) - First step after login
         GoRoute(
-          path: 'advanced',
-          name: 'company-advanced-search',
-          builder: (context, state) => BlocProvider(
-            create: (_) => getIt<CompanyBloc>(),
-            child: const AdvancedSearchPage(),
-          ),
-        ),
-        GoRoute(
-          path: '/company/qr',
-          name: 'company-qr',
-          builder: (context, state) => BlocProvider(
-            create: (_) => getIt<CompanyBloc>(),
-            child: const CompanyQRScannerPage(),
-          ),
-        ),
-        GoRoute(
-          path: '/company/bookmarks',
-          name: 'company-bookmarks',
-          builder: (context, state) => BlocProvider(
-            create: (_) => getIt<CompanyBloc>(),
-            child: const CompanyBookmarksPage(),
-          ),
+          path: 'complete-profile',
+          name: 'company-complete-profile',
+          builder: (context, state) => CompleteCompanyProfilePage(),
         ),
 
-        // صفحة الإعدادات
+        // 4c. SEARCH HOME (Final Destination)
         GoRoute(
-          path: '/company/settings',
-          name: 'company-settings',
-          builder: (context, state) => const CompanySettingsPage(),
+          path: 'search',
+          name: 'company-search',
+          builder: (context, state) => const CompanySearchPage(),
+          routes: [
+            // Nested features under the main search/home view
+            GoRoute(
+              path: 'advanced',
+              name: 'company-advanced-search',
+              builder: (context, state) => AdvancedSearchPage(),
+            ),
+            GoRoute(
+              path: 'bookmarks',
+              name: 'company-bookmarks',
+              builder: (context, state) => const CompanyBookmarksPage(),
+            ),
+            GoRoute(
+              path: 'qr-scanner',
+              name: 'company-qr-scanner',
+              builder: (context, state) => const CompanyQRScannerPage(),
+            ),
+            GoRoute(
+              path: 'settings',
+              name: 'company-settings',
+              builder: (context, state) => const CompanySettingsPage(),
+            ),
+          ],
         ),
       ],
     ),
-
     // ==================  Pay Page  =================== //
     //
     GoRoute(

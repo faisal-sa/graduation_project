@@ -10,14 +10,6 @@ export 'package:graduation_project/core/di/service_locator.dart';
 // Company Portal
 export 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 
-export 'package:graduation_project/features/company_portal/presentation/screens/advanced_searchpage.dart';
-export 'package:graduation_project/features/company_portal/presentation/screens/company_bookmarks_page.dart';
-export 'package:graduation_project/features/company_portal/presentation/screens/company_qr_page.dart';
-export 'package:graduation_project/features/company_portal/presentation/screens/company_search_page.dart';
-export 'package:graduation_project/features/company_portal/presentation/screens/company_settings_page.dart';
-export 'package:graduation_project/features/company_portal/presentation/screens/complete_company_profile_page.dart';
-export 'package:graduation_project/features/company_portal/presentation/screens/payment_page.dart';
-
 // Individuals – Chat
 export 'package:graduation_project/features/individuals/chat/presentation/pages/chats_tab.dart';
 

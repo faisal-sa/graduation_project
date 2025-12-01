@@ -32,5 +32,3 @@ abstract class RegisterModule {
     return supabase.client;
   }
 }
-
-

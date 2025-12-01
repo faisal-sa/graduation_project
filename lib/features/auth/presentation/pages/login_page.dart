@@ -17,9 +17,9 @@ class LoginPage extends StatelessWidget {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           if (state.role == 'Company') {
-            context.go('/company/complete-profile');
+            context.go('/company');
           } else {
-            context.go('/insights'); // صفحة الأفراد
+            context.go('/insights');
           }
         }
       },

@@ -22,14 +22,14 @@ class CompanyLoaded extends CompanyState {
 }
 
 class CandidateResults extends CompanyState {
-  final List<Map<String, dynamic>> candidates;
+  final List<CandidateEntity> candidates;
   const CandidateResults(this.candidates);
   @override
   List<Object?> get props => [candidates];
 }
 
 class CompanyBookmarksLoaded extends CompanyState {
-  final List<Map<String, dynamic>> bookmarks;
+  final List<CandidateEntity> bookmarks;
   const CompanyBookmarksLoaded(this.bookmarks);
   @override
   List<Object?> get props => [bookmarks];
@@ -50,4 +50,6 @@ class CompanyStatusChecked extends CompanyState {
   final bool hasProfile;
   final bool hasPaid;
   const CompanyStatusChecked({required this.hasProfile, required this.hasPaid});
+  @override
+  List<Object?> get props => [hasProfile, hasPaid];
 }
