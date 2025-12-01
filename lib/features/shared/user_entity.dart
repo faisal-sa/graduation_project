@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
+// --- UPDATED USER ENTITY ---
 
 class UserEntity extends Equatable {
   final String firstName;
@@ -11,6 +12,7 @@ class UserEntity extends Equatable {
   final String location;
   final String summary;
   final String? videoUrl;
+  final String? avatarUrl; // <--- ADDED THIS
   final List<WorkExperience> workExperiences;
   final List<Education> educations;
 
@@ -23,6 +25,7 @@ class UserEntity extends Equatable {
     this.location = '',
     this.summary = '',
     this.videoUrl,
+    this.avatarUrl, // <--- ADDED THIS
     this.workExperiences = const [],
     this.educations = const [],
   });
@@ -36,6 +39,7 @@ class UserEntity extends Equatable {
     String? location,
     String? summary,
     String? videoUrl,
+    String? avatarUrl,
     List<WorkExperience>? workExperiences,
     List<Education>? educations,
   }) {
@@ -48,6 +52,7 @@ class UserEntity extends Equatable {
       location: location ?? this.location,
       summary: summary ?? this.summary,
       videoUrl: videoUrl ?? this.videoUrl,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
       workExperiences: workExperiences ?? this.workExperiences,
       educations: educations ?? this.educations,
     );
@@ -63,12 +68,12 @@ class UserEntity extends Equatable {
     location,
     summary,
     videoUrl,
+    avatarUrl,
     workExperiences,
     educations,
   ];
 }
 
-// Simple extension helper for the heuristic string cut
 extension StringExtension on String {
   String take(int n) {
     if (length <= n) return this;
