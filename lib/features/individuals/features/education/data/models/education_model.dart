@@ -12,6 +12,10 @@ class EducationModel extends Education {
     super.activities,
     super.graduationCertificateUrl,
     super.academicRecordUrl,
+    super.graduationCertificateBytes,
+    super.graduationCertificateName,
+    super.academicRecordBytes,
+    super.academicRecordName,
   });
 
   factory EducationModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +34,11 @@ class EducationModel extends Education {
           [],
       graduationCertificateUrl: json['graduation_certificate_url'] as String?,
       academicRecordUrl: json['academic_record_url'] as String?,
+
+      graduationCertificateBytes: null,
+      graduationCertificateName: null,
+      academicRecordBytes: null,
+      academicRecordName: null,
     );
   }
 

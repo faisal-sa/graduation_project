@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/custom_text_field.dart';
-import 'package:graduation_project/features/individuals/features/shared/widgets/date_selection_row.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/dynamic_list_section.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/form_label.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/shared_things.dart';
@@ -43,8 +42,11 @@ class _AddEducationModalState extends State<AddEducationModal> {
   List<String> _activities = [];
 
   // File state
-  File? _selectedGradCertificate;
-  File? _selectedAcademicRecord;
+  PlatformFile? _selectedGradCertificate;
+  PlatformFile? _selectedAcademicRecord;
+
+  bool _keepExistingGradCert = false;
+  bool _keepExistingAcademicRecord = false;
 
   @override
   void initState() {
@@ -59,6 +61,8 @@ class _AddEducationModalState extends State<AddEducationModal> {
       _startDate = edu.startDate;
       _endDate = edu.endDate;
       _activities = List.from(edu.activities);
+      _keepExistingGradCert = edu.graduationCertificateUrl != null;
+      _keepExistingAcademicRecord = edu.academicRecordUrl != null;
     }
   }
 
@@ -76,24 +80,29 @@ class _AddEducationModalState extends State<AddEducationModal> {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+        withData: true,
       );
 
-      if (result != null && result.files.single.path != null) {
+      if (result != null && result.files.isNotEmpty) {
         setState(() {
           if (isGradCert) {
-            _selectedGradCertificate = File(result.files.single.path!);
+            _selectedGradCertificate = result.files.first;
+            _keepExistingGradCert = false; // We represent a NEW file now
           } else {
-            _selectedAcademicRecord = File(result.files.single.path!);
+            _selectedAcademicRecord = result.files.first;
+            _keepExistingAcademicRecord = false; // We represent a NEW file now
           }
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error picking file: $e"),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error picking file: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -101,8 +110,10 @@ class _AddEducationModalState extends State<AddEducationModal> {
     setState(() {
       if (isGradCert) {
         _selectedGradCertificate = null;
+        _keepExistingGradCert = false;
       } else {
         _selectedAcademicRecord = null;
+        _keepExistingAcademicRecord = false;
       }
     });
   }
@@ -122,6 +133,16 @@ class _AddEducationModalState extends State<AddEducationModal> {
       return;
     }
 
+    final gradUrlToSave =
+        _selectedGradCertificate == null && _keepExistingGradCert
+        ? widget.education?.graduationCertificateUrl
+        : null;
+
+    final academicUrlToSave =
+        _selectedAcademicRecord == null && _keepExistingAcademicRecord
+        ? widget.education?.academicRecordUrl
+        : null;
+
     final newEducation = Education(
       id: widget.education?.id ?? const Uuid().v4(),
       institutionName: _institutionController.text,
@@ -131,15 +152,15 @@ class _AddEducationModalState extends State<AddEducationModal> {
       endDate: _endDate!,
       gpa: _gpaController.text,
       activities: _activities,
-      graduationCertificate: _selectedGradCertificate,
-      academicRecord: _selectedAcademicRecord,
-      // Preserve existing URLs if no new file is selected
-      graduationCertificateUrl: _selectedGradCertificate == null
-          ? widget.education?.graduationCertificateUrl
-          : null,
-      academicRecordUrl: _selectedAcademicRecord == null
-          ? widget.education?.academicRecordUrl
-          : null,
+
+      graduationCertificateBytes: _selectedGradCertificate?.bytes,
+      graduationCertificateName: _selectedGradCertificate?.name,
+
+      academicRecordBytes: _selectedAcademicRecord?.bytes,
+      academicRecordName: _selectedAcademicRecord?.name,
+
+      graduationCertificateUrl: gradUrlToSave,
+      academicRecordUrl: academicUrlToSave,
     );
 
     Navigator.pop(context, newEducation);
@@ -193,7 +214,6 @@ class _AddEducationModalState extends State<AddEducationModal> {
           CustomTextField(hint: "e.g. 3.8/4.0", controller: _gpaController),
           SizedBox(height: 16.h),
 
-          // Attachments UI
           const FormLabel("Attachments"),
           Row(
             children: [
@@ -201,7 +221,9 @@ class _AddEducationModalState extends State<AddEducationModal> {
                 child: FormFileUploadButton(
                   label: "Graduation Cert.",
                   file: _selectedGradCertificate,
-                  existingUrl: widget.education?.graduationCertificateUrl,
+                  existingUrl: _keepExistingGradCert
+                      ? widget.education?.graduationCertificateUrl
+                      : null,
                   onTap: () => _pickFile(true),
                   onClear: () => _clearFile(true),
                 ),
@@ -211,7 +233,9 @@ class _AddEducationModalState extends State<AddEducationModal> {
                 child: FormFileUploadButton(
                   label: "Academic Record",
                   file: _selectedAcademicRecord,
-                  existingUrl: widget.education?.academicRecordUrl,
+                  existingUrl: _keepExistingAcademicRecord
+                      ? widget.education?.academicRecordUrl
+                      : null,
                   onTap: () => _pickFile(false),
                   onClear: () => _clearFile(false),
                 ),

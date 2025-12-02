@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Assuming usage based on .w/.h
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/certification_cubit.dart';
 import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/certification_state.dart';
@@ -14,7 +14,6 @@ class CertificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Extracted logic to avoid duplication
     Future<void> handleAddCertification() async {
       final result = await AddCertificationModal.show(context, null);
       if (result != null && context.mounted) {
@@ -99,10 +98,6 @@ class CertificationPage extends StatelessWidget {
   }
 }
 
-// -----------------------------------------------------------------------------
-// CARD COMPONENT (Unchanged)
-// -----------------------------------------------------------------------------
-
 class _CertificationCard extends StatelessWidget {
   final Certification certification;
   final VoidCallback onDelete;
@@ -143,7 +138,6 @@ class _CertificationCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Content Column
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +168,6 @@ class _CertificationCard extends StatelessWidget {
                   ],
                 ),
               ),
-              // Actions Row
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

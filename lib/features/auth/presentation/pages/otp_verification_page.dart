@@ -8,10 +8,7 @@ import '../cubit/auth_state.dart';
 class OTPVerificationPage extends StatelessWidget {
   final String email;
 
-  const OTPVerificationPage({
-    super.key,
-    required this.email,
-  });
+  const OTPVerificationPage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +21,7 @@ class OTPVerificationPage extends StatelessWidget {
           context.go('/');
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         } else if (state is OTPSent) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -41,13 +35,7 @@ class OTPVerificationPage extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF000000), Color(0xFF1a1a1a)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+            color: Colors.white,
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -120,9 +108,9 @@ class OTPVerificationPage extends StatelessWidget {
                               : () {
                                   if (formKey.currentState!.validate()) {
                                     context.read<AuthCubit>().verifyOTPCode(
-                                          email: email,
-                                          token: otpController.text.trim(),
-                                        );
+                                      email: email,
+                                      token: otpController.text.trim(),
+                                    );
                                   }
                                 },
                           style: ElevatedButton.styleFrom(
@@ -155,7 +143,9 @@ class OTPVerificationPage extends StatelessWidget {
                           onPressed: state is AuthLoading
                               ? null
                               : () {
-                                  context.read<AuthCubit>().resendOTPToEmail(email);
+                                  context.read<AuthCubit>().resendOTPToEmail(
+                                    email,
+                                  );
                                 },
                           child: const Text(
                             'Resend OTP',
@@ -174,4 +164,3 @@ class OTPVerificationPage extends StatelessWidget {
     );
   }
 }
-

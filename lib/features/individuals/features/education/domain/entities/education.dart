@@ -1,7 +1,6 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
-
 
 class Education extends Equatable {
   final String id;
@@ -13,11 +12,12 @@ class Education extends Equatable {
   final String? gpa;
   final List<String> activities;
 
-  // Files selected from device (for upload)
-  final File? graduationCertificate;
-  final File? academicRecord;
+  final Uint8List? graduationCertificateBytes;
+  final String? graduationCertificateName;
 
-  // URLs returned from server (for display)
+  final Uint8List? academicRecordBytes;
+  final String? academicRecordName;
+
   final String? graduationCertificateUrl;
   final String? academicRecordUrl;
 
@@ -30,8 +30,13 @@ class Education extends Equatable {
     required this.endDate,
     this.gpa,
     this.activities = const [],
-    this.graduationCertificate,
-    this.academicRecord,
+
+    this.graduationCertificateBytes,
+    this.graduationCertificateName,
+
+    this.academicRecordBytes,
+    this.academicRecordName,
+
     this.graduationCertificateUrl,
     this.academicRecordUrl,
   });
@@ -46,8 +51,10 @@ class Education extends Equatable {
     endDate,
     gpa,
     activities,
-    graduationCertificate,
-    academicRecord,
+    graduationCertificateBytes,
+    graduationCertificateName,
+    academicRecordBytes,
+    academicRecordName,
     graduationCertificateUrl,
     academicRecordUrl,
   ];

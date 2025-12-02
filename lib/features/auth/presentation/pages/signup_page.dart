@@ -58,13 +58,7 @@ class _SignupPageState extends State<SignupPage> {
       builder: (context, state) {
         return Scaffold(
           body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF000000), Color(0xFF1a1a1a)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+            color: Colors.white,
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -80,7 +74,7 @@ class _SignupPageState extends State<SignupPage> {
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                           textAlign: TextAlign.center,
                         ),

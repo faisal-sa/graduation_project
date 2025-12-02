@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/rendering.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path/path.dart' as p;
@@ -35,27 +36,27 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
 
   @override
   Future<void> addEducation(Education education) async {
-    // 1. Upload files if they exist
     String? gradCertUrl;
     String? academicRecUrl;
 
-    if (education.graduationCertificate != null) {
-      gradCertUrl = await _uploadFile(
-        education.graduationCertificate!,
+    if (education.graduationCertificateBytes != null) {
+      gradCertUrl = await _uploadFileBytes(
+        education.graduationCertificateBytes!,
+        education.graduationCertificateName ?? 'grad_cert.pdf',
         'grad_cert_${DateTime.now().millisecondsSinceEpoch}',
       );
     }
 
-    if (education.academicRecord != null) {
-      academicRecUrl = await _uploadFile(
-        education.academicRecord!,
+    if (education.academicRecordBytes != null) {
+      academicRecUrl = await _uploadFileBytes(
+        education.academicRecordBytes!,
+        education.academicRecordName ?? 'academic_rec.pdf',
         'academic_rec_${DateTime.now().millisecondsSinceEpoch}',
       );
     }
 
-    // 2. Prepare Data
     final model = EducationModel(
-      id: '', // DB generates this
+      id: '',
       degreeType: education.degreeType,
       institutionName: education.institutionName,
       fieldOfStudy: education.fieldOfStudy,
@@ -67,8 +68,6 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
       academicRecordUrl: academicRecUrl,
     );
 
-    // 3. Insert
-    // We explicitly remove 'id' from toJson within the map here because it's a new record
     final data = model.toJson(userId: _userId);
     data.remove('id');
 
@@ -77,35 +76,29 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
 
   @override
   Future<void> updateEducation(Education education) async {
-    // 1. Handle File Uploads (Only upload if a NEW file is selected)
-    // If graduationCertificate (File) is null, keep the existing graduationCertificateUrl
-
     String? gradCertUrl = education.graduationCertificateUrl;
     String? academicRecUrl = education.academicRecordUrl;
 
-    if (education.graduationCertificate != null) {
-      // Optional: Delete old file if exists
-      if (gradCertUrl != null) {
-        await _deleteFile(gradCertUrl);
-      }
-      gradCertUrl = await _uploadFile(
-        education.graduationCertificate!,
+    if (education.graduationCertificateBytes != null) {
+      if (gradCertUrl != null) await _deleteFile(gradCertUrl);
+
+      gradCertUrl = await _uploadFileBytes(
+        education.graduationCertificateBytes!,
+        education.graduationCertificateName ?? 'grad_cert.pdf',
         'grad_cert_${DateTime.now().millisecondsSinceEpoch}',
       );
     }
 
-    if (education.academicRecord != null) {
-      // Optional: Delete old file if exists
-      if (academicRecUrl != null) {
-        await _deleteFile(academicRecUrl);
-      }
-      academicRecUrl = await _uploadFile(
-        education.academicRecord!,
+    if (education.academicRecordBytes != null) {
+      if (academicRecUrl != null) await _deleteFile(academicRecUrl);
+
+      academicRecUrl = await _uploadFileBytes(
+        education.academicRecordBytes!,
+        education.academicRecordName ?? 'academic_rec.pdf',
         'academic_rec_${DateTime.now().millisecondsSinceEpoch}',
       );
     }
 
-    // 2. Prepare Data
     final model = EducationModel(
       id: education.id,
       degreeType: education.degreeType,
@@ -119,25 +112,27 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
       academicRecordUrl: academicRecUrl,
     );
 
-    // 3. Update
-    await _supabase
-        .from('educations')
-        .update(model.toJson(userId: _userId))
-        .eq('id', education.id);
+    final data = model.toJson(userId: _userId);
+    data.remove('user_id');
+
+    await _supabase.from('educations').update(data).eq('id', education.id);
   }
 
   @override
   Future<void> deleteEducation(String id) async {
-    // 1. Get the education record to find file URLs
     final response = await _supabase
         .from('educations')
         .select()
         .eq('id', id)
-        .single();
+        .maybeSingle();
+
+    if (response == null) {
+      debugPrint("Education record with id $id not found or already deleted.");
+      return;
+    }
 
     final education = EducationModel.fromJson(response);
 
-    // 2. Delete files if they exist
     if (education.graduationCertificateUrl != null) {
       await _deleteFile(education.graduationCertificateUrl!);
     }
@@ -145,18 +140,25 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
       await _deleteFile(education.academicRecordUrl!);
     }
 
-    // 3. Delete record
     await _supabase.from('educations').delete().eq('id', id);
   }
 
-  Future<String> _uploadFile(File file, String fileNamePrefix) async {
-    final fileExt = p.extension(file.path);
+  Future<String> _uploadFileBytes(
+    Uint8List bytes,
+    String originalFileName,
+    String fileNamePrefix,
+  ) async {
+    final fileExt = p.extension(originalFileName);
     final fileName = '$fileNamePrefix$fileExt';
     final filePath = '$_userId/$fileName';
 
     await _supabase.storage
         .from('education_files')
-        .upload(filePath, file, fileOptions: const FileOptions(upsert: true));
+        .uploadBinary(
+          filePath,
+          bytes,
+          fileOptions: const FileOptions(upsert: true),
+        );
 
     final url = _supabase.storage
         .from('education_files')
@@ -166,11 +168,8 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
 
   Future<void> _deleteFile(String url) async {
     try {
-      // URL format: .../storage/v1/object/public/education_files/userId/filename
-      // We need to extract 'userId/filename'
       final uri = Uri.parse(url);
       final pathSegments = uri.pathSegments;
-      // pathSegments example: ['storage', 'v1', 'object', 'public', 'education_files', 'userId', 'filename']
 
       final bucketIndex = pathSegments.indexOf('education_files');
       if (bucketIndex != -1 && bucketIndex + 1 < pathSegments.length) {
@@ -178,8 +177,7 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
         await _supabase.storage.from('education_files').remove([filePath]);
       }
     } catch (e) {
-      // Ignore errors during file deletion (e.g. invalid URL or file not found)
-      print('Error deleting file: $e');
+      debugPrint('Error deleting file: $e');
     }
   }
 }

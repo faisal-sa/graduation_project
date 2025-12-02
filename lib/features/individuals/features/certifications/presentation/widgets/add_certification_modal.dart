@@ -37,7 +37,6 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
   DateTime? _issueDate;
   DateTime? _expirationDate;
 
-  // Mock file state
   bool _hasCredentialFile = false;
 
   @override
@@ -116,7 +115,6 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
           ),
           SizedBox(height: 16.h),
 
-          // Used the Reusable Date Row Component
           FormDateRow(
             startLabel: "Issue Date",
             startDate: _issueDate,

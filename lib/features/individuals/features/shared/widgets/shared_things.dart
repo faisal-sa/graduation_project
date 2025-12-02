@@ -1,6 +1,7 @@
 // --- 1. THE MAIN SHELL ---
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/custom_date_picker.dart';
@@ -126,13 +127,11 @@ class BaseFormSheet extends StatelessWidget {
   }
 }
 
-// --- 2. REUSABLE FILE BUTTON ---
 class FormFileUploadButton extends StatelessWidget {
   final String label;
-  final File? file;
-  final String?
-  existingUrl; // To handle "Edit" state where file exists on server
-  final bool isSelected; // Generic boolean fallback
+  final PlatformFile? file;
+  final String? existingUrl;
+  final bool isSelected;
   final VoidCallback onTap;
   final VoidCallback? onClear;
 
@@ -148,7 +147,6 @@ class FormFileUploadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine if we have a file/url or if the manual boolean is set
     final bool hasContent =
         isSelected ||
         file != null ||
@@ -156,7 +154,7 @@ class FormFileUploadButton extends StatelessWidget {
 
     String displayText = label;
     if (file != null) {
-      displayText = file!.path.split(Platform.pathSeparator).last;
+      //displayText = file!.path!.split(Platform.pathSeparator).last;
     } else if (hasContent && file == null) {
       displayText = "File Selected";
     }

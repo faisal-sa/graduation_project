@@ -85,7 +85,7 @@ class EducationPage extends StatelessWidget {
           return ListView.separated(
             padding: EdgeInsets.all(24.w),
             itemCount: educations.length,
-            separatorBuilder: (_, __) => SizedBox(height: 16.h),
+            separatorBuilder: (_, _) => SizedBox(height: 16.h),
             itemBuilder: (context, index) {
               final edu = educations[index];
               return EducationCard(

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/theme/theme.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -26,13 +29,8 @@ class LoginPage extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF000000), Color(0xFF1a1a1a)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+            color: Colors.white,
+
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -43,14 +41,10 @@ class LoginPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
+                        SvgPicture.asset(
+                          "icons/logo.svg",
+                          width: 64.w,
+                          height: 64.h,
                         ),
                         const SizedBox(height: 48),
                         TextFormField(
@@ -66,7 +60,7 @@ class LoginPage extends StatelessWidget {
                               borderSide: BorderSide(color: Colors.blue),
                             ),
                           ),
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.black),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -92,7 +86,7 @@ class LoginPage extends StatelessWidget {
                               borderSide: BorderSide(color: Colors.blue),
                             ),
                           ),
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.black),
                           obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {

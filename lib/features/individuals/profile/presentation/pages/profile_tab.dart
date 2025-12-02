@@ -9,6 +9,7 @@ import 'package:graduation_project/features/shared/user_cubit.dart';
 import 'package:graduation_project/features/shared/user_state.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:typed_data';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -90,7 +91,6 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Helper function to handle the upload logic
     Future<void> _uploadAvatar(BuildContext context) async {
       final ImagePicker picker = ImagePicker();
       final SupabaseClient supabase = serviceLocator.get<SupabaseClient>();
@@ -98,37 +98,40 @@ class _ProfileHeader extends StatelessWidget {
       // 1. Pick Image
       final XFile? image = await picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 600, // Compress image for better performance
+        maxWidth: 600,
         maxHeight: 600,
+        imageQuality: 80,
       );
 
-      if (image == null) return; // User cancelled
+      if (image == null) return;
 
       try {
         final userId = supabase.auth.currentUser!.id;
-        final imageExtension = image.path.split('.').last;
-        // Create a unique file path: userId/timestamp.jpg
-        final fileName =
-            '$userId/${DateTime.now().millisecondsSinceEpoch}.$imageExtension';
 
-        // 2. Upload to Supabase Storage (Bucket name: 'avatars')
+        final String fileExtension = image.name.split('.').last;
+
+        final fileName =
+            '$userId/${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+
+        final Uint8List imageBytes = await image.readAsBytes();
+
         await supabase.storage
             .from('avatars')
-            .upload(
+            .uploadBinary(
               fileName,
-              File(image.path),
-              fileOptions: const FileOptions(
+              imageBytes,
+              fileOptions: FileOptions(
                 cacheControl: '3600',
                 upsert: true,
+
+                contentType: image.mimeType ?? 'image/$fileExtension',
               ),
             );
 
-        // 3. Get Public URL
         final String imageUrl = supabase.storage
             .from('avatars')
             .getPublicUrl(fileName);
 
-        // 4. Update Database Profile
         await supabase
             .from('profiles')
             .update({
@@ -137,13 +140,8 @@ class _ProfileHeader extends StatelessWidget {
             })
             .eq('id', userId);
 
-        // 5. Update Local State (UserCubit)
-        // Assuming your UserCubit has an event or method to update the user object locally
+        // 5. Update Local State
         if (context.mounted) {
-          // Option A: Trigger a reload of the profile
-          // context.read<UserCubit>().loadProfile();
-
-          // Option B: Update specific field (More efficient)
           context.read<UserCubit>().updateLocalAvatar(imageUrl);
         }
       } catch (error) {
@@ -158,19 +156,11 @@ class _ProfileHeader extends StatelessWidget {
     return BlocBuilder<UserCubit, UserState>(
       builder: (context, state) {
         final user = state.user;
-
-        // Logic to construct the full name
         final String fullName = '${user.firstName ?? ''} ${user.lastName ?? ''}'
             .trim();
-        // Logic to construct the full name
-        final bool hasName = fullName.isNotEmpty;
-
-        // Logic for Job and Location
         final bool hasJob = user.jobTitle.isNotEmpty;
         final bool hasLocation = user.location.isNotEmpty;
 
-        // Logic for Avatar Image Provider
-        // We check if avatar_url exists, if so use NetworkImage, else null
         final ImageProvider? avatarImage =
             (user.avatarUrl != null && user.avatarUrl!.isNotEmpty)
             ? NetworkImage(user.avatarUrl!)
@@ -178,7 +168,6 @@ class _ProfileHeader extends StatelessWidget {
 
         return Column(
           children: [
-            // --- AVATAR SECTION ---
             Stack(
               children: [
                 Container(
@@ -191,7 +180,6 @@ class _ProfileHeader extends StatelessWidget {
                     radius: 55,
                     backgroundColor: Colors.grey[200],
                     backgroundImage: avatarImage,
-                    // Only show the Person Icon if there is no image
                     child: avatarImage == null
                         ? const Icon(Icons.person, size: 60, color: Colors.grey)
                         : null,
@@ -201,7 +189,7 @@ class _ProfileHeader extends StatelessWidget {
                   bottom: 0,
                   right: 0,
                   child: GestureDetector(
-                    onTap: () => _uploadAvatar(context), // Trigger the upload
+                    onTap: () => _uploadAvatar(context),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: const BoxDecoration(
@@ -222,8 +210,7 @@ class _ProfileHeader extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-
-            // --- NAME SECTION ---
+            // ... (Rest of UI)
             if (fullName.isNotEmpty)
               Text(
                 fullName,
@@ -236,7 +223,6 @@ class _ProfileHeader extends StatelessWidget {
                 ),
               )
             else
-              // GUEST/EMPTY NAME STATE
               GestureDetector(
                 onTap: () => context.read<ProfileCubit>().onBasicInfoTapped(),
                 child: Container(
@@ -245,7 +231,7 @@ class _ProfileHeader extends StatelessWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEFF6FF), // Blue-50
+                    color: const Color(0xFFEFF6FF),
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
                       color: const Color(0xFFDBEAFE),
@@ -275,7 +261,6 @@ class _ProfileHeader extends StatelessWidget {
               ),
             const SizedBox(height: 8),
 
-            // --- JOB TITLE SECTION ---
             if (hasJob)
               Text(
                 user.jobTitle,
@@ -294,7 +279,6 @@ class _ProfileHeader extends StatelessWidget {
 
             const SizedBox(height: 6),
 
-            // --- LOCATION SECTION ---
             if (hasLocation)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
