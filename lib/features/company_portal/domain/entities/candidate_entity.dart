@@ -16,5 +16,8 @@ class CandidateEntity extends Equatable {
   });
 
   @override
+  bool? get stringify => true;
+
+  @override
   List<Object?> get props => [id, fullName, skills, city];
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 import 'package:graduation_project/features/company_portal/domain/entities/company_entity.dart';
 import 'package:graduation_project/core/storage/company_local_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CompleteCompanyProfilePage extends StatelessWidget {
   const CompleteCompanyProfilePage({super.key});
@@ -28,10 +30,10 @@ class CompleteCompanyProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    final nameController = TextEditingController();
-    final industryController = TextEditingController();
-    final cityController = TextEditingController();
-    final descController = TextEditingController();
+    final nameController = TextEditingController(text: "a");
+    final industryController = TextEditingController(text: "a");
+    final cityController = TextEditingController(text: "a");
+    final descController = TextEditingController(text: "a");
     final websiteController = TextEditingController();
     final addressController = TextEditingController();
     final emailController = TextEditingController();
@@ -85,7 +87,9 @@ class CompleteCompanyProfilePage extends StatelessWidget {
       body: BlocConsumer<CompanyBloc, CompanyState>(
         listener: (context, state) async {
           if (state is CompanyLoaded) {
-            await CompanyLocalStorage.saveCompanyId(state.company.id);
+            await CompanyLocalStorage.saveCompanyId(
+              serviceLocator.get<SupabaseClient>().auth.currentUser!.id,
+            );
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Profile saved successfully!')),
             );
@@ -110,26 +114,25 @@ class CompleteCompanyProfilePage extends StatelessWidget {
             company = state.company;
           } else {
             company = CompanyEntity(
-              id: '',
-              userId: '',
               companyName: '',
               industry: '',
               description: '',
               city: '',
+              logoUrl: "x",
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),
             );
           }
 
-          // Fill fields with existing values (unchanged logic)
-          nameController.text = company.companyName;
-          industryController.text = company.industry;
-          cityController.text = company.city;
-          descController.text = company.description;
-          websiteController.text = company.website ?? '';
-          addressController.text = company.address ?? '';
-          emailController.text = company.email ?? '';
-          phoneController.text = company.phone ?? '';
+          // // Fill fields with existing values (unchanged logic)
+          // nameController.text = company.companyName;
+          // industryController.text = company.industry;
+          // cityController.text = company.city;
+          // descController.text = company.description;
+          // websiteController.text = company.website ?? '';
+          // addressController.text = company.address ?? '';
+          // emailController.text = company.email ?? '';
+          // phoneController.text = company.phone ?? '';
           selectedSize = company.companySize;
 
           // UI Refactoring begins here
@@ -191,7 +194,9 @@ class CompleteCompanyProfilePage extends StatelessWidget {
                     items: sizeOptions
                         .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                         .toList(),
-                    onChanged: (v) => selectedSize = v,
+                    onChanged: (v) {
+                      selectedSize = v;
+                    },
                     onSaved: (v) =>
                         selectedSize = v, // Save to update selectedSize
                   ),

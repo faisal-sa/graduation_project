@@ -47,8 +47,6 @@ class CompanyModel with CompanyModelMappable {
 
   /// Model → Entity: Conversion happens in the Data layer
   CompanyEntity toEntity() => CompanyEntity(
-    id: id,
-    userId: userId,
     companyName: companyName,
     industry: industry,
     description: description,

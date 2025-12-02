@@ -7,14 +7,6 @@ import '../../domain/entities/candidate_entity.dart';
 class CompanySearchPage extends StatelessWidget {
   const CompanySearchPage({super.key});
 
-  void _performInitialSearch(BuildContext context) {
-    context.read<CompanyBloc>().add(
-      const SearchCandidatesEvent(
-        city: null, // No initial filter
-      ),
-    );
-  }
-
   // Example: Dispatches the bookmark event
   void _addBookmark(BuildContext context, String candidateId) {
     context.read<CompanyBloc>().add(AddCandidateBookmarkEvent(candidateId));
@@ -22,11 +14,6 @@ class CompanySearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dispatch the initial load/search event once the page is fully built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _performInitialSearch(context);
-    });
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Candidate Search (Home)'),

@@ -3,8 +3,6 @@
 import 'package:equatable/equatable.dart';
 
 class CompanyEntity extends Equatable {
-  final String id;
-  final String userId;
   final String companyName;
   final String industry;
   final String description;
@@ -19,8 +17,6 @@ class CompanyEntity extends Equatable {
   final DateTime updatedAt;
 
   const CompanyEntity({
-    required this.id,
-    required this.userId,
     required this.companyName,
     required this.industry,
     required this.description,
@@ -36,8 +32,6 @@ class CompanyEntity extends Equatable {
   });
 
   CompanyEntity copyWith({
-    String? id,
-    String? userId,
     String? companyName,
     String? industry,
     String? description,
@@ -52,8 +46,6 @@ class CompanyEntity extends Equatable {
     DateTime? updatedAt,
   }) {
     return CompanyEntity(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
       companyName: companyName ?? this.companyName,
       industry: industry ?? this.industry,
       description: description ?? this.description,
@@ -71,8 +63,6 @@ class CompanyEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    userId,
     companyName,
     industry,
     description,

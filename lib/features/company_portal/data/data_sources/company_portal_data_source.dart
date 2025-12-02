@@ -83,17 +83,23 @@ class CompanyRemoteDataSource {
   }
 
   Future<Map<String, dynamic>> updateCompanyProfile(
-    String id,
     Map<String, dynamic> data,
   ) async {
     return await _handleSupabaseCall(() async {
-      if (id.isEmpty)
+      if (supabase.auth.currentUser!.id.isEmpty)
         throw SupabaseException('Invalid company ID: cannot be empty.');
+
+      print(data);
+
+      data.addAll({
+        'id': supabase.auth.currentUser!.id,
+        'user_id': supabase.auth.currentUser!.id,
+      });
 
       final result = await supabase
           .from('companies')
-          .update(data)
-          .eq('id', id)
+          .upsert(data)
+          .eq('id', supabase.auth.currentUser!.id.isEmpty)
           .select()
           .single();
 
@@ -107,16 +113,12 @@ class CompanyRemoteDataSource {
     String? experience,
   }) async {
     return await _handleSupabaseCall(() async {
-      final query = supabase.from('candidates').select('*');
-
-      if (city != null && city.isNotEmpty) query.eq('city', city);
-      if (skill != null && skill.isNotEmpty) query.ilike('skills', '%$skill%');
-      if (experience != null && experience.isNotEmpty) {
-        query.ilike('experience', '%$experience%');
-      }
-
-      final result = await query;
-      return List<Map<String, dynamic>>.from(result);
+      final query = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('location', city ?? "");
+      print(query);
+      return List<Map<String, dynamic>>.from(query);
     });
   }
 
@@ -178,7 +180,6 @@ class CompanyRemoteDataSource {
             .eq('user_id', userId)
             .eq('status', 'active')
             .maybeSingle();
-
         hasPaid = subscriptionResponse != null;
       }
 

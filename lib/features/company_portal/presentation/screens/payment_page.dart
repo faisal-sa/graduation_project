@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PaymentPage extends StatelessWidget {
   const PaymentPage({super.key});
@@ -23,8 +25,18 @@ class PaymentPage extends StatelessWidget {
               ElevatedButton.icon(
                 icon: const Icon(Icons.payments),
                 label: const Text('الدفع الآن'),
-                onPressed: () {
-                  // هنا من المفترض تنفيذ الدفع الحقيقي (Stripe أو غيره)
+                onPressed: () async {
+                  await serviceLocator
+                      .get<SupabaseClient>()
+                      .from("subscriptions")
+                      .upsert({
+                        'user_id': serviceLocator
+                            .get<SupabaseClient>()
+                            .auth
+                            .currentUser!
+                            .id,
+                        'status': 'active',
+                      }, onConflict: 'user_id');
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('✅ تم الدفع بنجاح')),
                   );

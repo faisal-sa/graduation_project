@@ -1,6 +1,7 @@
 // lib/features/company_portal/presentation/bloc/company_bloc.dart
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/company_portal/domain/entities/candidate_entity.dart';
 import 'package:graduation_project/features/company_portal/domain/entities/company_entity.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/add_candidate_bookmark.dart';
@@ -12,6 +13,7 @@ import 'package:graduation_project/features/company_portal/domain/usecases/searc
 import 'package:graduation_project/features/company_portal/domain/usecases/update_company_profile.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/verify_company_qr.dart'; // NEW IMPORT
 import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'company_event.dart';
 part 'company_state.dart';
@@ -81,12 +83,6 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     Emitter<CompanyState> emit,
   ) async {
     emit(const CompanyLoading());
-
-    if (event.company.id.isEmpty) {
-      emit(const CompanyError('Cannot update company: missing company ID.'));
-      return;
-    }
-
     final result = await _updateCompanyProfile(event.company);
 
     result.when(
@@ -121,9 +117,11 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
       return;
     }
 
-    final companyId = current.company.id;
     emit(const CompanyLoading());
-    final result = await _addCandidateBookmark(companyId, event.candidateId);
+    final result = await _addCandidateBookmark(
+      serviceLocator.get<SupabaseClient>().auth.currentUser!.id,
+      event.candidateId,
+    );
 
     result.when(
       (_) => emit(const BookmarkAddedSuccessfully()),

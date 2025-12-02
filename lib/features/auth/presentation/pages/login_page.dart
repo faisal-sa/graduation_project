@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -16,7 +18,12 @@ class LoginPage extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          if (state.role == 'Company') {
+          if (serviceLocator
+                  .get<SupabaseClient>()
+                  .auth
+                  .currentUser
+                  ?.userMetadata?["role"] ==
+              "Company") {
             context.go('/company/onboarding-router');
           } else {
             context.go('/insights'); // Individual user flow

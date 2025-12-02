@@ -92,13 +92,10 @@ class CompanyRepositoryImpl implements CompanyRepository {
       // Use the helper to create the update payload
       final updatePayload = _entityToMap(company);
 
-      final updatedData = await remote.updateCompanyProfile(
-        company.id,
-        updatePayload,
-      );
-      final updatedModel = CompanyModelMapper.ensureInitialized().decodeMap(
-        updatedData,
-      );
+      final updatedData = await remote.updateCompanyProfile(updatePayload);
+
+      final CompanyModel updatedModel = CompanyModelMapper.ensureInitialized()
+          .decodeMap(updatedData);
       return Success(updatedModel.toEntity());
     } on Exception catch (e) {
       return Error(_mapExceptionToFailure(e));
@@ -118,7 +115,8 @@ class CompanyRepositoryImpl implements CompanyRepository {
         experience: experience,
       );
       final entities = results.map<CandidateEntity>((data) {
-        final model = CandidateModelMapper.ensureInitialized().decodeMap(data);
+        final CandidateModel model = CandidateModelMapper.ensureInitialized()
+            .decodeMap(data);
         return model.toEntity();
       }).toList();
       return Success(entities);
