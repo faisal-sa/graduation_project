@@ -134,7 +134,7 @@ final GoRouter router = GoRouter(
       name: 'company-search',
       builder: (context, state) => BlocProvider(
         create: (_) => getIt<CompanyBloc>(),
-        child: const CompanySearchPage(),
+        child: CompanySearchPage(),
       ),
       routes: [
         GoRoute(
@@ -155,6 +155,14 @@ final GoRouter router = GoRouter(
             child: const CompanyQRScannerPage(),
           ),
         ),
+        // GoRoute(
+        //   path: 'bookmarks',
+        //   name: 'company-bookmarks',
+        //   builder: (context, state) => BlocProvider(
+        //     create: (_) => getIt<CompanyBloc>(),
+        //     child: const CompanyQRScannerPage(),
+        //   ),
+        // ),
         GoRoute(
           path: 'settings',
           name: 'company-settings',
