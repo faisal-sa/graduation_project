@@ -10,6 +10,10 @@ class CompanyInitial extends CompanyState {
   const CompanyInitial();
 }
 
+class BookmarkRemovedSuccessfully extends CompanyState {
+  const BookmarkRemovedSuccessfully();
+}
+
 class CompanyLoading extends CompanyState {
   final CompanyEntity? company;
 
@@ -29,11 +33,16 @@ class CompanyLoaded extends CompanyState {
 class CandidateResults extends CompanyState {
   final List<CandidateEntity> candidates;
   final CompanyEntity? company;
+  final Set<String> bookmarkedIds;
 
-  const CandidateResults(this.candidates, {this.company});
+  const CandidateResults(
+    this.candidates, {
+    this.company,
+    this.bookmarkedIds = const {},
+  });
 
   @override
-  List<Object?> get props => [candidates, company];
+  List<Object?> get props => [candidates, company, bookmarkedIds];
 }
 
 class CompanyBookmarksLoaded extends CompanyState {
@@ -67,7 +76,6 @@ class CompanyStatusChecked extends CompanyState {
   List<Object?> get props => [hasProfile, hasPaid];
 }
 
-// --- NEW STATE ---
 class QRVerificationSuccess extends CompanyState {
   const QRVerificationSuccess();
 }

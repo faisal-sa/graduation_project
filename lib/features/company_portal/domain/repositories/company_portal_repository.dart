@@ -17,9 +17,14 @@ abstract class CompanyRepository {
   );
 
   Future<Result<List<CandidateEntity>, Failure>> searchCandidates({
-    String? city,
-    String? skill,
-    String? experience,
+    String? location,
+    List<String>? skills,
+    List<String>? employmentTypes,
+    bool? canRelocate,
+    List<String>? languages,
+    List<String>? workModes,
+    String? jobTitle,
+    List<String>? targetRoles,
   });
 
   Future<Result<void, Failure>> addCandidateBookmark(
@@ -33,6 +38,5 @@ abstract class CompanyRepository {
 
   Future<Result<Map<String, bool>, Failure>> checkCompanyStatus(String userId);
 
-  // --- NEW METHOD FOR QR VERIFICATION ---
   Future<Result<void, Failure>> verifyCompanyQR(String qrCodeData);
 }

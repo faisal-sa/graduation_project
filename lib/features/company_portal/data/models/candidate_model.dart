@@ -1,44 +1,76 @@
-// lib/features/company_portal/data/models/candidate_model.dart
-
 import 'package:dart_mappable/dart_mappable.dart';
 import '../../domain/entities/candidate_entity.dart';
 
-part 'candidate_model.mapper.dart'; // Ensure you run the code generator
+part 'candidate_model.mapper.dart';
 
 @MappableClass()
 class CandidateModel with CandidateModelMappable {
   final String? id;
+
   @MappableField(key: 'candidate_id')
   final String? candidateId;
 
-  // Fields to capture both direct SELECTs and nested join data
-  final Map<String, dynamic>? candidates;
-  final String? full_name;
-  final String? skills;
-  final String? city;
+  final Map<String, dynamic>? profiles;
+
+  final String? first_name;
+  final String? last_name;
+  final String? location;
+  final String? job_title;
+  final dynamic skills;
+  final String? avatar_url;
 
   const CandidateModel({
     this.id,
     this.candidateId,
-    this.candidates,
-    this.full_name,
+    this.profiles,
+    this.first_name,
+    this.last_name,
+    this.location,
+    this.job_title,
     this.skills,
-    this.city,
+    this.avatar_url,
   });
 
-  // Model → Entity
   CandidateEntity toEntity() {
     final candidateIdToUse = candidateId ?? id ?? '';
 
-    // Prioritize nested profile data from a join if available
-    final profileData =
-        candidates ?? {'full_name': full_name, 'skills': skills, 'city': city};
+    final source =
+        profiles ??
+        {
+          'first_name': first_name,
+          'last_name': last_name,
+          'location': location,
+          'job_title': job_title,
+          'skills': skills,
+          'avatar_url': avatar_url,
+        };
+
+    final fName = source['first_name'] as String? ?? '';
+    final lName = source['last_name'] as String? ?? '';
+    String fullName = '$fName $lName'.trim();
+    if (fullName.isEmpty) fullName = 'Unnamed Candidate';
+
+    final city = source['location'] as String? ?? 'Unknown location';
+
+    final job = source['job_title'] as String? ?? 'Open to work';
+
+    final rawSkills = source['skills'];
+    String normalizedSkills = 'No skills';
+
+    if (rawSkills is List) {
+      normalizedSkills = rawSkills.join(', ');
+    } else if (rawSkills is String) {
+      normalizedSkills = rawSkills.replaceAll(RegExp(r'[\[\]{}"]'), '').trim();
+    }
+    final image = source['avatar_url'] as String?;
 
     return CandidateEntity(
       id: candidateIdToUse,
-      fullName: profileData['full_name'] as String? ?? 'N/A',
-      skills: profileData['skills'] as String?,
-      city: profileData['city'] as String?,
+      fullName: fullName,
+      skills: normalizedSkills,
+      city: city,
+      jobTitle: job,
+      avatarUrl: image,
     );
   }
 }

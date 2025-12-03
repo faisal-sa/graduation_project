@@ -97,27 +97,51 @@ class CompanyRemoteDataSource {
   }
 
   Future<List<Map<String, dynamic>>> searchCandidates({
-    String? city,
-    String? skill,
-    String? experience,
+    String? location,
+    List<String>? skills,
+    List<String>? employmentTypes,
+    bool? canRelocate,
+    List<String>? languages,
+    List<String>? workModes,
+    String? jobTitle,
+    List<String>? targetRoles,
   }) async {
     return await _handleSupabaseCall(() async {
-      PostgrestFilterBuilder query = supabase.from('profiles').select('*');
-
-      if (city != null && city.isNotEmpty) {
-        query = query.eq('city', city);
+      PostgrestFilterBuilder query = supabase
+          .from('profiles')
+          .select(
+            'id, first_name, last_name, job_title, location, skills,avatar_url',
+          );
+      if (location != null && location.isNotEmpty) {
+        query = query.ilike('location', '%$location%');
       }
 
-      if (skill != null && skill.isNotEmpty) {
-        query = query.textSearch(
-          'skills',
-          skill,
-          type: TextSearchType.websearch,
-        );
+      if (skills != null && skills.isNotEmpty) {
+        query = query.overlaps('skills', skills);
       }
 
-      if (experience != null && experience.isNotEmpty) {
-        query = query.eq('experience_level', experience);
+      if (employmentTypes != null && employmentTypes.isNotEmpty) {
+        query = query.overlaps('employment_types', employmentTypes);
+      }
+
+      if (canRelocate != null) {
+        query = query.eq('can_relocate', canRelocate);
+      }
+
+      if (languages != null && languages.isNotEmpty) {
+        query = query.overlaps('languages', languages);
+      }
+
+      if (workModes != null && workModes.isNotEmpty) {
+        query = query.overlaps('work_modes', workModes);
+      }
+
+      if (jobTitle != null && jobTitle.isNotEmpty) {
+        query = query.ilike('job_title', '%$jobTitle%');
+      }
+
+      if (targetRoles != null && targetRoles.isNotEmpty) {
+        query = query.overlaps('target_roles', targetRoles);
       }
 
       final result = await query;
@@ -136,10 +160,13 @@ class CompanyRemoteDataSource {
         );
       }
 
-      await supabase.from('company_bookmarks').insert({
-        'company_id': companyId,
-        'candidate_id': candidateId,
-      });
+      await supabase
+          .from('company_bookmarks')
+          .upsert(
+            {'company_id': companyId, 'candidate_id': candidateId},
+            onConflict: 'company_id, candidate_id',
+            ignoreDuplicates: true,
+          );
     });
   }
 
@@ -165,14 +192,15 @@ class CompanyRemoteDataSource {
     String companyId,
   ) async {
     return await _handleSupabaseCall(() async {
-      if (companyId.isEmpty) {
-        throw SupabaseException('Invalid companyId: cannot be empty.');
-      }
-
       final result = await supabase
           .from('company_bookmarks')
-          .select('candidate_id, candidates(full_name,skills,city,id)')
+          .select(
+            'candidate_id, profiles(first_name, last_name, skills, location, job_title, avatar_url,id)',
+          )
           .eq('company_id', companyId);
+
+      print("🔍 Bookmarks Result: $result");
+
       return List<Map<String, dynamic>>.from(result);
     });
   }

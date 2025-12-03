@@ -15,7 +15,6 @@ class CompanySettingsPage extends StatelessWidget {
             title: const Text('Edit Company Profile'),
             subtitle: const Text('Update description, industry, etc.'),
             onTap: () {
-              // Navigate back to the main profile page for edits
               context.goNamed('company-complete-profile');
             },
           ),
@@ -23,16 +22,13 @@ class CompanySettingsPage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.lock),
             title: const Text('Change Password'),
-            onTap: () {
-              // Navigate to a dedicated password change page
-            },
+            onTap: () {},
           ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Logout'),
             onTap: () {
-              // Dispatch AuthLogoutEvent and navigate to the root login page
               context.go('/login');
             },
           ),

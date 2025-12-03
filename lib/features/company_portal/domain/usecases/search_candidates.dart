@@ -13,14 +13,24 @@ class SearchCandidates {
   SearchCandidates(this.repository);
 
   Future<Result<List<CandidateEntity>, Failure>> call({
-    String? city,
-    String? skill,
-    String? experience,
+    String? location,
+    List<String>? skills,
+    List<String>? employmentTypes,
+    bool? canRelocate,
+    List<String>? languages,
+    List<String>? workModes,
+    String? jobTitle,
+    List<String>? targetRoles,
   }) {
     return repository.searchCandidates(
-      city: city,
-      skill: skill,
-      experience: experience,
+      location: location,
+      skills: skills,
+      employmentTypes: employmentTypes,
+      canRelocate: canRelocate,
+      languages: languages,
+      workModes: workModes,
+      jobTitle: jobTitle,
+      targetRoles: targetRoles,
     );
   }
 }

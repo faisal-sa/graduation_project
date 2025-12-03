@@ -83,7 +83,6 @@ class CompanyRepositoryImpl implements CompanyRepository {
     CompanyEntity company,
   ) async {
     try {
-      // Use the helper to create the update payload
       final updatePayload = _entityToMap(company);
 
       final updatedData = await remote.updateCompanyProfile(updatePayload);
@@ -97,15 +96,25 @@ class CompanyRepositoryImpl implements CompanyRepository {
 
   @override
   Future<Result<List<CandidateEntity>, Failure>> searchCandidates({
-    String? city,
-    String? skill,
-    String? experience,
+    String? location,
+    List<String>? skills,
+    List<String>? employmentTypes,
+    bool? canRelocate,
+    List<String>? languages,
+    List<String>? workModes,
+    String? jobTitle,
+    List<String>? targetRoles,
   }) async {
     try {
       final results = await remote.searchCandidates(
-        city: city,
-        skill: skill,
-        experience: experience,
+        location: location,
+        skills: skills,
+        employmentTypes: employmentTypes,
+        canRelocate: canRelocate,
+        languages: languages,
+        workModes: workModes,
+        jobTitle: jobTitle,
+        targetRoles: targetRoles,
       );
       final entities = results.map<CandidateEntity>((data) {
         final CandidateModel model = CandidateModelMapper.ensureInitialized()
@@ -150,18 +159,13 @@ class CompanyRepositoryImpl implements CompanyRepository {
   ) async {
     try {
       final results = await remote.getCompanyBookmarks(companyId);
-      final entities = results.map<CandidateEntity>((data) {
-        final candidateData = data['candidates'] as Map<String, dynamic>?;
-        final candidateId = data['candidate_id'] as String;
 
-        return CandidateEntity(
-          id: candidateId,
-          fullName:
-              candidateData?['full_name'] as String? ?? 'Unknown Candidate',
-          skills: candidateData?['skills'] as String?,
-          city: candidateData?['city'] as String?,
-        );
+      final entities = results.map<CandidateEntity>((data) {
+        final CandidateModel model = CandidateModelMapper.ensureInitialized()
+            .decodeMap(data);
+        return model.toEntity();
       }).toList();
+
       return Success(entities);
     } on Exception catch (e) {
       return Error(_mapExceptionToFailure(e));

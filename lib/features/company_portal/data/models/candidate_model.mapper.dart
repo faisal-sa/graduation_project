@@ -34,25 +34,46 @@ class CandidateModelMapper extends ClassMapperBase<CandidateModel> {
     key: r'candidate_id',
     opt: true,
   );
-  static Map<String, dynamic>? _$candidates(CandidateModel v) => v.candidates;
-  static const Field<CandidateModel, Map<String, dynamic>> _f$candidates =
-      Field('candidates', _$candidates, opt: true);
-  static String? _$full_name(CandidateModel v) => v.full_name;
-  static const Field<CandidateModel, String> _f$full_name = Field(
-    'full_name',
-    _$full_name,
+  static Map<String, dynamic>? _$profiles(CandidateModel v) => v.profiles;
+  static const Field<CandidateModel, Map<String, dynamic>> _f$profiles = Field(
+    'profiles',
+    _$profiles,
     opt: true,
   );
-  static String? _$skills(CandidateModel v) => v.skills;
-  static const Field<CandidateModel, String> _f$skills = Field(
+  static String? _$first_name(CandidateModel v) => v.first_name;
+  static const Field<CandidateModel, String> _f$first_name = Field(
+    'first_name',
+    _$first_name,
+    opt: true,
+  );
+  static String? _$last_name(CandidateModel v) => v.last_name;
+  static const Field<CandidateModel, String> _f$last_name = Field(
+    'last_name',
+    _$last_name,
+    opt: true,
+  );
+  static String? _$location(CandidateModel v) => v.location;
+  static const Field<CandidateModel, String> _f$location = Field(
+    'location',
+    _$location,
+    opt: true,
+  );
+  static String? _$job_title(CandidateModel v) => v.job_title;
+  static const Field<CandidateModel, String> _f$job_title = Field(
+    'job_title',
+    _$job_title,
+    opt: true,
+  );
+  static dynamic _$skills(CandidateModel v) => v.skills;
+  static const Field<CandidateModel, dynamic> _f$skills = Field(
     'skills',
     _$skills,
     opt: true,
   );
-  static String? _$city(CandidateModel v) => v.city;
-  static const Field<CandidateModel, String> _f$city = Field(
-    'city',
-    _$city,
+  static String? _$avatar_url(CandidateModel v) => v.avatar_url;
+  static const Field<CandidateModel, String> _f$avatar_url = Field(
+    'avatar_url',
+    _$avatar_url,
     opt: true,
   );
 
@@ -60,20 +81,26 @@ class CandidateModelMapper extends ClassMapperBase<CandidateModel> {
   final MappableFields<CandidateModel> fields = const {
     #id: _f$id,
     #candidateId: _f$candidateId,
-    #candidates: _f$candidates,
-    #full_name: _f$full_name,
+    #profiles: _f$profiles,
+    #first_name: _f$first_name,
+    #last_name: _f$last_name,
+    #location: _f$location,
+    #job_title: _f$job_title,
     #skills: _f$skills,
-    #city: _f$city,
+    #avatar_url: _f$avatar_url,
   };
 
   static CandidateModel _instantiate(DecodingData data) {
     return CandidateModel(
       id: data.dec(_f$id),
       candidateId: data.dec(_f$candidateId),
-      candidates: data.dec(_f$candidates),
-      full_name: data.dec(_f$full_name),
+      profiles: data.dec(_f$profiles),
+      first_name: data.dec(_f$first_name),
+      last_name: data.dec(_f$last_name),
+      location: data.dec(_f$location),
+      job_title: data.dec(_f$job_title),
       skills: data.dec(_f$skills),
-      city: data.dec(_f$city),
+      avatar_url: data.dec(_f$avatar_url),
     );
   }
 
@@ -140,14 +167,17 @@ extension CandidateModelValueCopy<$R, $Out>
 abstract class CandidateModelCopyWith<$R, $In extends CandidateModel, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   MapCopyWith<$R, String, dynamic, ObjectCopyWith<$R, dynamic, dynamic>>?
-  get candidates;
+  get profiles;
   $R call({
     String? id,
     String? candidateId,
-    Map<String, dynamic>? candidates,
-    String? full_name,
-    String? skills,
-    String? city,
+    Map<String, dynamic>? profiles,
+    String? first_name,
+    String? last_name,
+    String? location,
+    String? job_title,
+    dynamic skills,
+    String? avatar_url,
   });
   CandidateModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
@@ -164,39 +194,48 @@ class _CandidateModelCopyWithImpl<$R, $Out>
       CandidateModelMapper.ensureInitialized();
   @override
   MapCopyWith<$R, String, dynamic, ObjectCopyWith<$R, dynamic, dynamic>>?
-  get candidates => $value.candidates != null
+  get profiles => $value.profiles != null
       ? MapCopyWith(
-          $value.candidates!,
+          $value.profiles!,
           (v, t) => ObjectCopyWith(v, $identity, t),
-          (v) => call(candidates: v),
+          (v) => call(profiles: v),
         )
       : null;
   @override
   $R call({
     Object? id = $none,
     Object? candidateId = $none,
-    Object? candidates = $none,
-    Object? full_name = $none,
+    Object? profiles = $none,
+    Object? first_name = $none,
+    Object? last_name = $none,
+    Object? location = $none,
+    Object? job_title = $none,
     Object? skills = $none,
-    Object? city = $none,
+    Object? avatar_url = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != $none) #id: id,
       if (candidateId != $none) #candidateId: candidateId,
-      if (candidates != $none) #candidates: candidates,
-      if (full_name != $none) #full_name: full_name,
+      if (profiles != $none) #profiles: profiles,
+      if (first_name != $none) #first_name: first_name,
+      if (last_name != $none) #last_name: last_name,
+      if (location != $none) #location: location,
+      if (job_title != $none) #job_title: job_title,
       if (skills != $none) #skills: skills,
-      if (city != $none) #city: city,
+      if (avatar_url != $none) #avatar_url: avatar_url,
     }),
   );
   @override
   CandidateModel $make(CopyWithData data) => CandidateModel(
     id: data.get(#id, or: $value.id),
     candidateId: data.get(#candidateId, or: $value.candidateId),
-    candidates: data.get(#candidates, or: $value.candidates),
-    full_name: data.get(#full_name, or: $value.full_name),
+    profiles: data.get(#profiles, or: $value.profiles),
+    first_name: data.get(#first_name, or: $value.first_name),
+    last_name: data.get(#last_name, or: $value.last_name),
+    location: data.get(#location, or: $value.location),
+    job_title: data.get(#job_title, or: $value.job_title),
     skills: data.get(#skills, or: $value.skills),
-    city: data.get(#city, or: $value.city),
+    avatar_url: data.get(#avatar_url, or: $value.avatar_url),
   );
 
   @override

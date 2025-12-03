@@ -2,7 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/advanced_searchpage.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/CandidateResultsPage.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_bookmarks_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_onboarding_router_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_page.dart';
 
@@ -102,8 +103,6 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/company/onboarding-router',
       name: 'company-onboarding-router',
-      // We must provide the CompanyBloc here so the router page can dispatch
-      // the CheckCompanyStatusEvent and listen for the results.
       builder: (context, state) => BlocProvider(
         create: (_) => getIt<CompanyBloc>(),
         child: const CompanyOnboardingRouterPage(),
@@ -125,7 +124,6 @@ final GoRouter router = GoRouter(
       path: '/company/payment',
       name: 'company-payment',
       builder: (context, state) => const PaymentPage(),
-      // Note: This page must route to '/company/search' upon success.
     ),
 
     // 4. MAIN FEATURE: Search Candidates (if all prerequisites are met)
@@ -138,15 +136,25 @@ final GoRouter router = GoRouter(
       ),
       routes: [
         GoRoute(
-          path: 'advanced',
-          name: 'company-advanced-search',
+          path: 'search-results',
+          name: 'company-search-results',
+          builder: (context, state) {
+            final bloc = state.extra as CompanyBloc;
+            return BlocProvider.value(
+              value: bloc,
+              child: const CandidateResultsPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: 'bookmarks',
+          name: 'company-bookmarks',
           builder: (context, state) => BlocProvider(
             create: (_) => getIt<CompanyBloc>(),
-            child: AdvancedSearchPage(),
+            child: const CompanyBookmarksPage(),
           ),
         ),
-        // Note: The QR route should ideally be nested under /company/search or accessible from it.
-        // I moved the absolute path '/company/qr' to be relative to the root or explicitly defined.
+
         GoRoute(
           path: 'qr',
           name: 'company-qr',
@@ -155,14 +163,6 @@ final GoRouter router = GoRouter(
             child: const CompanyQRScannerPage(),
           ),
         ),
-        // GoRoute(
-        //   path: 'bookmarks',
-        //   name: 'company-bookmarks',
-        //   builder: (context, state) => BlocProvider(
-        //     create: (_) => getIt<CompanyBloc>(),
-        //     child: const CompanyQRScannerPage(),
-        //   ),
-        // ),
         GoRoute(
           path: 'settings',
           name: 'company-settings',
@@ -170,8 +170,5 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-
-    // Define other common/utility routes if necessary (e.g., /settings)
   ],
-  // ... rest of GoRouter configuration (errorBuilder, redirect, etc.)
 );

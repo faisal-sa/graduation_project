@@ -110,7 +110,6 @@ class CompleteCompanyProfilePage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // Default company entity if not yet loaded
           CompanyEntity company;
           if (state is CompanyLoaded) {
             company = state.company;

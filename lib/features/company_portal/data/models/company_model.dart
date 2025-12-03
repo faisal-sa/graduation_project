@@ -1,9 +1,7 @@
-// lib/features/company_portal/data/models/company_model.dart
-
 import 'package:dart_mappable/dart_mappable.dart';
 import '../../domain/entities/company_entity.dart';
 
-part 'company_model.mapper.dart'; // Ensure you run the code generator
+part 'company_model.mapper.dart';
 
 @MappableClass()
 class CompanyModel with CompanyModelMappable {
@@ -45,7 +43,6 @@ class CompanyModel with CompanyModelMappable {
     required this.updatedAt,
   });
 
-  /// Model → Entity: Conversion happens in the Data layer
   CompanyEntity toEntity() => CompanyEntity(
     companyName: companyName,
     industry: industry,
@@ -57,7 +54,6 @@ class CompanyModel with CompanyModelMappable {
     email: email,
     phone: phone,
     logoUrl: logoUrl,
-    // Robust date parsing for strings from Supabase
     createdAt: DateTime.tryParse(createdAt) ?? DateTime(1970),
     updatedAt: DateTime.tryParse(updatedAt) ?? DateTime(1970),
   );

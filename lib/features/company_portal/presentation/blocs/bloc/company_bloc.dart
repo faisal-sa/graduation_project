@@ -47,6 +47,19 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     on<CheckCompanyStatusEvent>(_onCheckCompanyStatus);
     on<RegisterCompanyEvent>(_onRegisterCompany);
     on<VerifyCompanyQREvent>(_onVerifyCompanyQR);
+    on<RemoveCandidateBookmarkEvent>(_onRemoveBookmark);
+  }
+
+  Future<void> _onRemoveBookmark(
+    RemoveCandidateBookmarkEvent event,
+    Emitter<CompanyState> emit,
+  ) async {
+    final companyId = serviceLocator.get<SupabaseClient>().auth.currentUser?.id;
+    if (companyId == null) return;
+
+    emit(const BookmarkRemovedSuccessfully());
+
+    add(GetCompanyBookmarksEvent(companyId));
   }
 
   Future<void> _onRegisterCompany(
@@ -95,9 +108,14 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
   ) async {
     emit(const CompanyLoading());
     final result = await _searchCandidates(
-      city: event.city,
-      skill: event.skill,
-      experience: event.experience,
+      location: event.location,
+      skills: event.skills,
+      employmentTypes: event.employmentTypes,
+      canRelocate: event.canRelocate,
+      languages: event.languages,
+      workModes: event.workModes,
+      jobTitle: event.jobTitle,
+      targetRoles: event.targetRoles,
     );
     result.when(
       (candidates) => emit(CandidateResults(candidates)),
@@ -109,27 +127,42 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     AddCandidateBookmarkEvent event,
     Emitter<CompanyState> emit,
   ) async {
-    final CandidateResults candidateResults = state as CandidateResults;
+    if (state is! CandidateResults) return;
 
-
-
+    final currentState = state as CandidateResults;
     final companyId = serviceLocator.get<SupabaseClient>().auth.currentUser?.id;
 
     if (companyId == null) {
-      emit(const CompanyError('Authentication required: User ID not found.'));
+      emit(const CompanyError('Authentication required.'));
       return;
     }
 
-    emit(CompanyLoading(company: candidateResults.company));
+    final updatedBookmarks = Set<String>.from(currentState.bookmarkedIds);
+    updatedBookmarks.add(event.candidateId);
+
+    emit(
+      CandidateResults(
+        currentState.candidates,
+        company: currentState.company,
+        bookmarkedIds: updatedBookmarks,
+      ),
+    );
+
     final result = await _addCandidateBookmark(companyId, event.candidateId);
 
-    result.when(
-      (_) {
-      emit(BookmarkAddedSuccessfully(company: candidateResults.company));
-      emit(candidateResults);
-    },
-      (failure) => emit(CompanyError(failure.message)),
-    );
+    result.when((success) {}, (failure) {
+      updatedBookmarks.remove(event.candidateId);
+
+      emit(
+        CandidateResults(
+          currentState.candidates,
+          company: currentState.company,
+          bookmarkedIds: updatedBookmarks,
+        ),
+      );
+
+      emit(CompanyError(failure.message));
+    });
   }
 
   Future<void> _onGetBookmarks(
