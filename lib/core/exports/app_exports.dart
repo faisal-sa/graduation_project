@@ -60,5 +60,4 @@ export 'package:graduation_project/features/auth/presentation/pages/otp_verifica
 // Shared
 export 'package:graduation_project/features/shared/user_cubit.dart';
 
-// Payment
-export 'package:graduation_project/features/payment/pay_page.dart';
+

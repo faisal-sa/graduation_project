@@ -21,6 +21,8 @@ class Certification extends Equatable {
     this.credentialUrl,
   });
 
+  
+
   @override
   List<Object?> get props => [
     id,

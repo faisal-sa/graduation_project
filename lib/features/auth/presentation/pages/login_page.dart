@@ -42,7 +42,7 @@ class LoginPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SvgPicture.asset(
-                          "icons/logo.svg",
+                          "assets/icons/logo.svg",
                           width: 64.w,
                           height: 64.h,
                         ),

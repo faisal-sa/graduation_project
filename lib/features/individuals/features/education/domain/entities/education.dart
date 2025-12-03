@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
@@ -40,6 +41,52 @@ class Education extends Equatable {
     this.graduationCertificateUrl,
     this.academicRecordUrl,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'degreeType': degreeType,
+      'institutionName': institutionName,
+      'fieldOfStudy': fieldOfStudy,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'gpa': gpa,
+      'activities': activities,
+      'graduationCertificateBytes': graduationCertificateBytes != null
+          ? base64Encode(graduationCertificateBytes!)
+          : null,
+      'graduationCertificateName': graduationCertificateName,
+      'academicRecordBytes': academicRecordBytes != null
+          ? base64Encode(academicRecordBytes!)
+          : null,
+      'academicRecordName': academicRecordName,
+      'graduationCertificateUrl': graduationCertificateUrl,
+      'academicRecordUrl': academicRecordUrl,
+    };
+  }
+
+  factory Education.fromMap(Map<String, dynamic> map) {
+    return Education(
+      id: map['id'] ?? '',
+      degreeType: map['degreeType'] ?? '',
+      institutionName: map['institutionName'] ?? '',
+      fieldOfStudy: map['fieldOfStudy'] ?? '',
+      startDate: DateTime.parse(map['startDate']),
+      endDate: DateTime.parse(map['endDate']),
+      gpa: map['gpa'],
+      activities: List<String>.from(map['activities'] ?? []),
+      graduationCertificateBytes: map['graduationCertificateBytes'] != null
+          ? base64Decode(map['graduationCertificateBytes'])
+          : null,
+      graduationCertificateName: map['graduationCertificateName'],
+      academicRecordBytes: map['academicRecordBytes'] != null
+          ? base64Decode(map['academicRecordBytes'])
+          : null,
+      academicRecordName: map['academicRecordName'],
+      graduationCertificateUrl: map['graduationCertificateUrl'],
+      academicRecordUrl: map['academicRecordUrl'],
+    );
+  }
 
   @override
   List<Object?> get props => [

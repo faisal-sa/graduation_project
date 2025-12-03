@@ -6,6 +6,9 @@ import 'package:graduation_project/features/company_portal/presentation/pages/co
 import 'package:graduation_project/features/company_portal/presentation/pages/company_status_wrapper.dart';
 import 'package:graduation_project/features/company_portal/presentation/pages/complete_company_profile_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/pages/ompany_bookmarks_page.dart';
+import 'package:graduation_project/features/payment/presentation/cubit/payment_cubit.dart';
+import 'package:graduation_project/features/payment/presentation/pages/pay_page.dart';
+import 'package:graduation_project/features/payment/presentation/pages/webview_page.dart';
 
 // keep it here for now
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -213,20 +216,38 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
+    //▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲ ROUTE START ▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼
+    //
+
     // ==================  Pay Page  =================== //
     //
     GoRoute(
       path: '/pay',
+      builder: (context, state) => BlocProvider(
+        create: (_) => serviceLocator<PaymentCubit>(),
+        child: const PayPage(),
+      ),
+    ),
+
+    // ==================  Payment WebView (3DS Authentication)  =================== //
+    //
+    GoRoute(
+      path: '/payment-webview',
       builder: (context, state) {
-        return const PayPage();
+        final url = state.uri.queryParameters['url'] ?? '';
+        return PaymentWebViewPage(url: url);
       },
     ),
+
+    // ==================  CR Info Page  =================== //
+    //
     GoRoute(
-      path: '/crInfo',
+      path: '/cr-info',
       builder: (context, state) {
         return const CrInfoPage(); //spalsh later page
       },
     ),
+
 
     //▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲ ROUTE END ▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼
   ],

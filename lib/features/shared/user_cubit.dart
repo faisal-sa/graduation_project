@@ -8,22 +8,55 @@ import 'package:graduation_project/features/individuals/features/education/domai
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
 import 'package:graduation_project/features/shared/user_entity.dart';
 import 'package:graduation_project/features/shared/user_state.dart';
-import 'package:graduation_project/main.dart';
 import 'package:injectable/injectable.dart';
 import 'package:bloc/bloc.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @LazySingleton()
 class UserCubit extends Cubit<UserState> {
-  UserCubit() : super(const UserState());
+  final SharedPreferences _prefs;
+  static const String _storageKey = 'user_entity_data';
+  UserCubit(this._prefs) : super(const UserState()) {
+    _loadUserFromStorage();
+  }
+
+  /// 1. LOAD: Read from SharedPrefs on initialization
+  void _loadUserFromStorage() {
+    try {
+      final jsonString = _prefs.getString(_storageKey);
+      if (jsonString != null && jsonString.isNotEmpty) {
+        final user = UserEntity.fromJson(jsonString);
+        emit(state.copyWith(user: user));
+      }
+    } catch (e) {
+      print("Error loading user from local storage: $e");
+    }
+  }
+
+  @override
+  void onChange(Change<UserState> change) {
+    super.onChange(change);
+    print("changing1");
+    if (change.nextState.user != change.currentState.user) {
+      _saveUserToStorage(change.nextState.user);
+    }
+  }
+
+  Future<void> _saveUserToStorage(UserEntity user) async {
+    try {
+      final jsonString = user.toJson();
+      await _prefs.setString(_storageKey, jsonString);
+      print("changing2");
+    } catch (e) {
+      print("Error saving user to local storage: $e");
+    }
+  }
 
   void setInitialUserData(UserEntity user) {
     emit(state.copyWith(user: user));
   }
 
-  // --- Avatar Logic (NEW) ---
-
-  // Call this method after you successfully get the public URL from Supabase
   void updateLocalAvatar(String url) {
     final updatedUser = state.user.copyWith(avatarUrl: url);
     emit(state.copyWith(user: updatedUser));
@@ -37,13 +70,12 @@ class UserCubit extends Cubit<UserState> {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
-        withData: true, // This ensures bytes are available
+        withData: true, 
       );
 
       if (result != null) {
         final platformFile = result.files.single;
 
-        // 1. Get the raw bytes of the file
         Uint8List? fileBytes;
 
         if (platformFile.bytes != null) {

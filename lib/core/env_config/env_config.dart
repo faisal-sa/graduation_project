@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class EnvConfig {
@@ -31,4 +32,11 @@ abstract class RegisterModule {
 
     return supabase.client;
   }
+  
+  @preResolve
+  Future<SharedPreferences> get prefs async {
+    return await SharedPreferences.getInstance();
+  }
+
+
 }

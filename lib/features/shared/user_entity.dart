@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
-// --- UPDATED USER ENTITY ---
 
 class UserEntity extends Equatable {
   final String firstName;
@@ -12,7 +13,7 @@ class UserEntity extends Equatable {
   final String location;
   final String summary;
   final String? videoUrl;
-  final String? avatarUrl; // <--- ADDED THIS
+  final String? avatarUrl; 
   final List<WorkExperience> workExperiences;
   final List<Education> educations;
 
@@ -25,7 +26,7 @@ class UserEntity extends Equatable {
     this.location = '',
     this.summary = '',
     this.videoUrl,
-    this.avatarUrl, // <--- ADDED THIS
+    this.avatarUrl,
     this.workExperiences = const [],
     this.educations = const [],
   });
@@ -58,6 +59,53 @@ class UserEntity extends Equatable {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'jobTitle': jobTitle,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'location': location,
+      'summary': summary,
+      'videoUrl': videoUrl,
+      'avatarUrl': avatarUrl,
+      'workExperiences': workExperiences.map((x) => x.toMap()).toList(),
+      'educations': educations.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  // 2. CREATE FROM MAP (For Loading)
+  factory UserEntity.fromMap(Map<String, dynamic> map) {
+    return UserEntity(
+      firstName: map['firstName'] ?? '',
+      lastName: map['lastName'] ?? '',
+      jobTitle: map['jobTitle'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
+      email: map['email'] ?? '',
+      location: map['location'] ?? '',
+      summary: map['summary'] ?? '',
+      videoUrl: map['videoUrl'],
+      avatarUrl: map['avatarUrl'],
+      workExperiences: List<WorkExperience>.from(
+        (map['workExperiences'] as List<dynamic>? ?? []).map<WorkExperience>(
+          (x) => WorkExperience.fromMap(x),
+        ),
+      ),
+      educations: List<Education>.from(
+        (map['educations'] as List<dynamic>? ?? []).map<Education>(
+          (x) => Education.fromMap(x),
+        ),
+      ),
+    );
+  }
+
+  // Helpers for JSON String
+  String toJson() => json.encode(toMap());
+
+  factory UserEntity.fromJson(String source) =>
+      UserEntity.fromMap(json.decode(source));
+
   @override
   List<Object?> get props => [
     firstName,
@@ -72,11 +120,4 @@ class UserEntity extends Equatable {
     workExperiences,
     educations,
   ];
-}
-
-extension StringExtension on String {
-  String take(int n) {
-    if (length <= n) return this;
-    return substring(0, n);
-  }
 }

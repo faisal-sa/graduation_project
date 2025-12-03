@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import '../../features/auth/data/datasources/auth_remote_datasource.dart'
@@ -138,6 +139,14 @@ import '../../features/individuals/features/work_experience/domain/usecases/upda
     as _i56;
 import '../../features/individuals/features/work_experience/presentation/cubit/work_experience_cubit.dart'
     as _i760;
+import '../../features/payment/data/datasources/payment_remote_data_source.dart'
+    as _i811;
+import '../../features/payment/data/repositories/payment_repository_impl.dart'
+    as _i265;
+import '../../features/payment/domain/usecases/process_payment_usecase.dart'
+    as _i432;
+import '../../features/payment/export_payment.dart' as _i903;
+import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
 import '../../features/shared/user_cubit.dart' as _i171;
 import '../env_config/env_config.dart' as _i113;
 
@@ -153,9 +162,18 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.supabaseClient,
       preResolve: true,
     );
-    gh.lazySingleton<_i171.UserCubit>(() => _i171.UserCubit());
+    await gh.factoryAsync<_i460.SharedPreferences>(
+      () => registerModule.prefs,
+      preResolve: true,
+    );
+    gh.lazySingleton<_i171.UserCubit>(
+      () => _i171.UserCubit(gh<_i460.SharedPreferences>()),
+    );
     gh.factory<_i252.CompanyRemoteDataSource>(
       () => _i252.CompanyRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
+    gh.lazySingleton<_i811.PaymentRemoteDataSource>(
+      () => _i811.PaymentRemoteDataSourceImpl(),
     );
     gh.lazySingleton<_i733.AboutMeRemoteDataSource>(
       () => _i733.AboutMeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -223,6 +241,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i787.AuthRepository>(
       () => _i153.AuthRepositoryImpl(gh<_i161.AuthRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i903.PaymentRepository>(
+      () => _i265.PaymentRepositoryImpl(gh<_i903.PaymentRemoteDataSource>()),
     );
     gh.lazySingleton<_i965.AddEducationUseCase>(
       () => _i965.AddEducationUseCase(gh<_i843.EducationRepository>()),
@@ -310,6 +331,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i468.RegisterCompany>(),
       ),
     );
+    gh.lazySingleton<_i432.ProcessPaymentUseCase>(
+      () => _i432.ProcessPaymentUseCase(gh<_i903.PaymentRepository>()),
+    );
     gh.factory<_i387.JobPreferencesCubit>(
       () => _i387.JobPreferencesCubit(
         gh<_i43.GetJobPreferencesUseCase>(),
@@ -365,6 +389,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i190.SignUp>(() => _i190.SignUp(gh<_i787.AuthRepository>()));
     gh.factory<_i975.VerifyOTP>(
       () => _i975.VerifyOTP(gh<_i787.AuthRepository>()),
+    );
+    gh.factory<_i513.PaymentCubit>(
+      () => _i513.PaymentCubit(gh<_i903.ProcessPaymentUseCase>()),
     );
     gh.lazySingleton<_i961.SaveBasicInfoUseCase>(
       () => _i961.SaveBasicInfoUseCase(gh<_i591.BasicInfoRepository>()),
