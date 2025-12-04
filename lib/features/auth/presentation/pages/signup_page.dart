@@ -32,15 +32,7 @@ class _SignupPageState extends State<SignupPage> {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           if (state.role == 'Company') {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            context.go('/company');
-=======
             context.go('/company/onboarding-router');
->>>>>>> abbass
-=======
-            context.go('/company/onboarding-router');
->>>>>>> abbass
           } else {
             context.go('/insights'); // Individual user flow
           }

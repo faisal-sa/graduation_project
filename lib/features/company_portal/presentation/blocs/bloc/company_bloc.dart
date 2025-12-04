@@ -9,6 +9,7 @@ import 'package:graduation_project/features/company_portal/domain/usecases/check
 import 'package:graduation_project/features/company_portal/domain/usecases/get_company_bookmarks.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/get_company_profile.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/register_company.dart';
+import 'package:graduation_project/features/company_portal/domain/usecases/remove_candidate_bookmark.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/search_candidates.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/update_company_profile.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/verify_company_qr.dart';
@@ -28,6 +29,7 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
   final CheckCompanyStatus _checkCompanyStatus;
   final RegisterCompany _registerCompany;
   final VerifyCompanyQR _verifyCompanyQR;
+  final RemoveCandidateBookmark _removeCandidateBookmark;
 
   CompanyBloc(
     this._getCompanyProfile,
@@ -38,6 +40,7 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     this._checkCompanyStatus,
     this._registerCompany,
     this._verifyCompanyQR,
+    this._removeCandidateBookmark,
   ) : super(const CompanyInitial()) {
     on<GetCompanyProfileEvent>(_onGetCompanyProfile);
     on<UpdateCompanyProfileEvent>(_onUpdateCompanyProfile);
@@ -54,12 +57,35 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     RemoveCandidateBookmarkEvent event,
     Emitter<CompanyState> emit,
   ) async {
+    if (state is! CompanyBookmarksLoaded) return;
+
+    final currentState = state as CompanyBookmarksLoaded;
+    final originalList = currentState.bookmarks;
+
+    final updatedList = originalList
+        .where((c) => c.id != event.candidateId)
+        .toList();
+
+    emit(CompanyBookmarksLoaded(updatedList));
+
     final companyId = serviceLocator.get<SupabaseClient>().auth.currentUser?.id;
-    if (companyId == null) return;
+    if (companyId != null) {
+      final result = await _removeCandidateBookmark(
+        companyId,
+        event.candidateId,
+      );
 
-    emit(const BookmarkRemovedSuccessfully());
-
-    add(GetCompanyBookmarksEvent(companyId));
+      result.when(
+        (success) {
+          emit(const BookmarkRemovedSuccessfully());
+          emit(CompanyBookmarksLoaded(updatedList));
+        },
+        (failure) {
+          emit(CompanyBookmarksLoaded(originalList));
+          emit(CompanyError("Failed to delete: ${failure.message}"));
+        },
+      );
+    }
   }
 
   Future<void> _onRegisterCompany(

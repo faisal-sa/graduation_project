@@ -175,11 +175,6 @@ class CompanyRemoteDataSource {
     String candidateId,
   ) async {
     return await _handleSupabaseCall(() async {
-      if (companyId.isEmpty || candidateId.isEmpty) {
-        throw SupabaseException(
-          'Invalid uuid: companyId or candidateId cannot be empty.',
-        );
-      }
       await supabase
           .from('company_bookmarks')
           .delete()
