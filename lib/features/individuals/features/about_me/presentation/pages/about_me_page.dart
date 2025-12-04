@@ -161,8 +161,13 @@ class _VideoPickerSection extends StatelessWidget {
           child: CustomPaint(
             painter: _DashedBorderPainter(
               color: Colors.grey[300]!,
+<<<<<<< HEAD
               gap: 6,
               strokeWidth: 5,
+=======
+              strokeWidth: 2,
+              gap: 6,
+>>>>>>> origin/payments_new
             ),
             child: Container(
               height: 180,
@@ -390,6 +395,10 @@ class _DashedBorderPainter extends CustomPainter {
 
   _DashedBorderPainter({
     required this.color,
+<<<<<<< HEAD
+=======
+    required this.strokeWidth,
+>>>>>>> origin/payments_new
     this.gap = 5.0,
     required this.strokeWidth,
   });
