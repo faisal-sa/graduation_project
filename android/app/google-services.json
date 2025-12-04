@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "481583811571",
+    "project_id": "chatting-app-37131",
+    "storage_bucket": "chatting-app-37131.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481583811571:android:d70eadd44f886193936086",
+        "android_client_info": {
+          "package_name": "com.example.flutter_chat_application_abdualaziz_abbas_abdualaziz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtuvKaI5ET5lz53pYhbbBVbZt8ICEGJ3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481583811571:android:97daf3f1b022a9c0936086",
+        "android_client_info": {
+          "package_name": "com.example.graduation_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtuvKaI5ET5lz53pYhbbBVbZt8ICEGJ3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

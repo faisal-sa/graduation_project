@@ -1,0 +1,55 @@
+import 'package:equatable/equatable.dart';
+import '../../domain/entities/user.dart';
+
+abstract class AuthState extends Equatable {
+  const AuthState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class AuthInitial extends AuthState {}
+
+class AuthLoading extends AuthState {}
+
+class AuthAuthenticated extends AuthState {
+  final User user;
+  final String? role;
+  final String userId; // <--- FIX: Added userId getter
+
+  AuthAuthenticated(this.user, {this.role})
+    // FIX: Initialize userId using the User entity's ID
+    : userId = user.id;
+
+  @override
+  List<Object?> get props => [user, role, userId];
+}
+
+class AuthUnauthenticated extends AuthState {}
+
+class AuthError extends AuthState {
+  final String message;
+
+  const AuthError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class OTPSent extends AuthState {
+  final String email;
+
+  const OTPSent(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class OTPVerified extends AuthState {
+  final User user;
+
+  const OTPVerified(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}

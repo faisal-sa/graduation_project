@@ -1,0 +1,66 @@
+name: graduation_project
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  flutter_dotenv: ^6.0.0
+  flutter_screenutil: ^5.9.3
+  get_it: ^9.0.5
+  go_router: ^16.3.0
+  supabase_flutter: ^2.10.3
+  bloc: ^9.1.0
+  freezed: ^3.2.3
+  json_annotation: ^4.9.0
+  freezed_annotation: ^3.1.0
+  intl: ^0.20.2
+  fl_chart: ^1.1.1
+  fpdart: ^1.2.0
+  equatable: ^2.0.7
+  injectable: ^2.6.0
+  dart_mappable: ^4.6.1
+  pinput: ^5.0.2
+  pdfrx: ^2.2.12
+  file_picker: ^10.3.6
+  flutter_svg: ^2.2.3
+  dotted_border: ^3.1.0
+  image_picker: ^1.2.1
+  multiple_result: ^5.2.0
+  shimmer: ^3.0.0
+  qr_flutter: ^4.1.0
+  flutter_hooks: ^0.21.3+1
+  syncfusion_flutter_pdf: ^31.2.15
+  firebase_core: ^4.2.1
+  firebase_ai: ^3.6.0
+  webview_flutter: ^4.13.0
+  flutter_credit_card: ^4.1.0
+  u_credit_card: ^1.4.0
+  shared_preferences: ^2.5.3
+  path: ^1.9.1
+  dartz: ^0.10.1
+  gap: ^3.0.1
+  dio: ^5.9.0
+  uuid: ^4.5.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  injectable_generator: ^2.9.1
+  build_runner: ^2.10.2
+  dart_mappable_builder: ^4.6.1
+  json_serializable: ^6.11.2
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env
+    - assets/icons/
+    - assets/icons/logo.svg
