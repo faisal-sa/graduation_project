@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 
@@ -83,14 +82,15 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
           style: TextStyle(color: textColor, fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: textColor, size: 20),
-          onPressed: () => context.pop(),
-        ),
+
         actions: [
           IconButton(
             icon: Icon(Icons.bookmark_border_rounded, color: textColor),
             onPressed: () => context.goNamed('company-bookmarks'),
+          ),
+          IconButton(
+            icon: Icon(Icons.settings, color: textColor),
+            onPressed: () => context.goNamed('company-settings'),
           ),
         ],
       ),
@@ -200,7 +200,7 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
                 ),
                 child: SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  activeColor: primaryColor,
+                  activeThumbColor: primaryColor,
                   title: Text(
                     "Willing to relocate?",
                     style: TextStyle(
@@ -328,7 +328,7 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
         ],
       ),
       child: DropdownButtonFormField<String>(
-        value: selectedJobTitle,
+        initialValue: selectedJobTitle,
         icon: const Icon(Icons.keyboard_arrow_down_rounded),
         style: TextStyle(
           color: textColor,

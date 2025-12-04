@@ -198,8 +198,7 @@ class CompleteCompanyProfilePage extends StatelessWidget {
                     onChanged: (v) {
                       selectedSize = v;
                     },
-                    onSaved: (v) =>
-                        selectedSize = v, // Save to update selectedSize
+                    onSaved: (v) => selectedSize = v,
                   ),
                   _buildVerticalSpace(),
 

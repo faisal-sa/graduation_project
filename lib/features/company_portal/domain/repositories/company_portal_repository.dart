@@ -31,6 +31,10 @@ abstract class CompanyRepository {
     String companyId,
     String candidateId,
   );
+  Future<Result<void, Failure>> removeCandidateBookmark(
+    String companyId,
+    String candidateId,
+  );
 
   Future<Result<List<CandidateEntity>, Failure>> getCompanyBookmarks(
     String companyId,

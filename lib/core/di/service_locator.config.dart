@@ -42,6 +42,8 @@ import '../../features/company_portal/domain/usecases/get_company_profile.dart'
     as _i303;
 import '../../features/company_portal/domain/usecases/register_company.dart'
     as _i468;
+import '../../features/company_portal/domain/usecases/remove_candidate_bookmark.dart'
+    as _i243;
 import '../../features/company_portal/domain/usecases/search_candidates.dart'
     as _i754;
 import '../../features/company_portal/domain/usecases/update_company_profile.dart'
@@ -84,6 +86,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i742.VerifyCompanyQR>(
       () => _i742.VerifyCompanyQR(gh<_i786.CompanyRepository>()),
     );
+    gh.lazySingleton<_i243.RemoveCandidateBookmark>(
+      () => _i243.RemoveCandidateBookmark(gh<_i786.CompanyRepository>()),
+    );
     gh.factory<_i533.AddCandidateBookmark>(
       () => _i533.AddCandidateBookmark(gh<_i786.CompanyRepository>()),
     );
@@ -112,6 +117,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i528.CheckCompanyStatus>(),
         gh<_i468.RegisterCompany>(),
         gh<_i742.VerifyCompanyQR>(),
+        gh<_i243.RemoveCandidateBookmark>(),
       ),
     );
     gh.factory<_i111.GetCurrentUser>(
