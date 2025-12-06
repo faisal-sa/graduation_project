@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/core/theme/theme.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/feature_card.dart';
@@ -49,152 +50,148 @@ class InsightsTab extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: isComplete
-                          ? FeatureCard(
-                              onTap: () {
-                                // Navigate to the new page
-                                context.go('/insights/match-strength');
-                              },
-                              child: Column(
-                                children: [
-                                  const Icon(
-                                    Icons.handshake,
-                                    color: Colors.pink,
-                                    size: 32,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    "78%",
-                                    style: TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w900,
-                                      color: AppColors.textMain,
-                                    ),
-                                  ),
-                                  const Text(
-                                    "Match Strength",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: AppColors.textSub,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.pink.shade50,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      "Great fit!",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.pink.shade700,
-                                        fontWeight: FontWeight.bold,
+                SizedBox(
+                  height: 140.h,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: isComplete
+                            ? FeatureCard(
+                                onTap: () {
+                                  context.go('/insights/match-strength');
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Center(
+                                      child: Icon(
+                                        Icons.handshake,
+                                        color: Colors.pink,
+                                        size: 32.r,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Match Strength",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Check job fit",
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: AppColors.textSub,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Row(
+                                      children: [
+                                        Text(
+                                          "View Score",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColors.bluePrimary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Icon(
+                                          Icons.arrow_forward,
+                                          size: 14,
+                                          color: AppColors.bluePrimary,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const LockedFeatureCard(
+                                icon: Icons.track_changes,
+                                title: "Match Strength",
+                                unlockText: "Complete profile to see scores.",
                               ),
-                            )
-                          : const LockedFeatureCard(
-                              icon: Icons.track_changes,
-                              title: "Match Strength",
-                              unlockText: "Complete profile to see scores.",
-                            ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: isComplete
-                          ? FeatureCard(
-                              onTap: () {
-                                context.go('/insights/ai-skill-check');
-                              },
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Icon(
+                      ),
+                      const SizedBox(width: 16),
+
+                      Expanded(
+                        child: isComplete
+                            ? FeatureCard(
+                                onTap: () {
+                                  context.go('/insights/ai-skill-check');
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Center(
+                                      child: Icon(
                                         Icons.bolt,
                                         color: Colors.amber,
-                                        size: 28,
+                                        size: 32.r,
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                          vertical: 2,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.green.shade50,
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          "New",
+                                    ),
+                                    const Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "AI Skill Check",
                                           style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.green,
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 16,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    "AI Skill Check",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  const Text(
-                                    "Validate top skills",
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.textSub,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        "Start Quiz",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: AppColors.bluePrimary,
-                                          fontWeight: FontWeight.w600,
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Validate top skills",
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: AppColors.textSub,
+                                          ),
                                         ),
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward,
-                                        size: 14,
-                                        color: AppColors.bluePrimary,
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                    const Row(
+                                      children: [
+                                        Text(
+                                          "Start Quiz",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColors.bluePrimary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Icon(
+                                          Icons.arrow_forward,
+                                          size: 14,
+                                          color: AppColors.bluePrimary,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const LockedFeatureCard(
+                                icon: Icons.bolt,
+                                title: "AI Quiz",
+                                unlockText:
+                                    "Generate quiz based on experience.",
                               ),
-                            )
-                          : const LockedFeatureCard(
-                              icon: Icons.bolt,
-                              title: "AI Quiz",
-                              unlockText: "Generate quiz based on experience.",
-                            ),
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 24),
@@ -205,7 +202,132 @@ class InsightsTab extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 if (isComplete)
-                  _buildAnalyticsSection()
+                  Column(
+                    children: [
+                      _buildAnalyticsSection(),
+                      const SizedBox(height: 16),
+
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Profile Traffic",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.bar_chart,
+                                  color: AppColors.bluePrimary,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            // Visual placeholder for a Graph
+                            SizedBox(
+                              height: 100,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: List.generate(7, (index) {
+                                  // Generate random heights for a fake bar chart look
+                                  final height = [
+                                    40.0,
+                                    60.0,
+                                    30.0,
+                                    80.0,
+                                    50.0,
+                                    90.0,
+                                    65.0,
+                                  ][index];
+                                  return Container(
+                                    width: 30, // Adjust based on screen width
+                                    height: height,
+                                    decoration: BoxDecoration(
+                                      color: index == 5
+                                          ? AppColors.bluePrimary
+                                          : Colors
+                                                .grey
+                                                .shade200, // Highlight one bar
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Mon",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  "Tue",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  "Wed",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  "Thu",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  "Fri",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  "Sat",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  "Sun",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                  
                 else
                   const LockedFeatureCard(
                     icon: Icons.trending_up,
@@ -465,65 +587,72 @@ class InsightsTab extends StatelessWidget {
   }
 
   Widget _buildAnalyticsSection() {
-    return FeatureCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Profile Performance",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 150,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [35, 55, 40, 70, 50, 90, 100].asMap().entries.map((
-                entry,
-              ) {
-                final isLast = entry.key == 6;
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          height: entry.value * 1.2,
-                          decoration: BoxDecoration(
-                            color: isLast
-                                ? AppColors.bluePrimary
-                                : AppColors.bluePrimary.withOpacity(0.2),
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(6),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
+    return Row(
+      children: [
+        // Card 1: Appeared in Searches
+        Expanded(
+          child: FeatureCard(
+            child: _buildStatContent(
+              label: "Appeared in Searches",
+              count: "342", // Replace with real data
+              icon: Icons.person_search_rounded,
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-                .map(
-                  (d) => Text(
-                    d,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textSub,
-                    ),
-                  ),
-                )
-                .toList(),
+        ),
+        const SizedBox(width: 16), // Spacing between the two cards
+        // Card 2: Profile Views
+        Expanded(
+          child: FeatureCard(
+            child: _buildStatContent(
+              label: "Profile Views",
+              count: "86", // Replace with real data
+              icon: Icons.visibility_rounded,
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  // Helper widget to keep the internals of the two cards identical
+  Widget _buildStatContent({
+    required String label,
+    required String count,
+    required IconData icon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Icon with a light background circle
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: AppColors.bluePrimary.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: AppColors.bluePrimary, size: 24,
+          ),
+        ),
+        const SizedBox(height: 20),
+        // The Big Number
+        Text(
+          count,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 28,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 13,
+            color: AppColors.textSub,
+            height: 1.4,
+          ),
+        ),
+      ],
     );
   }
 }
