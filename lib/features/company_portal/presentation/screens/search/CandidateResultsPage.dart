@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/utils/log_profile_view.dart';
 import 'package:toastification/toastification.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 import '../../../domain/entities/candidate_entity.dart';
@@ -233,6 +234,7 @@ class _CandidateRichCard extends StatelessWidget {
               'candidate-details',
               pathParameters: {'id': candidate.id},
             );
+            logProfileView(candidate.id);
           },
           child: Padding(
             padding: const EdgeInsets.all(20.0),

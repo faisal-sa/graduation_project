@@ -8,6 +8,7 @@ import 'package:graduation_project/core/router/router.dart';
 import 'package:graduation_project/core/theme/theme.dart';
 import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:graduation_project/firebase_options.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final model = FirebaseAI.googleAI().generativeModel(
   model: 'gemini-2.5-flash-lite',
@@ -42,29 +43,3 @@ class MainApp extends StatelessWidget {
 
 
 
-//in candidate result page moving to page
-// Future<void> logProfileView(String candidateId) async {
-//   // Don't log if viewing your own profile
-//   final supabase = serviceLocator.get<SupabaseClient>();
-//   if (candidateId == supabase.auth.currentUser?.id) return;
-
-//   try {
-//     await supabase.rpc(
-//       'track_profile_view',
-//       params: {'target_user_id': candidateId},
-//     );
-//   } catch (e) {
-//     print("Error logging view: $e");
-//   }
-// }
-
- // Fire and forget 
- //in datasource candidate search
-        // supabase
-        //     .rpc(
-        //       'track_search_appearances',
-        //       params: {'candidate_ids': foundIds},
-        //     )
-        //     .catchError((e) {
-        //       print('Error tracking search stats: $e');
-        //     });
