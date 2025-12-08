@@ -115,12 +115,10 @@ class _IntroPageState extends State<IntroPage> {
               child: GestureDetector(
                 onTap: () {
                   if (_currentPage == introText.length - 1) {
-                    // TODO: Navigate to main app or dashboard
-                    // Navigate to main app or dashboard
-                    // Navigator.pushReplacementNamed(context, '/dashBoard');
+                    context.go('/login');
                   } else {
                     _controller.nextPage(
-                      duration: const Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 400),
                       curve: Curves.easeOut,
                     );
                   }
