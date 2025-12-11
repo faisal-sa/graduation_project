@@ -39,6 +39,18 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
     'Co-op',
   ];
 
+@override
+  void initState() {
+    super.initState();
+
+    // 1. Get the current state of the cubit
+    final state = context.read<JobPreferencesCubit>().state;
+
+    // 2. If data is already loaded, fill the controllers immediately
+    if (state is JobPreferencesLoaded) {
+      _initializeValues(state.preferences);
+    }
+  }
   @override
   void dispose() {
     _minSalaryController.dispose();
@@ -79,21 +91,8 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<JobPreferencesCubit, JobPreferencesState>(
-      listener: (context, state) {
-        if (state is JobPreferencesSaved) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Preferences saved successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else if (state is JobPreferencesLoaded) {
-          setState(() {
-            _initializeValues(state.preferences);
-          });
-        }
-      },
+    return BlocBuilder<JobPreferencesCubit, JobPreferencesState>(
+    
       builder: (context, state) {
         // Move loading check to button or overlay if you want to keep form visible
         if (state is JobPreferencesLoading) {
@@ -174,7 +173,7 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
 
                 SavingButton(
                   text: 'Save Preferences',
-                  //pass isLoading: state is JobPreferencesLoading here
+                  isLoading: state is JobPreferencesLoading,
                   onPressed: _onSave,
                   backgroundColor: const Color(0xFF4285F4),
                   padding: EdgeInsets.zero,

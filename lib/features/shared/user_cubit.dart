@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
+import 'package:graduation_project/features/individuals/features/job_preferences/domain/entities/job_preferences_entity.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
 import 'package:graduation_project/features/shared/user_entity.dart';
 import 'package:graduation_project/features/shared/user_state.dart';
@@ -135,6 +136,15 @@ class UserCubit extends Cubit<UserState> {
     // Emit new state (triggers onChange -> saves to Local Storage)
     emit(state.copyWith(user: updatedUser));
   }
+
+
+  void updateJobPreferences(JobPreferencesEntity newPreferences) {
+    final updatedUser = state.user.copyWith(jobPreferences: newPreferences);
+
+    // Emit new state (this updates local storage if you use HydratedBloc)
+    emit(state.copyWith(user: updatedUser));
+  }
+
 void updateCertificationsList(List<Certification> certifications) {
     // Create a copy of the current user with the updated certifications list
     final updatedUser = state.user.copyWith(certifications: certifications);
@@ -350,7 +360,6 @@ void updateCertificationsList(List<Certification> certifications) {
       credentialUrl: map['credential_url'],
     );
   }
-  /// Helper to map Supabase snake_case JSON to UserEntity
   UserEntity _mapSupabaseResponseToEntity(Map<String, dynamic> data) {
     // 1. Map Educations
     final educationList =
@@ -373,15 +382,38 @@ void updateCertificationsList(List<Certification> certifications) {
             .toList() ??
         [];
 
-    // 4. Map Skills (Handle text[] array from Postgres)
+    // 4. Map Arrays (Safely handle nulls)
     final List<String> skillsList = data['skills'] != null
         ? List<String>.from(data['skills'])
         : [];
 
-    // 5. Map Languages (Handle text[] array from Postgres)
     final List<String> languagesList = data['languages'] != null
         ? List<String>.from(data['languages'])
         : [];
+
+    // =========================================================================
+    // 5. MAP JOB PREFERENCES (The Fix)
+    // Extract fields from 'profiles' table and put them into JobPreferencesEntity
+    // =========================================================================
+    final jobPrefs = JobPreferencesEntity(
+      targetRoles: data['target_roles'] != null
+          ? List<String>.from(data['target_roles'])
+          : [],
+      employmentTypes: data['employment_types'] != null
+          ? List<String>.from(data['employment_types'])
+          : [],
+      workModes: data['work_modes'] != null
+          ? List<String>.from(data['work_modes'])
+          : [],
+      minSalary: data['min_salary'], // integer
+      maxSalary: data['max_salary'], // integer
+      salaryCurrency: data['salary_currency'] ?? 'USD',
+      canRelocate: data['can_relocate'] ?? false,
+      canStartImmediately: data['can_start_immediately'] ?? false,
+      noticePeriodDays: data['notice_period_days'], // integer
+      // If current_work_status is in your entity, map it too:
+      // currentWorkStatus: data['current_work_status'],
+    );
 
     return UserEntity(
       firstName: data['first_name'] ?? '',
@@ -396,12 +428,12 @@ void updateCertificationsList(List<Certification> certifications) {
       educations: educationList,
       workExperiences: workList,
       certifications: certList,
-      // Add these to your UserEntity constructor:
       skills: skillsList,
       languages: languagesList,
+      // Pass the mapped preferences here
+      jobPreferences: jobPrefs, 
     );
   }
-
   /// Helper for WorkExperience (Snake Case DB -> Camel Case Entity)
   WorkExperience _mapSupabaseWorkExperience(Map<String, dynamic> map) {
     return WorkExperience(

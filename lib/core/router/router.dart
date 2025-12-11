@@ -9,6 +9,7 @@ import 'package:graduation_project/features/company_portal/presentation/screens/
 import 'package:graduation_project/features/company_portal/presentation/screens/search/CandidateResultsPage.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/search/company_search_page.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/pages/ai_skill_check_page.dart';
+import 'package:graduation_project/features/individuals/features/job_preferences/presentation/cubit/job_preferences_cubit.dart';
 import 'package:graduation_project/features/individuals/features/skills_languages/presentation/cubit/skills_languages_cubit.dart';
 import 'package:graduation_project/features/individuals/match_strength/cubit/match_strength_cubit.dart';
 import 'package:graduation_project/features/individuals/match_strength/pages/match_strength_page.dart';
@@ -275,7 +276,32 @@ GoRoute(
                   path: 'preferences',
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
-                    return const JobPreferencesPage();
+                    // 1. Get existing UserCubit
+                    final userCubit = serviceLocator.get<UserCubit>();
+
+                    // 2. Extract current preferences from local state
+                    final initialPreferences =
+                        userCubit.state.user.jobPreferences;
+
+                    // 3. Provide both cubits
+                    return MultiBlocProvider(
+                      providers: [
+                        // Pass the UserCubit down (for the BlocListener to work)
+                        BlocProvider.value(value: userCubit),
+
+                        // Create JobPreferencesCubit and initialize with local data
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = serviceLocator
+                                .get<JobPreferencesCubit>();
+                            // Initialize immediately with data from UserEntity
+                            cubit.initialize(initialPreferences);
+                            return cubit;
+                          },
+                        ),
+                      ],
+                      child: const JobPreferencesPage(),
+                    );
                   },
                 ),
               ],

@@ -5,9 +5,9 @@ class JobPreferencesEntity extends Equatable {
   final int? minSalary;
   final int? maxSalary;
   final String? salaryCurrency;
-  final String? currentWorkStatus; // Could be an Enum in real app
-  final List<String> employmentTypes; // Full-time, Part-time...
-  final List<String> workModes; // Remote, Onsite...
+  final String? currentWorkStatus;
+  final List<String> employmentTypes;
+  final List<String> workModes;
   final bool canRelocate;
   final bool canStartImmediately;
   final int? noticePeriodDays;
@@ -16,7 +16,7 @@ class JobPreferencesEntity extends Equatable {
     this.targetRoles = const [],
     this.minSalary,
     this.maxSalary,
-    this.salaryCurrency,
+    this.salaryCurrency = 'SAR', // Set default
     this.currentWorkStatus,
     this.employmentTypes = const [],
     this.workModes = const [],
@@ -24,6 +24,8 @@ class JobPreferencesEntity extends Equatable {
     this.canStartImmediately = false,
     this.noticePeriodDays,
   });
+
+  // ... (keep copyWith if you have it) ...
 
   @override
   List<Object?> get props => [
@@ -38,6 +40,38 @@ class JobPreferencesEntity extends Equatable {
     canStartImmediately,
     noticePeriodDays,
   ];
+
+  // --- NEW: Serialization Logic ---
+
+  Map<String, dynamic> toMap() {
+    return {
+      'targetRoles': targetRoles,
+      'minSalary': minSalary,
+      'maxSalary': maxSalary,
+      'salaryCurrency': salaryCurrency,
+      'currentWorkStatus': currentWorkStatus,
+      'employmentTypes': employmentTypes,
+      'workModes': workModes,
+      'canRelocate': canRelocate,
+      'canStartImmediately': canStartImmediately,
+      'noticePeriodDays': noticePeriodDays,
+    };
+  }
+
+  factory JobPreferencesEntity.fromMap(Map<String, dynamic> map) {
+    return JobPreferencesEntity(
+      targetRoles: List<String>.from(map['targetRoles'] ?? []),
+      minSalary: map['minSalary'],
+      maxSalary: map['maxSalary'],
+      salaryCurrency: map['salaryCurrency'],
+      currentWorkStatus: map['currentWorkStatus'],
+      employmentTypes: List<String>.from(map['employmentTypes'] ?? []),
+      workModes: List<String>.from(map['workModes'] ?? []),
+      canRelocate: map['canRelocate'] ?? false,
+      canStartImmediately: map['canStartImmediately'] ?? false,
+      noticePeriodDays: map['noticePeriodDays'],
+    );
+  }
 }
 
 

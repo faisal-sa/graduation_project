@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
+import 'package:graduation_project/features/individuals/features/job_preferences/domain/entities/job_preferences_entity.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
 
 class UserEntity extends Equatable {
@@ -20,6 +21,8 @@ class UserEntity extends Equatable {
   final List<Certification> certifications;
   final List<String> skills;
   final List<String> languages;
+  final JobPreferencesEntity jobPreferences; 
+
 
 
   const UserEntity({
@@ -37,7 +40,7 @@ class UserEntity extends Equatable {
     this.certifications = const [],
     this.skills = const [],
     this.languages = const [],
-
+    this.jobPreferences = const JobPreferencesEntity(),
   });
 
   UserEntity copyWith({
@@ -55,6 +58,8 @@ class UserEntity extends Equatable {
     List<Certification>? certifications,
     List<String>? skills,
     List<String>? languages,
+    JobPreferencesEntity? jobPreferences,
+
     bool forceClearVideo = false,
   }) {
     return UserEntity(
@@ -71,7 +76,8 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
       educations: educations ?? this.educations,
       certifications: certifications ?? this.certifications,
       skills: skills ?? this.skills,
-      languages: languages ?? this.languages
+      languages: languages ?? this.languages,
+      jobPreferences: jobPreferences ?? this.jobPreferences,
     );
   }
 
@@ -91,7 +97,8 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
     educations,
     certifications,
     skills,
-    languages
+    languages,
+    jobPreferences
   ];
 
   //=========================================================== MAPPING LOGIC ===========================================================
@@ -112,6 +119,7 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
       'certifications': certifications.map((x) => x.toMap()).toList(),
       'skills': skills,
       'languages': languages,
+      'jobPreferences': jobPreferences.toMap(),
     };
   }
 
@@ -143,7 +151,12 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
         (map['certifications'] as List<dynamic>? ?? []).map<Certification>(
           (x) => Certification.fromMap(x),
         ),
-      ), // <--- ADD THIS
+      ),
+      jobPreferences: map['jobPreferences'] != null
+          ? JobPreferencesEntity.fromMap(
+              Map<String, dynamic>.from(map['jobPreferences']),
+            )
+          : const JobPreferencesEntity(), 
     );
   }
 
