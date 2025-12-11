@@ -65,6 +65,25 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
     );
   }
 
+ 
+  @override
+  List<Object?> get props => [
+    firstName,
+    lastName,
+    jobTitle,
+    phoneNumber,
+    email,
+    location,
+    summary,
+    videoUrl,
+    avatarUrl,
+    workExperiences,
+    educations,
+    certifications,
+  ];
+
+  //=========================================================== MAPPING LOGIC ===========================================================
+
   Map<String, dynamic> toMap() {
     return {
       'firstName': firstName,
@@ -118,19 +137,4 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
   factory UserEntity.fromJson(String source) =>
       UserEntity.fromMap(json.decode(source));
 
-  @override
-  List<Object?> get props => [
-    firstName,
-    lastName,
-    jobTitle,
-    phoneNumber,
-    email,
-    location,
-    summary,
-    videoUrl,
-    avatarUrl,
-    workExperiences,
-    educations,
-    certifications,
-  ];
 }

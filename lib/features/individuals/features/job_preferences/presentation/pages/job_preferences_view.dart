@@ -107,16 +107,7 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. REUSED: DynamicListSection
-                // Replaces _buildLabel, _roleController, _buildRoleInput, and the Chips Wrap
-                DynamicListSection(
-                  title: 'Target Role',
-                  hintText: 'e.g., Software Engineer',
-                  items: _targetRoles,
-                  onChanged: (values) => setState(() => _targetRoles = values),
-                ),
 
-                const Gap(24),
                 _buildLabel('Salary Expectations'),
                 // Note: Kept custom _buildSalaryRow because your CustomTextField
                 // doesn't support suffixText ('/mo') or Widget prefixes currently.
