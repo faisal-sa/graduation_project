@@ -214,8 +214,8 @@ return $default(_that.id,_that.jobTitle,_that.companyName,_that.employmentType,_
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _WorkExperience implements WorkExperience {
   const _WorkExperience({required this.id, this.jobTitle = '', this.companyName = '', this.employmentType = '', this.location = '', final  List<String> responsibilities = const [], required this.startDate, this.endDate, this.isCurrentlyWorking = false}): _responsibilities = responsibilities;
   factory _WorkExperience.fromJson(Map<String, dynamic> json) => _$WorkExperienceFromJson(json);

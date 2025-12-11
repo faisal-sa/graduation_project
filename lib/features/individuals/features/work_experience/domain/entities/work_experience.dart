@@ -7,6 +7,7 @@ part 'work_experience.g.dart';
 
 @freezed
 abstract class WorkExperience with _$WorkExperience {
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory WorkExperience({
     required String id,
     @Default('') String jobTitle,

@@ -7,17 +7,17 @@ part of 'user_entity.dart';
 // **************************************************************************
 
 _UserEntity _$UserEntityFromJson(Map<String, dynamic> json) => _UserEntity(
-  firstName: json['firstName'] as String? ?? '',
-  lastName: json['lastName'] as String? ?? '',
-  jobTitle: json['jobTitle'] as String? ?? '',
-  phoneNumber: json['phoneNumber'] as String? ?? '',
+  firstName: json['first_name'] as String? ?? '',
+  lastName: json['last_name'] as String? ?? '',
+  jobTitle: json['job_title'] as String? ?? '',
+  phoneNumber: json['phone_number'] as String? ?? '',
   email: json['email'] as String? ?? '',
   location: json['location'] as String? ?? '',
-  summary: json['summary'] as String? ?? '',
-  videoUrl: json['videoUrl'] as String?,
-  avatarUrl: json['avatarUrl'] as String?,
+  summary: json['about_me'] as String? ?? '',
+  videoUrl: json['intro_video_url'] as String?,
+  avatarUrl: json['avatar_url'] as String?,
   workExperiences:
-      (json['workExperiences'] as List<dynamic>?)
+      (json['work_experiences'] as List<dynamic>?)
           ?.map((e) => WorkExperience.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
@@ -37,28 +37,29 @@ _UserEntity _$UserEntityFromJson(Map<String, dynamic> json) => _UserEntity(
   languages:
       (json['languages'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
-  jobPreferences: json['jobPreferences'] == null
+  jobPreferences: _readRoot(json, 'job_preferences') == null
       ? const JobPreferencesEntity()
       : JobPreferencesEntity.fromJson(
-          json['jobPreferences'] as Map<String, dynamic>,
+          _readRoot(json, 'job_preferences') as Map<String, dynamic>,
         ),
 );
 
-Map<String, dynamic> _$UserEntityToJson(_UserEntity instance) =>
-    <String, dynamic>{
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
-      'jobTitle': instance.jobTitle,
-      'phoneNumber': instance.phoneNumber,
-      'email': instance.email,
-      'location': instance.location,
-      'summary': instance.summary,
-      'videoUrl': instance.videoUrl,
-      'avatarUrl': instance.avatarUrl,
-      'workExperiences': instance.workExperiences,
-      'educations': instance.educations,
-      'certifications': instance.certifications,
-      'skills': instance.skills,
-      'languages': instance.languages,
-      'jobPreferences': instance.jobPreferences,
-    };
+Map<String, dynamic> _$UserEntityToJson(
+  _UserEntity instance,
+) => <String, dynamic>{
+  'first_name': instance.firstName,
+  'last_name': instance.lastName,
+  'job_title': instance.jobTitle,
+  'phone_number': instance.phoneNumber,
+  'email': instance.email,
+  'location': instance.location,
+  'about_me': instance.summary,
+  'intro_video_url': instance.videoUrl,
+  'avatar_url': instance.avatarUrl,
+  'work_experiences': instance.workExperiences.map((e) => e.toJson()).toList(),
+  'educations': instance.educations.map((e) => e.toJson()).toList(),
+  'certifications': instance.certifications.map((e) => e.toJson()).toList(),
+  'skills': instance.skills,
+  'languages': instance.languages,
+  'job_preferences': instance.jobPreferences.toJson(),
+};

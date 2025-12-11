@@ -15,7 +15,13 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserEntity {
 
- String get firstName; String get lastName; String get jobTitle; String get phoneNumber; String get email; String get location; String get summary; String? get videoUrl; String? get avatarUrl; List<WorkExperience> get workExperiences; List<Education> get educations; List<Certification> get certifications; List<String> get skills; List<String> get languages; JobPreferencesEntity get jobPreferences;
+ String get firstName; String get lastName; String get jobTitle; String get phoneNumber; String get email; String get location;// Ensure all keys match DB columns or use @JsonKey
+@JsonKey(name: 'about_me') String get summary;@JsonKey(name: 'intro_video_url') String? get videoUrl;// Explicitly map if DB is different
+ String? get avatarUrl;// Children lists (handled automatically if DB returns nested arrays)
+ List<WorkExperience> get workExperiences; List<Education> get educations; List<Certification> get certifications; List<String> get skills; List<String> get languages;// THE MAGIC FIX:
+// 1. readValue: _readRoot passes the entire DB response to JobPreferencesEntity
+// 2. JobPreferencesEntity extracts 'min_salary', etc. from that root map
+@JsonKey(readValue: _readRoot) JobPreferencesEntity get jobPreferences;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +54,7 @@ abstract mixin class $UserEntityCopyWith<$Res>  {
   factory $UserEntityCopyWith(UserEntity value, $Res Function(UserEntity) _then) = _$UserEntityCopyWithImpl;
 @useResult
 $Res call({
- String firstName, String lastName, String jobTitle, String phoneNumber, String email, String location, String summary, String? videoUrl, String? avatarUrl, List<WorkExperience> workExperiences, List<Education> educations, List<Certification> certifications, List<String> skills, List<String> languages, JobPreferencesEntity jobPreferences
+ String firstName, String lastName, String jobTitle, String phoneNumber, String email, String location,@JsonKey(name: 'about_me') String summary,@JsonKey(name: 'intro_video_url') String? videoUrl, String? avatarUrl, List<WorkExperience> workExperiences, List<Education> educations, List<Certification> certifications, List<String> skills, List<String> languages,@JsonKey(readValue: _readRoot) JobPreferencesEntity jobPreferences
 });
 
 
@@ -176,7 +182,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String firstName,  String lastName,  String jobTitle,  String phoneNumber,  String email,  String location,  String summary,  String? videoUrl,  String? avatarUrl,  List<WorkExperience> workExperiences,  List<Education> educations,  List<Certification> certifications,  List<String> skills,  List<String> languages,  JobPreferencesEntity jobPreferences)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String firstName,  String lastName,  String jobTitle,  String phoneNumber,  String email,  String location, @JsonKey(name: 'about_me')  String summary, @JsonKey(name: 'intro_video_url')  String? videoUrl,  String? avatarUrl,  List<WorkExperience> workExperiences,  List<Education> educations,  List<Certification> certifications,  List<String> skills,  List<String> languages, @JsonKey(readValue: _readRoot)  JobPreferencesEntity jobPreferences)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
 return $default(_that.firstName,_that.lastName,_that.jobTitle,_that.phoneNumber,_that.email,_that.location,_that.summary,_that.videoUrl,_that.avatarUrl,_that.workExperiences,_that.educations,_that.certifications,_that.skills,_that.languages,_that.jobPreferences);case _:
@@ -197,7 +203,7 @@ return $default(_that.firstName,_that.lastName,_that.jobTitle,_that.phoneNumber,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String firstName,  String lastName,  String jobTitle,  String phoneNumber,  String email,  String location,  String summary,  String? videoUrl,  String? avatarUrl,  List<WorkExperience> workExperiences,  List<Education> educations,  List<Certification> certifications,  List<String> skills,  List<String> languages,  JobPreferencesEntity jobPreferences)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String firstName,  String lastName,  String jobTitle,  String phoneNumber,  String email,  String location, @JsonKey(name: 'about_me')  String summary, @JsonKey(name: 'intro_video_url')  String? videoUrl,  String? avatarUrl,  List<WorkExperience> workExperiences,  List<Education> educations,  List<Certification> certifications,  List<String> skills,  List<String> languages, @JsonKey(readValue: _readRoot)  JobPreferencesEntity jobPreferences)  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity():
 return $default(_that.firstName,_that.lastName,_that.jobTitle,_that.phoneNumber,_that.email,_that.location,_that.summary,_that.videoUrl,_that.avatarUrl,_that.workExperiences,_that.educations,_that.certifications,_that.skills,_that.languages,_that.jobPreferences);case _:
@@ -217,7 +223,7 @@ return $default(_that.firstName,_that.lastName,_that.jobTitle,_that.phoneNumber,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String firstName,  String lastName,  String jobTitle,  String phoneNumber,  String email,  String location,  String summary,  String? videoUrl,  String? avatarUrl,  List<WorkExperience> workExperiences,  List<Education> educations,  List<Certification> certifications,  List<String> skills,  List<String> languages,  JobPreferencesEntity jobPreferences)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String firstName,  String lastName,  String jobTitle,  String phoneNumber,  String email,  String location, @JsonKey(name: 'about_me')  String summary, @JsonKey(name: 'intro_video_url')  String? videoUrl,  String? avatarUrl,  List<WorkExperience> workExperiences,  List<Education> educations,  List<Certification> certifications,  List<String> skills,  List<String> languages, @JsonKey(readValue: _readRoot)  JobPreferencesEntity jobPreferences)?  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
 return $default(_that.firstName,_that.lastName,_that.jobTitle,_that.phoneNumber,_that.email,_that.location,_that.summary,_that.videoUrl,_that.avatarUrl,_that.workExperiences,_that.educations,_that.certifications,_that.skills,_that.languages,_that.jobPreferences);case _:
@@ -229,10 +235,10 @@ return $default(_that.firstName,_that.lastName,_that.jobTitle,_that.phoneNumber,
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class _UserEntity implements UserEntity {
-  const _UserEntity({this.firstName = '', this.lastName = '', this.jobTitle = '', this.phoneNumber = '', this.email = '', this.location = '', this.summary = '', this.videoUrl, this.avatarUrl, final  List<WorkExperience> workExperiences = const [], final  List<Education> educations = const [], final  List<Certification> certifications = const [], final  List<String> skills = const [], final  List<String> languages = const [], this.jobPreferences = const JobPreferencesEntity()}): _workExperiences = workExperiences,_educations = educations,_certifications = certifications,_skills = skills,_languages = languages;
+  const _UserEntity({this.firstName = '', this.lastName = '', this.jobTitle = '', this.phoneNumber = '', this.email = '', this.location = '', @JsonKey(name: 'about_me') this.summary = '', @JsonKey(name: 'intro_video_url') this.videoUrl, this.avatarUrl, final  List<WorkExperience> workExperiences = const [], final  List<Education> educations = const [], final  List<Certification> certifications = const [], final  List<String> skills = const [], final  List<String> languages = const [], @JsonKey(readValue: _readRoot) this.jobPreferences = const JobPreferencesEntity()}): _workExperiences = workExperiences,_educations = educations,_certifications = certifications,_skills = skills,_languages = languages;
   factory _UserEntity.fromJson(Map<String, dynamic> json) => _$UserEntityFromJson(json);
 
 @override@JsonKey() final  String firstName;
@@ -241,10 +247,14 @@ class _UserEntity implements UserEntity {
 @override@JsonKey() final  String phoneNumber;
 @override@JsonKey() final  String email;
 @override@JsonKey() final  String location;
-@override@JsonKey() final  String summary;
-@override final  String? videoUrl;
+// Ensure all keys match DB columns or use @JsonKey
+@override@JsonKey(name: 'about_me') final  String summary;
+@override@JsonKey(name: 'intro_video_url') final  String? videoUrl;
+// Explicitly map if DB is different
 @override final  String? avatarUrl;
+// Children lists (handled automatically if DB returns nested arrays)
  final  List<WorkExperience> _workExperiences;
+// Children lists (handled automatically if DB returns nested arrays)
 @override@JsonKey() List<WorkExperience> get workExperiences {
   if (_workExperiences is EqualUnmodifiableListView) return _workExperiences;
   // ignore: implicit_dynamic_type
@@ -279,7 +289,10 @@ class _UserEntity implements UserEntity {
   return EqualUnmodifiableListView(_languages);
 }
 
-@override@JsonKey() final  JobPreferencesEntity jobPreferences;
+// THE MAGIC FIX:
+// 1. readValue: _readRoot passes the entire DB response to JobPreferencesEntity
+// 2. JobPreferencesEntity extracts 'min_salary', etc. from that root map
+@override@JsonKey(readValue: _readRoot) final  JobPreferencesEntity jobPreferences;
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -314,7 +327,7 @@ abstract mixin class _$UserEntityCopyWith<$Res> implements $UserEntityCopyWith<$
   factory _$UserEntityCopyWith(_UserEntity value, $Res Function(_UserEntity) _then) = __$UserEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String firstName, String lastName, String jobTitle, String phoneNumber, String email, String location, String summary, String? videoUrl, String? avatarUrl, List<WorkExperience> workExperiences, List<Education> educations, List<Certification> certifications, List<String> skills, List<String> languages, JobPreferencesEntity jobPreferences
+ String firstName, String lastName, String jobTitle, String phoneNumber, String email, String location,@JsonKey(name: 'about_me') String summary,@JsonKey(name: 'intro_video_url') String? videoUrl, String? avatarUrl, List<WorkExperience> workExperiences, List<Education> educations, List<Certification> certifications, List<String> skills, List<String> languages,@JsonKey(readValue: _readRoot) JobPreferencesEntity jobPreferences
 });
 
 

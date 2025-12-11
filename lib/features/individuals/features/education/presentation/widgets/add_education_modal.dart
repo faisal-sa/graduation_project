@@ -167,10 +167,10 @@ class _AddEducationModalState extends State<AddEducationModal> {
       activities: _activities,
 
       graduationCertificateBytes: _selectedGradCertificate?.bytes,
-      graduationCertificateName: _selectedGradCertificate?.name,
+      //graduationCertificateName: _selectedGradCertificate?.name,
 
       academicRecordBytes: _selectedAcademicRecord?.bytes,
-      academicRecordName: _selectedAcademicRecord?.name,
+      //academicRecordName: _selectedAcademicRecord?.name,
 
       graduationCertificateUrl: gradUrlToSave,
       academicRecordUrl: academicUrlToSave,

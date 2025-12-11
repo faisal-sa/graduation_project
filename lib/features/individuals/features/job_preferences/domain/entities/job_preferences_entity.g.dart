@@ -10,38 +10,40 @@ _JobPreferencesEntity _$JobPreferencesEntityFromJson(
   Map<String, dynamic> json,
 ) => _JobPreferencesEntity(
   targetRoles:
-      (json['targetRoles'] as List<dynamic>?)
+      (json['target_roles'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList() ??
       const [],
-  minSalary: (json['minSalary'] as num?)?.toInt(),
-  maxSalary: (json['maxSalary'] as num?)?.toInt(),
-  salaryCurrency: json['salaryCurrency'] as String? ?? 'SAR',
-  currentWorkStatus: json['currentWorkStatus'] as String?,
+  minSalary: (json['min_salary'] as num?)?.toInt(),
+  maxSalary: (json['max_salary'] as num?)?.toInt(),
+  salaryCurrency: json['salary_currency'] as String? ?? 'SAR',
+  currentWorkStatus: json['current_work_status'] as String?,
   employmentTypes:
-      (json['employmentTypes'] as List<dynamic>?)
+      (json['employment_types'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList() ??
       const [],
   workModes:
-      (json['workModes'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      (json['work_modes'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
       const [],
-  canRelocate: json['canRelocate'] as bool? ?? false,
-  canStartImmediately: json['canStartImmediately'] as bool? ?? false,
-  noticePeriodDays: (json['noticePeriodDays'] as num?)?.toInt(),
+  canRelocate: json['can_relocate'] as bool? ?? false,
+  canStartImmediately: json['can_start_immediately'] as bool? ?? false,
+  noticePeriodDays: (json['notice_period_days'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$JobPreferencesEntityToJson(
   _JobPreferencesEntity instance,
 ) => <String, dynamic>{
-  'targetRoles': instance.targetRoles,
-  'minSalary': instance.minSalary,
-  'maxSalary': instance.maxSalary,
-  'salaryCurrency': instance.salaryCurrency,
-  'currentWorkStatus': instance.currentWorkStatus,
-  'employmentTypes': instance.employmentTypes,
-  'workModes': instance.workModes,
-  'canRelocate': instance.canRelocate,
-  'canStartImmediately': instance.canStartImmediately,
-  'noticePeriodDays': instance.noticePeriodDays,
+  'target_roles': instance.targetRoles,
+  'min_salary': instance.minSalary,
+  'max_salary': instance.maxSalary,
+  'salary_currency': instance.salaryCurrency,
+  'current_work_status': instance.currentWorkStatus,
+  'employment_types': instance.employmentTypes,
+  'work_modes': instance.workModes,
+  'can_relocate': instance.canRelocate,
+  'can_start_immediately': instance.canStartImmediately,
+  'notice_period_days': instance.noticePeriodDays,
 };

@@ -15,8 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Certification {
 
- String get id; String get name; String get issuingInstitution; DateTime get issueDate; DateTime? get expirationDate;// Ignored in JSON, just like your original code
-@JsonKey(includeFromJson: false, includeToJson: false) File? get credentialFile; String? get credentialUrl;
+ String get id; String get name; String get issuingInstitution; DateTime get issueDate; DateTime? get expirationDate; String? get credentialUrl;// --- ADD THIS FIELD ---
+// We ignore this for JSON because a File object cannot be serialized directly.
+@JsonKey(includeFromJson: false, includeToJson: false) File? get credentialFile;
 /// Create a copy of Certification
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +30,16 @@ $CertificationCopyWith<Certification> get copyWith => _$CertificationCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Certification&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.issuingInstitution, issuingInstitution) || other.issuingInstitution == issuingInstitution)&&(identical(other.issueDate, issueDate) || other.issueDate == issueDate)&&(identical(other.expirationDate, expirationDate) || other.expirationDate == expirationDate)&&(identical(other.credentialFile, credentialFile) || other.credentialFile == credentialFile)&&(identical(other.credentialUrl, credentialUrl) || other.credentialUrl == credentialUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Certification&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.issuingInstitution, issuingInstitution) || other.issuingInstitution == issuingInstitution)&&(identical(other.issueDate, issueDate) || other.issueDate == issueDate)&&(identical(other.expirationDate, expirationDate) || other.expirationDate == expirationDate)&&(identical(other.credentialUrl, credentialUrl) || other.credentialUrl == credentialUrl)&&(identical(other.credentialFile, credentialFile) || other.credentialFile == credentialFile));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,issuingInstitution,issueDate,expirationDate,credentialFile,credentialUrl);
+int get hashCode => Object.hash(runtimeType,id,name,issuingInstitution,issueDate,expirationDate,credentialUrl,credentialFile);
 
 @override
 String toString() {
-  return 'Certification(id: $id, name: $name, issuingInstitution: $issuingInstitution, issueDate: $issueDate, expirationDate: $expirationDate, credentialFile: $credentialFile, credentialUrl: $credentialUrl)';
+  return 'Certification(id: $id, name: $name, issuingInstitution: $issuingInstitution, issueDate: $issueDate, expirationDate: $expirationDate, credentialUrl: $credentialUrl, credentialFile: $credentialFile)';
 }
 
 
@@ -49,7 +50,7 @@ abstract mixin class $CertificationCopyWith<$Res>  {
   factory $CertificationCopyWith(Certification value, $Res Function(Certification) _then) = _$CertificationCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String issuingInstitution, DateTime issueDate, DateTime? expirationDate,@JsonKey(includeFromJson: false, includeToJson: false) File? credentialFile, String? credentialUrl
+ String id, String name, String issuingInstitution, DateTime issueDate, DateTime? expirationDate, String? credentialUrl,@JsonKey(includeFromJson: false, includeToJson: false) File? credentialFile
 });
 
 
@@ -66,16 +67,16 @@ class _$CertificationCopyWithImpl<$Res>
 
 /// Create a copy of Certification
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? issuingInstitution = null,Object? issueDate = null,Object? expirationDate = freezed,Object? credentialFile = freezed,Object? credentialUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? issuingInstitution = null,Object? issueDate = null,Object? expirationDate = freezed,Object? credentialUrl = freezed,Object? credentialFile = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,issuingInstitution: null == issuingInstitution ? _self.issuingInstitution : issuingInstitution // ignore: cast_nullable_to_non_nullable
 as String,issueDate: null == issueDate ? _self.issueDate : issueDate // ignore: cast_nullable_to_non_nullable
 as DateTime,expirationDate: freezed == expirationDate ? _self.expirationDate : expirationDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,credentialFile: freezed == credentialFile ? _self.credentialFile : credentialFile // ignore: cast_nullable_to_non_nullable
-as File?,credentialUrl: freezed == credentialUrl ? _self.credentialUrl : credentialUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as DateTime?,credentialUrl: freezed == credentialUrl ? _self.credentialUrl : credentialUrl // ignore: cast_nullable_to_non_nullable
+as String?,credentialFile: freezed == credentialFile ? _self.credentialFile : credentialFile // ignore: cast_nullable_to_non_nullable
+as File?,
   ));
 }
 
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String issuingInstitution,  DateTime issueDate,  DateTime? expirationDate, @JsonKey(includeFromJson: false, includeToJson: false)  File? credentialFile,  String? credentialUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String issuingInstitution,  DateTime issueDate,  DateTime? expirationDate,  String? credentialUrl, @JsonKey(includeFromJson: false, includeToJson: false)  File? credentialFile)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Certification() when $default != null:
-return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_that.expirationDate,_that.credentialFile,_that.credentialUrl);case _:
+return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_that.expirationDate,_that.credentialUrl,_that.credentialFile);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String issuingInstitution,  DateTime issueDate,  DateTime? expirationDate, @JsonKey(includeFromJson: false, includeToJson: false)  File? credentialFile,  String? credentialUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String issuingInstitution,  DateTime issueDate,  DateTime? expirationDate,  String? credentialUrl, @JsonKey(includeFromJson: false, includeToJson: false)  File? credentialFile)  $default,) {final _that = this;
 switch (_that) {
 case _Certification():
-return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_that.expirationDate,_that.credentialFile,_that.credentialUrl);case _:
+return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_that.expirationDate,_that.credentialUrl,_that.credentialFile);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String issuingInstitution,  DateTime issueDate,  DateTime? expirationDate, @JsonKey(includeFromJson: false, includeToJson: false)  File? credentialFile,  String? credentialUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String issuingInstitution,  DateTime issueDate,  DateTime? expirationDate,  String? credentialUrl, @JsonKey(includeFromJson: false, includeToJson: false)  File? credentialFile)?  $default,) {final _that = this;
 switch (_that) {
 case _Certification() when $default != null:
-return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_that.expirationDate,_that.credentialFile,_that.credentialUrl);case _:
+return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_that.expirationDate,_that.credentialUrl,_that.credentialFile);case _:
   return null;
 
 }
@@ -213,10 +214,10 @@ return $default(_that.id,_that.name,_that.issuingInstitution,_that.issueDate,_th
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _Certification implements Certification {
-  const _Certification({required this.id, this.name = '', this.issuingInstitution = '', required this.issueDate, this.expirationDate, @JsonKey(includeFromJson: false, includeToJson: false) this.credentialFile, this.credentialUrl});
+  const _Certification({required this.id, this.name = '', this.issuingInstitution = '', required this.issueDate, this.expirationDate, this.credentialUrl, @JsonKey(includeFromJson: false, includeToJson: false) this.credentialFile});
   factory _Certification.fromJson(Map<String, dynamic> json) => _$CertificationFromJson(json);
 
 @override final  String id;
@@ -224,9 +225,10 @@ class _Certification implements Certification {
 @override@JsonKey() final  String issuingInstitution;
 @override final  DateTime issueDate;
 @override final  DateTime? expirationDate;
-// Ignored in JSON, just like your original code
-@override@JsonKey(includeFromJson: false, includeToJson: false) final  File? credentialFile;
 @override final  String? credentialUrl;
+// --- ADD THIS FIELD ---
+// We ignore this for JSON because a File object cannot be serialized directly.
+@override@JsonKey(includeFromJson: false, includeToJson: false) final  File? credentialFile;
 
 /// Create a copy of Certification
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Certification&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.issuingInstitution, issuingInstitution) || other.issuingInstitution == issuingInstitution)&&(identical(other.issueDate, issueDate) || other.issueDate == issueDate)&&(identical(other.expirationDate, expirationDate) || other.expirationDate == expirationDate)&&(identical(other.credentialFile, credentialFile) || other.credentialFile == credentialFile)&&(identical(other.credentialUrl, credentialUrl) || other.credentialUrl == credentialUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Certification&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.issuingInstitution, issuingInstitution) || other.issuingInstitution == issuingInstitution)&&(identical(other.issueDate, issueDate) || other.issueDate == issueDate)&&(identical(other.expirationDate, expirationDate) || other.expirationDate == expirationDate)&&(identical(other.credentialUrl, credentialUrl) || other.credentialUrl == credentialUrl)&&(identical(other.credentialFile, credentialFile) || other.credentialFile == credentialFile));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,issuingInstitution,issueDate,expirationDate,credentialFile,credentialUrl);
+int get hashCode => Object.hash(runtimeType,id,name,issuingInstitution,issueDate,expirationDate,credentialUrl,credentialFile);
 
 @override
 String toString() {
-  return 'Certification(id: $id, name: $name, issuingInstitution: $issuingInstitution, issueDate: $issueDate, expirationDate: $expirationDate, credentialFile: $credentialFile, credentialUrl: $credentialUrl)';
+  return 'Certification(id: $id, name: $name, issuingInstitution: $issuingInstitution, issueDate: $issueDate, expirationDate: $expirationDate, credentialUrl: $credentialUrl, credentialFile: $credentialFile)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$CertificationCopyWith<$Res> implements $CertificationCopy
   factory _$CertificationCopyWith(_Certification value, $Res Function(_Certification) _then) = __$CertificationCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String issuingInstitution, DateTime issueDate, DateTime? expirationDate,@JsonKey(includeFromJson: false, includeToJson: false) File? credentialFile, String? credentialUrl
+ String id, String name, String issuingInstitution, DateTime issueDate, DateTime? expirationDate, String? credentialUrl,@JsonKey(includeFromJson: false, includeToJson: false) File? credentialFile
 });
 
 
@@ -278,16 +280,16 @@ class __$CertificationCopyWithImpl<$Res>
 
 /// Create a copy of Certification
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? issuingInstitution = null,Object? issueDate = null,Object? expirationDate = freezed,Object? credentialFile = freezed,Object? credentialUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? issuingInstitution = null,Object? issueDate = null,Object? expirationDate = freezed,Object? credentialUrl = freezed,Object? credentialFile = freezed,}) {
   return _then(_Certification(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,issuingInstitution: null == issuingInstitution ? _self.issuingInstitution : issuingInstitution // ignore: cast_nullable_to_non_nullable
 as String,issueDate: null == issueDate ? _self.issueDate : issueDate // ignore: cast_nullable_to_non_nullable
 as DateTime,expirationDate: freezed == expirationDate ? _self.expirationDate : expirationDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,credentialFile: freezed == credentialFile ? _self.credentialFile : credentialFile // ignore: cast_nullable_to_non_nullable
-as File?,credentialUrl: freezed == credentialUrl ? _self.credentialUrl : credentialUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as DateTime?,credentialUrl: freezed == credentialUrl ? _self.credentialUrl : credentialUrl // ignore: cast_nullable_to_non_nullable
+as String?,credentialFile: freezed == credentialFile ? _self.credentialFile : credentialFile // ignore: cast_nullable_to_non_nullable
+as File?,
   ));
 }
 

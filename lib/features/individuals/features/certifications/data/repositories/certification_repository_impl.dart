@@ -33,13 +33,13 @@ Future<Certification> addCertification(Certification certification) async {
 
       String? uploadedUrl;
 
-      // 1. Upload File if exists
-      if (certification.credentialFile != null) {
-        uploadedUrl = await _remoteDataSource.uploadCredentialFile(
-          certification.credentialFile!,
-          userId,
-        );
-      }
+      // // 1. Upload File if exists
+      // if (certification.credentialFile != null) {
+      //   uploadedUrl = await _remoteDataSource.uploadCredentialFile(
+      //     certification.credentialFile!,
+      //     userId,
+      //   );
+      // }
 
       // 2. Create Model
       // We pass the uploadedUrl here so it gets saved to the DB
@@ -69,12 +69,12 @@ Future<Certification> addCertification(Certification certification) async {
       String? uploadedUrl = certification.credentialUrl;
 
       // 1. Check if a NEW file was selected (overwriting the old URL)
-      if (certification.credentialFile != null) {
-        uploadedUrl = await _remoteDataSource.uploadCredentialFile(
-          certification.credentialFile!,
-          userId,
-        );
-      }
+      // if (certification.credentialFile != null) {
+      //   uploadedUrl = await _remoteDataSource.uploadCredentialFile(
+      //     certification.credentialFile!,
+      //     userId,
+      //   );
+      // }
 
       // 2. Create Model
       final model = CertificationModel.fromEntity(

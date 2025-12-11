@@ -290,35 +290,30 @@ void updateBasicInfo({
   }
 
   Future<void> _handleFetchUserProfile() async {
-    print("fetching now");
     try {
       final userId = _supabase.auth.currentUser?.id;
-      if (userId == null) {
-        print("UserCubit: No logged-in user found.");
-        return;
-      }
-
+      if (userId == null) return;
 
       final response = await _supabase
           .from('profiles')
           .select('''
-        *,
-        educations (*),
-        work_experiences (*),
-        certifications (*)    
-      ''')
+          *,
+          educations (*),
+          work_experiences (*),
+          certifications (*)    
+        ''')
           .eq('id', userId)
           .single();
 
-      final fetchedUser = _mapSupabaseResponseToEntity(response);
-final userMap = fetchedUser.toJson();
-      final prettyString = const JsonEncoder.withIndent('  ').convert(userMap);
-      print(prettyString);
-      
+      // 
+      // DIRECT MAPPING - No manual intervention needed
+      final fetchedUser = UserEntity.fromJson(response);
+
       emit(state.copyWith(user: fetchedUser));
-      _saveUserToStorage(fetchedUser);
+      _saveUserToStorage(fetchedUser); 
+      
     } catch (e) {
-      print("Error fetching user profile from Supabase: $e");
+      print("Error fetching user profile: $e");
     }
   }
 
@@ -337,140 +332,6 @@ final userMap = fetchedUser.toJson();
 
 
 
-
-
-
-
-
-
-  //===========================================================MAPPING LOGIC===========================================================
-
-  Certification _mapSupabaseCertification(Map<String, dynamic> map) {
-    return Certification(
-      id: map['id']?.toString() ?? '',
-      name: map['name'] ?? '',
-      // Map DB 'issuing_institution' to Dart 'issuingInstitution'
-      issuingInstitution: map['issuing_institution'] ?? '',
-
-      // Handle required Date (Fallback to now if DB is null, though DB allows null)
-      issueDate: map['issue_date'] != null
-          ? DateTime.parse(map['issue_date'])
-          : DateTime.now(),
-
-      // Map DB 'expiration_date'
-      expirationDate: map['expiration_date'] != null
-          ? DateTime.parse(map['expiration_date'])
-          : null,
-
-      // Map DB 'credential_url'
-      credentialUrl: map['credential_url'],
-    );
-  }
-  UserEntity _mapSupabaseResponseToEntity(Map<String, dynamic> data) {
-    // 1. Map Educations
-    final educationList =
-        (data['educations'] as List<dynamic>?)
-            ?.map((e) => _mapSupabaseEducation(e))
-            .toList() ??
-        [];
-
-    // 2. Map Work Experiences
-    final workList =
-        (data['work_experiences'] as List<dynamic>?)
-            ?.map((e) => _mapSupabaseWorkExperience(e))
-            .toList() ??
-        [];
-
-    // 3. Map Certifications
-    final certList =
-        (data['certifications'] as List<dynamic>?)
-            ?.map((e) => _mapSupabaseCertification(e))
-            .toList() ??
-        [];
-
-    // 4. Map Arrays (Safely handle nulls)
-    final List<String> skillsList = data['skills'] != null
-        ? List<String>.from(data['skills'])
-        : [];
-
-    final List<String> languagesList = data['languages'] != null
-        ? List<String>.from(data['languages'])
-        : [];
-
-    // =========================================================================
-    // 5. MAP JOB PREFERENCES (The Fix)
-    // Extract fields from 'profiles' table and put them into JobPreferencesEntity
-    // =========================================================================
-    final jobPrefs = JobPreferencesEntity(
-      targetRoles: data['target_roles'] != null
-          ? List<String>.from(data['target_roles'])
-          : [],
-      employmentTypes: data['employment_types'] != null
-          ? List<String>.from(data['employment_types'])
-          : [],
-      workModes: data['work_modes'] != null
-          ? List<String>.from(data['work_modes'])
-          : [],
-      minSalary: data['min_salary'], // integer
-      maxSalary: data['max_salary'], // integer
-      salaryCurrency: data['salary_currency'] ?? 'USD',
-      canRelocate: data['can_relocate'] ?? false,
-      canStartImmediately: data['can_start_immediately'] ?? false,
-      noticePeriodDays: data['notice_period_days'], // integer
-      // If current_work_status is in your entity, map it too:
-      // currentWorkStatus: data['current_work_status'],
-    );
-
-    return UserEntity(
-      firstName: data['first_name'] ?? '',
-      lastName: data['last_name'] ?? '',
-      jobTitle: data['job_title'] ?? '',
-      phoneNumber: data['phone_number'] ?? '',
-      email: data['email'] ?? '',
-      location: data['location'] ?? '',
-      summary: data['about_me'] ?? '',
-      avatarUrl: data['avatar_url'],
-      videoUrl: data['intro_video_url'],
-      educations: educationList,
-      workExperiences: workList,
-      certifications: certList,
-      skills: skillsList,
-      languages: languagesList,
-      // Pass the mapped preferences here
-      jobPreferences: jobPrefs, 
-    );
-  }
-  /// Helper for WorkExperience (Snake Case DB -> Camel Case Entity)
-  WorkExperience _mapSupabaseWorkExperience(Map<String, dynamic> map) {
-    return WorkExperience(
-      id: map['id']?.toString() ?? '',
-      jobTitle: map['job_title'] ?? '',
-      companyName: map['company_name'] ?? '',
-      employmentType: map['employment_type'] ?? '',
-      location: map['location'] ?? '',
-      responsibilities: List<String>.from(map['responsibilities'] ?? []),
-      startDate: DateTime.parse(map['start_date']),
-      endDate: map['end_date'] != null ? DateTime.parse(map['end_date']) : null,
-      isCurrentlyWorking: map['is_currently_working'] ?? false,
-    );
-  }
-
-  /// Helper for Education (Snake Case DB -> Camel Case Entity)
-  /// Note: If you use EducationModel.fromJson, ensure it matches DB keys exactly.
-  Education _mapSupabaseEducation(Map<String, dynamic> map) {
-    return Education(
-      id: map['id']?.toString() ?? '',
-      degreeType: map['degree_type'] ?? '',
-      institutionName: map['institution_name'] ?? '',
-      fieldOfStudy: map['field_of_study'] ?? '',
-      startDate: DateTime.parse(map['start_date']),
-      endDate: DateTime.parse(map['end_date']),
-      gpa: map['gpa']?.toString(), // Handle potential numeric types from DB
-      activities: List<String>.from(map['activities'] ?? []),
-      graduationCertificateUrl: map['graduation_certificate_url'],
-      academicRecordUrl: map['academic_record_url'],
-    );
-  }
 
 
 

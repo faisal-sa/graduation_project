@@ -53,7 +53,11 @@ abstract class CertificationModel with _$CertificationModel {
       issueDate: issueDate,
       expirationDate: expirationDate,
       credentialUrl: credentialUrl,
+      
+      // --- UNCOMMENT THIS ---
       credentialFile: credentialFile,
+      // ----------------------
     );
   }
 }
+

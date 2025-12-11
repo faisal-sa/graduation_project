@@ -215,8 +215,8 @@ return $default(_that.targetRoles,_that.minSalary,_that.maxSalary,_that.salaryCu
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _JobPreferencesEntity implements JobPreferencesEntity {
   const _JobPreferencesEntity({final  List<String> targetRoles = const [], this.minSalary, this.maxSalary, this.salaryCurrency = 'SAR', this.currentWorkStatus, final  List<String> employmentTypes = const [], final  List<String> workModes = const [], this.canRelocate = false, this.canStartImmediately = false, this.noticePeriodDays}): _targetRoles = targetRoles,_employmentTypes = employmentTypes,_workModes = workModes;
   factory _JobPreferencesEntity.fromJson(Map<String, dynamic> json) => _$JobPreferencesEntityFromJson(json);
