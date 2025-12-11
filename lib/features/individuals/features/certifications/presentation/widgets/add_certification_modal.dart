@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
@@ -7,7 +8,6 @@ import 'package:graduation_project/features/individuals/features/shared/widgets/
 import 'package:graduation_project/features/individuals/features/shared/widgets/form_label.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/shared_things.dart';
 import 'package:uuid/uuid.dart';
-
 class AddCertificationModal extends StatefulWidget {
   final Certification? certification;
 
@@ -37,7 +37,9 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
   DateTime? _issueDate;
   DateTime? _expirationDate;
 
-  bool _hasCredentialFile = false;
+  // CHANGED: Use PlatformFile for new picks and a bool to track removal of existing
+  PlatformFile? _pickedFile;
+  bool _isExistingFileRemoved = false;
 
   @override
   void initState() {
@@ -51,7 +53,8 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
     if (cert != null) {
       _issueDate = cert.issueDate;
       _expirationDate = cert.expirationDate;
-      _hasCredentialFile = cert.credentialFile != null;
+      // We don't pre-fill _pickedFile because that's only for NEW user actions.
+      // We rely on widget.certification.credentialFile for the existing state.
     }
   }
 
@@ -60,6 +63,39 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
     _nameController.dispose();
     _issuingInstitutionController.dispose();
     super.dispose();
+  }
+
+  // ADDED: Real file picking logic
+  Future<void> _pickFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'],
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          _pickedFile = result.files.first;
+          _isExistingFileRemoved =
+              false; // Reset removal if they pick a new one
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking file: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Failed to pick file: $e")));
+      }
+    }
+  }
+
+  // ADDED: Logic to clear the file
+  void _clearFile() {
+    setState(() {
+      _pickedFile = null;
+      _isExistingFileRemoved = true;
+    });
   }
 
   void _submit() {
@@ -75,15 +111,27 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
       return;
     }
 
+    // CHANGED: Determine which file to save
+    File? fileToSave;
+
+    // 1. If a new file was picked, use it.
+    if (_pickedFile != null && _pickedFile!.path != null) {
+      fileToSave = File(_pickedFile!.path!);
+    }
+    // 2. If no new file, but we haven't removed the old one, keep the old one.
+    else if (!_isExistingFileRemoved &&
+        widget.certification?.credentialFile != null) {
+      fileToSave = widget.certification!.credentialFile;
+    }
+    // 3. Otherwise (removed or never existed), it stays null.
+
     final newCertification = Certification(
       id: widget.certification?.id ?? const Uuid().v4(),
       name: _nameController.text,
       issuingInstitution: _issuingInstitutionController.text,
       issueDate: _issueDate!,
       expirationDate: _expirationDate,
-      credentialFile: _hasCredentialFile
-          ? File("path/to/credential.pdf")
-          : null,
+      credentialFile: fileToSave,
     );
 
     Navigator.pop(context, newCertification);
@@ -92,6 +140,16 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.certification != null;
+
+    // Helper to determine what to show in the button
+    final bool hasExistingFile =
+        !_isExistingFileRemoved && widget.certification?.credentialFile != null;
+
+    // Pass a dummy string to 'existingUrl' if we have a local File,
+    // just to trigger the "File Attached" UI state in your button.
+    final String? existingFileIndicator = hasExistingFile
+        ? "Existing File"
+        : null;
 
     return BaseFormSheet(
       title: isEditing ? "Edit Certification" : "Add Certification",
@@ -129,14 +187,12 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
           const FormLabel("Credential File"),
           FormFileUploadButton(
             label: "Upload Certificate",
-            isSelected: _hasCredentialFile,
-            onTap: () {
-              setState(() {
-                _hasCredentialFile = !_hasCredentialFile;
-              });
-            },
-            onClear: _hasCredentialFile
-                ? () => setState(() => _hasCredentialFile = false)
+            file: _pickedFile, // Pass the new platform file
+            existingUrl:
+                existingFileIndicator, // Pass indicator for existing file
+            onTap: _pickFile, // Trigger the picker
+            onClear: (_pickedFile != null || hasExistingFile)
+                ? _clearFile 
                 : null,
           ),
         ],

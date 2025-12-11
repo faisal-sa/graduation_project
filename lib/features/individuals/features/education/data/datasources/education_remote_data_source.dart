@@ -76,29 +76,59 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
 
   @override
   Future<void> updateEducation(Education education) async {
+    // 1. Fetch the CURRENT state from the database to check for existing files
+    final currentRecord = await _supabase
+        .from('educations')
+        .select()
+        .eq('id', education.id)
+        .single();
+
+    final String? oldGradUrl = currentRecord['graduation_certificate_url'];
+    final String? oldAcademicUrl = currentRecord['academic_record_url'];
+
+    // 2. Prepare new URLs
     String? gradCertUrl = education.graduationCertificateUrl;
     String? academicRecUrl = education.academicRecordUrl;
 
+    // --- HANDLE GRADUATION CERTIFICATE ---
+
+    // Case A: User selected a NEW file (bytes are present).
+    // We must upload the new one. If there was an old one, delete it.
     if (education.graduationCertificateBytes != null) {
-      if (gradCertUrl != null) await _deleteFile(gradCertUrl);
+      // If there was an old file, delete it from storage
+      if (oldGradUrl != null) await _deleteFile(oldGradUrl);
 
       gradCertUrl = await _uploadFileBytes(
         education.graduationCertificateBytes!,
         education.graduationCertificateName ?? 'grad_cert.pdf',
         'grad_cert_${DateTime.now().millisecondsSinceEpoch}',
       );
+    } 
+    // Case B: User clicked "X" (Bytes are null AND Url is null).
+    // If there was an old file, we must delete it from storage.
+    else if (education.graduationCertificateUrl == null && oldGradUrl != null) {
+      await _deleteFile(oldGradUrl);
+      gradCertUrl = null; // Ensure DB clears this field
     }
+    // Case C: User did nothing. education.graduationCertificateUrl is preserved from the modal state.
+    // We do nothing to storage.
 
+    // --- HANDLE ACADEMIC RECORD (Same Logic) ---
+    
     if (education.academicRecordBytes != null) {
-      if (academicRecUrl != null) await _deleteFile(academicRecUrl);
+      if (oldAcademicUrl != null) await _deleteFile(oldAcademicUrl);
 
       academicRecUrl = await _uploadFileBytes(
         education.academicRecordBytes!,
         education.academicRecordName ?? 'academic_rec.pdf',
         'academic_rec_${DateTime.now().millisecondsSinceEpoch}',
       );
+    } else if (education.academicRecordUrl == null && oldAcademicUrl != null) {
+      await _deleteFile(oldAcademicUrl);
+      academicRecUrl = null;
     }
 
+    // 3. Update the Database
     final model = EducationModel(
       id: education.id,
       degreeType: education.degreeType,
@@ -113,7 +143,7 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
     );
 
     final data = model.toJson(userId: _userId);
-    data.remove('user_id');
+    data.remove('user_id'); // Don't update user_id
 
     await _supabase.from('educations').update(data).eq('id', education.id);
   }

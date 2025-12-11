@@ -23,7 +23,7 @@ class CertificationRepositoryImpl implements CertificationRepository {
   }
 
   @override
-  Future<void> addCertification(Certification certification) async {
+Future<Certification> addCertification(Certification certification) async {
     try {
       final userId = _client.auth.currentUser?.id;
       if (userId == null) throw Exception("User not authenticated");
@@ -39,14 +39,19 @@ class CertificationRepositoryImpl implements CertificationRepository {
       }
 
       // 2. Create Model
+      // We pass the uploadedUrl here so it gets saved to the DB
       final model = CertificationModel.fromEntity(
         certification,
         userId,
-        uploadedUrl: uploadedUrl,
+        uploadedUrl: uploadedUrl, 
       );
 
-      // 3. Insert to DB
-      await _remoteDataSource.addCertification(model);
+      // 3. Insert to DB and Capture the result
+      // The remote data source now returns the model with the new ID
+      final savedModel = await _remoteDataSource.addCertification(model);
+
+      // 4. Convert back to Entity and Return
+      return savedModel; 
     } catch (e) {
       throw Exception('Failed to add certification: $e');
     }

@@ -77,6 +77,9 @@ class _AddEducationModalState extends State<AddEducationModal> {
 
   Future<void> _pickFile(bool isGradCert) async {
     try {
+      // Debug print
+      debugPrint("Opening File Picker...");
+
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
@@ -84,17 +87,27 @@ class _AddEducationModalState extends State<AddEducationModal> {
       );
 
       if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+
+        // Debug print
+        debugPrint("File Picked: ${file.name}, Size: ${file.size}");
+
         setState(() {
           if (isGradCert) {
-            _selectedGradCertificate = result.files.first;
-            _keepExistingGradCert = false; // We represent a NEW file now
+            _selectedGradCertificate = file;
+            _keepExistingGradCert =
+                false; // Important: Invalidates the old URL logic
           } else {
-            _selectedAcademicRecord = result.files.first;
-            _keepExistingAcademicRecord = false; // We represent a NEW file now
+            _selectedAcademicRecord = file;
+            _keepExistingAcademicRecord =
+                false; // Important: Invalidates the old URL logic
           }
         });
+      } else {
+        debugPrint("File Picker cancelled or result empty");
       }
     } catch (e) {
+      debugPrint("File Picker Error: $e");
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -6,5 +6,7 @@ import 'package:injectable/injectable.dart';
 class AddCertificationUseCase {
   final CertificationRepository repository;
   AddCertificationUseCase(this.repository);
-  Future<void> call(Certification cert) => repository.addCertification(cert);
+  Future<Certification> call(Certification params) {
+    return repository.addCertification(params);
+  }
 }

@@ -113,8 +113,10 @@ class EducationCard extends StatelessWidget {
           ),
 
           // Attachments Indicator
-          if (education.graduationCertificateBytes != null ||
-              education.academicRecordBytes != null)
+          if ((education.graduationCertificateBytes != null ||
+                  education.graduationCertificateUrl != null) ||
+              (education.academicRecordBytes != null ||
+                  education.academicRecordUrl != null))
             Padding(
               padding: EdgeInsets.only(top: 8.h),
               child: Row(

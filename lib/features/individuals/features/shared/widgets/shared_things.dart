@@ -126,38 +126,44 @@ class BaseFormSheet extends StatelessWidget {
     );
   }
 }
-
 class FormFileUploadButton extends StatelessWidget {
   final String label;
   final PlatformFile? file;
   final String? existingUrl;
-  final bool isSelected;
   final VoidCallback onTap;
   final VoidCallback? onClear;
 
   const FormFileUploadButton({
     super.key,
     required this.label,
-    required this.onTap,
     this.file,
     this.existingUrl,
-    this.isSelected = false,
+    required this.onTap,
     this.onClear,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool hasContent =
-        isSelected ||
-        file != null ||
-        (existingUrl != null && existingUrl!.isNotEmpty);
+    // 1. Determine if we have content (New file OR Existing URL)
+    final bool hasNewFile = file != null;
+    final bool hasExistingUrl = existingUrl != null && existingUrl!.isNotEmpty;
+    final bool hasContent = hasNewFile || hasExistingUrl;
 
+    // 2. Determine Display Text (New File Name > "File Attached" > Label)
     String displayText = label;
-    if (file != null) {
-      //displayText = file!.path!.split(Platform.pathSeparator).last;
-    } else if (hasContent && file == null) {
-      displayText = "File Selected";
+    if (hasNewFile) {
+      displayText = file!.name;
+    } else if (hasExistingUrl) {
+      displayText = "File Attached";
     }
+
+    // 3. Determine Colors
+    final backgroundColor = hasContent
+        ? Colors.green.withOpacity(0.1)
+        : Colors.white;
+    final borderColor = hasContent ? Colors.green : Colors.grey[300]!;
+    final iconColor = hasContent ? Colors.green : Colors.grey[500];
+    final iconData = hasContent ? Icons.check_circle : Icons.upload_file;
 
     return InkWell(
       onTap: onTap,
@@ -165,12 +171,9 @@ class FormFileUploadButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
         decoration: BoxDecoration(
-          color: hasContent ? Colors.green.withOpacity(0.1) : Colors.white,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(
-            color: hasContent ? Colors.green : Colors.grey[300]!,
-            width: 1,
-          ),
+          border: Border.all(color: borderColor, width: 1),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -178,29 +181,36 @@ class FormFileUploadButton extends StatelessWidget {
             Column(
               children: [
                 Icon(
-                  hasContent ? Icons.check_circle : Icons.upload_file,
-                  color: hasContent ? Colors.green : Colors.grey[500],
+                  iconData, color: iconColor,
                   size: 20.sp,
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   displayText,
-                  style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.grey[700],
+                    fontWeight: hasContent
+                        ? FontWeight.w500
+                        : FontWeight.normal,
+                  ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
+            // Clear Button
             if (hasContent && onClear != null)
               Positioned(
-                top: -8,
-                right: -8,
+                top: -10,
+                right: -10,
                 child: IconButton(
-                  icon: Icon(Icons.close, size: 16.sp, color: Colors.red),
+                  icon: Icon(Icons.cancel, size: 18.sp, color: Colors.red[300]),
                   onPressed: onClear,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
+                  splashRadius: 16,
                 ),
               ),
           ],

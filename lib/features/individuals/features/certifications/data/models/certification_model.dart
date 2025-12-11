@@ -58,4 +58,24 @@ class CertificationModel extends Certification {
       credentialUrlModel: uploadedUrl ?? certification.credentialUrl,
     );
   }
+  CertificationModel copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    String? issuingInstitutionModel,
+    DateTime? issueDateModel,
+    DateTime? expirationDateModel,
+    String? credentialUrlModel,
+  }) {
+    return CertificationModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      issuingInstitutionModel:
+          issuingInstitutionModel ?? this.issuingInstitutionModel,
+      issueDateModel: issueDateModel ?? this.issueDateModel,
+      expirationDateModel: expirationDateModel ?? this.expirationDateModel,
+      credentialUrlModel: credentialUrlModel ?? this.credentialUrlModel,
+    );
+  }
 }

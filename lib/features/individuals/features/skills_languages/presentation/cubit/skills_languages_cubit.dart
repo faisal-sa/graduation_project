@@ -10,9 +10,6 @@ class SkillsLanguagesCubit extends Cubit<SkillsLanguagesState> {
 
   SkillsLanguagesCubit(this._repository) : super(SkillsLanguagesInitial());
 
-  void removeLanguage(String s) {}
-  void removeSkill(String s) {}
-
   Future<void> loadProfile() async {
     emit(SkillsLanguagesLoading());
     final result = await _repository.getData();
@@ -23,15 +20,18 @@ class SkillsLanguagesCubit extends Cubit<SkillsLanguagesState> {
     );
   }
 
+  // --- ADD METHODS (From your code) ---
+
   Future<void> addSkill(String newSkill) async {
     if (state is! SkillsLanguagesLoaded) return;
     final currentProfile = (state as SkillsLanguagesLoaded).skillsLanguages;
 
-    // Create new list to ensure immutability
+    // Prevent duplicates
+    if (currentProfile.skills.contains(newSkill)) return;
+
     final updatedSkills = List<String>.from(currentProfile.skills)
       ..add(newSkill);
 
-    // Optimistic Update (update UI immediately)
     emit(
       SkillsLanguagesLoaded(
         SkillsAndLanguages(
@@ -42,25 +42,87 @@ class SkillsLanguagesCubit extends Cubit<SkillsLanguagesState> {
       ),
     );
 
-    // API Call
     final result = await _repository.updateSkills(updatedSkills);
 
-    result.fold(
-      (failure) {
-        // Revert on failure
-        emit(SkillsLanguagesError(failure.message));
-        emit(SkillsLanguagesLoaded(currentProfile)); // Go back to original
-      },
-      (_) => null, // Success, UI is already updated
-    );
+    result.fold((failure) {
+      emit(SkillsLanguagesError(failure.message));
+      emit(SkillsLanguagesLoaded(currentProfile)); // Revert
+    }, (_) => null);
   }
 
   Future<void> addLanguage(String newLanguage) async {
     if (state is! SkillsLanguagesLoaded) return;
     final currentProfile = (state as SkillsLanguagesLoaded).skillsLanguages;
 
+    // Prevent duplicates
+    if (currentProfile.languages.contains(newLanguage)) return;
+
     final updatedLanguages = List<String>.from(currentProfile.languages)
       ..add(newLanguage);
+
+    emit(
+      SkillsLanguagesLoaded(
+        SkillsAndLanguages(
+          id: currentProfile.id,
+          skills: currentProfile.skills,
+          languages: updatedLanguages,
+        ),
+      ),
+    );
+
+    final result = await _repository.updateLanguages(updatedLanguages);
+
+    result.fold((failure) {
+      emit(SkillsLanguagesError(failure.message));
+      emit(SkillsLanguagesLoaded(currentProfile)); // Revert
+    }, (_) => null);
+  }
+
+  // --- DELETE METHODS (Implemented) ---
+
+  Future<void> removeSkill(String skillToRemove) async {
+    // 1. Check if data is loaded
+    if (state is! SkillsLanguagesLoaded) return;
+
+    // 2. Capture current state for potential revert
+    final currentProfile = (state as SkillsLanguagesLoaded).skillsLanguages;
+
+    // 3. Create new list excluding the item (Immutability)
+    final updatedSkills = List<String>.from(currentProfile.skills)
+      ..remove(skillToRemove);
+
+    // 4. Optimistic Update: Update UI immediately
+    emit(
+      SkillsLanguagesLoaded(
+        SkillsAndLanguages(
+          id: currentProfile.id,
+          skills: updatedSkills,
+          languages: currentProfile.languages,
+        ),
+      ),
+    );
+
+    // 5. API Call to Supabase
+    final result = await _repository.updateSkills(updatedSkills);
+
+    // 6. Handle Failure
+    result.fold(
+      (failure) {
+        emit(SkillsLanguagesError(failure.message));
+        // Revert to original state if API fails
+        emit(SkillsLanguagesLoaded(currentProfile)); 
+      },
+      (_) => null, // Success
+    );
+  }
+
+  Future<void> removeLanguage(String languageToRemove) async {
+    if (state is! SkillsLanguagesLoaded) return;
+    
+    final currentProfile = (state as SkillsLanguagesLoaded).skillsLanguages;
+
+    final updatedLanguages = List<String>.from(currentProfile.languages)
+      ..remove(languageToRemove);
 
     emit(
       SkillsLanguagesLoaded(

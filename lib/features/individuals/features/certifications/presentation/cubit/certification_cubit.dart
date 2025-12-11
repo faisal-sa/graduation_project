@@ -40,14 +40,22 @@ class CertificationCubit extends Cubit<CertificationState> {
     }
   }
 
-  Future<void> addCertification(Certification certification) async {
+Future<void> addCertification(Certification certification) async {
     try {
-      await _addCertificationUseCase(certification);
+      // Assuming your UseCase returns the result from the DataSource
+      // Update your UseCase signature to return Future<Certification>
+      final newCertification = await _addCertificationUseCase(certification);
+      
       final currentList = List<Certification>.from(state.certifications);
-      currentList.add(certification);
+      currentList.add(newCertification); // Add the one with the real ID
+
+      // Sort list to keep UI consistent (optional, based on issue date)
+      currentList.sort((a, b) => b.issueDate.compareTo(a.issueDate));
+      
       emit(state.copyWith(certifications: currentList));
     } catch (e) {
       debugPrint(e.toString());
+      // Optional: emit failure state or show snackbar via listener
     }
   }
 
