@@ -68,7 +68,7 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
       academicRecordUrl: academicRecUrl,
     );
 
-    final data = model.toJson(userId: _userId);
+    final data = model.toJson();
     data.remove('id');
 
     await _supabase.from('educations').insert(data);
@@ -142,7 +142,7 @@ class EducationRemoteDataSourceImpl implements EducationRemoteDataSource {
       academicRecordUrl: academicRecUrl,
     );
 
-    final data = model.toJson(userId: _userId);
+    final data = model.toJson();
     data.remove('user_id'); // Don't update user_id
 
     await _supabase.from('educations').update(data).eq('id', education.id);

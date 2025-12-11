@@ -16,7 +16,7 @@ class JobPreferencesRepositoryImpl implements JobPreferencesRepository {
   Future<Either<Failure, JobPreferencesEntity>> getJobPreferences() async {
     try {
       final result = await remoteDataSource.getPreferences();
-      return Right(result);
+      return Right(result.toEntity());
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

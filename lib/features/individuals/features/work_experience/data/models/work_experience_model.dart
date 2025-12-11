@@ -1,48 +1,33 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entities/work_experience.dart';
 
-class WorkExperienceModel extends WorkExperience {
-  const WorkExperienceModel({
-    required super.id,
-    required super.jobTitle,
-    required super.companyName,
-    required super.employmentType,
-    required super.location,
-    required super.responsibilities,
-    required super.startDate,
-    super.endDate,
-    super.isCurrentlyWorking,
-  });
 
-  factory WorkExperienceModel.fromJson(Map<String, dynamic> json) {
-    return WorkExperienceModel(
-      id: json['id'] as String,
-      jobTitle: json['job_title'] as String,
-      companyName: json['company_name'] as String,
-      employmentType: json['employment_type'] as String,
-      location: json['location'] as String,
-      responsibilities: List<String>.from(json['responsibilities'] ?? []),
-      startDate: DateTime.parse(json['start_date']),
-      endDate: json['end_date'] != null
-          ? DateTime.parse(json['end_date'])
-          : null,
-      isCurrentlyWorking: json['is_currently_working'] as bool? ?? false,
-    );
-  }
+part 'work_experience_model.freezed.dart';
+part 'work_experience_model.g.dart';
 
-  Map<String, dynamic> toJson({required String userId}) {
-    return {
-      'id': id,
-      'user_id': userId,
-      'job_title': jobTitle,
-      'company_name': companyName,
-      'employment_type': employmentType,
-      'location': location,
-      'responsibilities': responsibilities,
-      'start_date': startDate.toIso8601String(),
-      'end_date': endDate?.toIso8601String(),
-      'is_currently_working': isCurrentlyWorking,
-    };
-  }
+@freezed
+abstract class WorkExperienceModel with _$WorkExperienceModel {
+  const WorkExperienceModel._(); // Required for custom methods
+
+  // @JsonSerializable(fieldRename: FieldRename.snake) // Optional: saves typing @JsonKey names manually
+  const factory WorkExperienceModel({
+    required String id,
+    @JsonKey(name: 'job_title') required String jobTitle,
+    @JsonKey(name: 'company_name') required String companyName,
+    @JsonKey(name: 'employment_type') required String employmentType,
+    required String location,
+    @Default([]) List<String> responsibilities,
+
+    @JsonKey(name: 'start_date') required DateTime startDate,
+    @JsonKey(name: 'end_date') DateTime? endDate,
+
+    @JsonKey(name: 'is_currently_working', defaultValue: false)
+    required bool isCurrentlyWorking,
+  }) = _WorkExperienceModel;
+
+  factory WorkExperienceModel.fromJson(Map<String, dynamic> json) =>
+      _$WorkExperienceModelFromJson(json);
 
   factory WorkExperienceModel.fromEntity(WorkExperience entity) {
     return WorkExperienceModel(
@@ -56,5 +41,28 @@ class WorkExperienceModel extends WorkExperience {
       endDate: entity.endDate,
       isCurrentlyWorking: entity.isCurrentlyWorking,
     );
+  }
+
+  WorkExperience toEntity() {
+    return WorkExperience(
+      id: id,
+      jobTitle: jobTitle,
+      companyName: companyName,
+      employmentType: employmentType,
+      location: location,
+      responsibilities: responsibilities,
+      startDate: startDate,
+      endDate: endDate,
+      isCurrentlyWorking: isCurrentlyWorking,
+    );
+  }
+
+  // Custom method to match your original toJson({userId}) logic
+  Map<String, dynamic> toApiJson({required String userId}) {
+    // Generate the standard JSON
+    final json = toJson();
+    // Inject the user_id
+    json['user_id'] = userId;
+    return json;
   }
 }

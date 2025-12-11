@@ -16,7 +16,10 @@ class CertificationRepositoryImpl implements CertificationRepository {
   Future<List<Certification>> getCertifications() async {
     try {
       final models = await _remoteDataSource.getCertifications();
-      return models; // Models extend Entity, so this works implicitly
+      
+      // FIX: Map the models to entities
+      return models.map((model) => model.toEntity()).toList(); 
+      
     } catch (e) {
       throw Exception('Failed to fetch certifications: $e');
     }
@@ -51,7 +54,7 @@ Future<Certification> addCertification(Certification certification) async {
       final savedModel = await _remoteDataSource.addCertification(model);
 
       // 4. Convert back to Entity and Return
-      return savedModel; 
+      return savedModel.toEntity(); 
     } catch (e) {
       throw Exception('Failed to add certification: $e');
     }

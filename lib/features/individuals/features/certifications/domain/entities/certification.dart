@@ -1,58 +1,24 @@
 import 'dart:io';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:equatable/equatable.dart';
-class Certification extends Equatable {
-  final String id;
-  final String name;
-  final String issuingInstitution;
-  final DateTime issueDate;
-  final DateTime? expirationDate;
-  final File? credentialFile; // Not serialized to JSON/Map
-  final String? credentialUrl;
+part 'certification.freezed.dart';
+part 'certification.g.dart';
 
-  const Certification({
-    required this.id,
-    required this.name,
-    required this.issuingInstitution,
-    required this.issueDate,
-    this.expirationDate,
-    this.credentialFile,
-    this.credentialUrl,
-  });
+@freezed
+abstract class Certification with _$Certification {
+  const factory Certification({
+    required String id,
+    @Default('') String name,
+    @Default('') String issuingInstitution,
+    required DateTime issueDate,
+    DateTime? expirationDate,
+    
+    // Ignored in JSON, just like your original code
+    @JsonKey(includeFromJson: false, includeToJson: false) File? credentialFile,
+    
+    String? credentialUrl,
+  }) = _Certification;
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'issuingInstitution': issuingInstitution,
-      'issueDate': issueDate.toIso8601String(),
-      'expirationDate': expirationDate?.toIso8601String(),
-      'credentialUrl': credentialUrl,
-    };
-  }
-
-  factory Certification.fromMap(Map<String, dynamic> map) {
-    return Certification(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      issuingInstitution: map['issuingInstitution'] ?? '',
-      issueDate: DateTime.tryParse(map['issueDate'] ?? '') ?? DateTime.now(),
-      expirationDate: map['expirationDate'] != null
-          ? DateTime.tryParse(map['expirationDate'])
-          : null,
-      credentialUrl: map['credentialUrl'],
-      credentialFile: null,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    id,
-    name,
-    issuingInstitution,
-    issueDate,
-    expirationDate,
-    credentialFile,
-    credentialUrl,
-  ];
+  factory Certification.fromJson(Map<String, dynamic> json) =>
+      _$CertificationFromJson(json);
 }

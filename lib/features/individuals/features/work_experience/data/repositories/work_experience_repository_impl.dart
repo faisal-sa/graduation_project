@@ -30,6 +30,7 @@ class WorkExperienceRepositoryImpl implements WorkExperienceRepository {
   @override
   Future<List<WorkExperience>> getWorkExperiences() async {
     final models = await _remoteDataSource.getWorkExperiences();
-    return models;
+    return models.map((model) => model.toEntity()).toList();
+
   }
 }

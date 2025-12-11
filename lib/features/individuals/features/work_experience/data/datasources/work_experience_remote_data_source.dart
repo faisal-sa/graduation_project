@@ -23,7 +23,7 @@ class WorkExperienceRemoteDataSourceImpl
 
     await _supabaseClient
         .from('work_experiences')
-        .insert(model.toJson(userId: user.id));
+        .insert(model.toJson());
   }
 
   @override
@@ -33,7 +33,7 @@ class WorkExperienceRemoteDataSourceImpl
 
     await _supabaseClient
         .from('work_experiences')
-        .update(model.toJson(userId: user.id))
+        .update(model.toJson())
         .eq('id', model.id);
   }
 

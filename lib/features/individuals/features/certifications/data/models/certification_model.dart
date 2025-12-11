@@ -1,48 +1,33 @@
+import 'dart:io';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 
+part 'certification_model.freezed.dart';
 part 'certification_model.g.dart';
 
-@JsonSerializable()
-class CertificationModel extends Certification {
-  @JsonKey(name: 'user_id')
-  final String userId;
+@freezed
+abstract class CertificationModel with _$CertificationModel {
+  const CertificationModel._();
 
-  @JsonKey(name: 'credential_url')
-  final String? credentialUrlModel;
+  const factory CertificationModel({
+    required String id,
+    required String name,
+    @JsonKey(name: 'issuing_institution') required String issuingInstitution,
+    @JsonKey(name: 'issue_date') required DateTime issueDate,
+    @JsonKey(name: 'expiration_date') DateTime? expirationDate,
+    @JsonKey(name: 'credential_url') String? credentialUrl,
 
-  @JsonKey(name: 'issue_date')
-  final DateTime issueDateModel;
-
-  @JsonKey(name: 'expiration_date')
-  final DateTime? expirationDateModel;
-
-  @JsonKey(name: 'issuing_institution')
-  final String issuingInstitutionModel;
-
-  const CertificationModel({
-    required super.id,
-    required this.userId,
-    required super.name,
-    required this.issuingInstitutionModel,
-    required this.issueDateModel,
-    this.expirationDateModel,
-    this.credentialUrlModel,
-  }) : super(
-         issuingInstitution: issuingInstitutionModel,
-         issueDate: issueDateModel,
-         expirationDate: expirationDateModel,
-         credentialUrl: credentialUrlModel,
-         // credentialFile is local-only, not mapped from DB JSON
-         credentialFile: null,
-       );
+    // File/Local fields ignored in JSON
+    @JsonKey(includeFromJson: false, includeToJson: false) File? credentialFile,
+    
+    // In your provided snippet, userId was a field in the model.
+    // If you want it part of the constructor but not the Entity interface:
+    @JsonKey(name: 'user_id') required String userId,
+  }) = _CertificationModel;
 
   factory CertificationModel.fromJson(Map<String, dynamic> json) =>
       _$CertificationModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CertificationModelToJson(this);
-
-  // Helper to convert Entity -> Model for DB operations
   factory CertificationModel.fromEntity(
     Certification certification,
     String userId, {
@@ -52,30 +37,23 @@ class CertificationModel extends Certification {
       id: certification.id,
       userId: userId,
       name: certification.name,
-      issuingInstitutionModel: certification.issuingInstitution,
-      issueDateModel: certification.issueDate,
-      expirationDateModel: certification.expirationDate,
-      credentialUrlModel: uploadedUrl ?? certification.credentialUrl,
+      issuingInstitution: certification.issuingInstitution,
+      issueDate: certification.issueDate,
+      expirationDate: certification.expirationDate,
+      credentialUrl: uploadedUrl ?? certification.credentialUrl,
+      credentialFile:
+          null, // Models usually don't hold the local file after conversion
     );
   }
-  CertificationModel copyWith({
-    String? id,
-    String? userId,
-    String? name,
-    String? issuingInstitutionModel,
-    DateTime? issueDateModel,
-    DateTime? expirationDateModel,
-    String? credentialUrlModel,
-  }) {
-    return CertificationModel(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      name: name ?? this.name,
-      issuingInstitutionModel:
-          issuingInstitutionModel ?? this.issuingInstitutionModel,
-      issueDateModel: issueDateModel ?? this.issueDateModel,
-      expirationDateModel: expirationDateModel ?? this.expirationDateModel,
-      credentialUrlModel: credentialUrlModel ?? this.credentialUrlModel,
+  Certification toEntity() {
+    return Certification(
+      id: id,
+      name: name,
+      issuingInstitution: issuingInstitution,
+      issueDate: issueDate,
+      expirationDate: expirationDate,
+      credentialUrl: credentialUrl,
+      credentialFile: credentialFile,
     );
   }
 }

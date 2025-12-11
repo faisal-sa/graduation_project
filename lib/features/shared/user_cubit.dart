@@ -35,23 +35,29 @@ class UserCubit extends Cubit<UserState> {
 
 //=========================================================== LOCAL STORAGE LOGIC ===========================================================
   void loadUserFromStorage() {
+    print("loading user from storage");
     try {
       final jsonString = _prefs.getString(_storageKey);
       if (jsonString != null && jsonString.isNotEmpty) {
-        final user = UserEntity.fromJson(jsonString);
+        final Map<String, dynamic> userMap = jsonDecode(jsonString);
+        final prettyString = const JsonEncoder.withIndent(
+          '  ',
+        ).convert(userMap);
+        print(prettyString);
+
+        final user = UserEntity.fromJson(userMap);
         emit(state.copyWith(user: user));
       }
     } catch (e) {
-      print("Error loading user from local storage: $e");
     }
   }
 
   Future<void> _saveUserToStorage(UserEntity user) async {
+    print("saving now");
     try {
       final jsonString = user.toJson();
-      await _prefs.setString(_storageKey, jsonString);
+      await _prefs.setString(_storageKey, jsonString.toString());
     } catch (e) {
-      print("Error saving user to local storage: $e");
     }
   }
 
@@ -59,9 +65,6 @@ class UserCubit extends Cubit<UserState> {
   @override
   void onChange(Change<UserState> change) {
     super.onChange(change);
-    print(
-      "UserCubit Change: ${change.currentState.user.videoUrl} -> ${change.nextState.user.videoUrl}",
-    );
 
     if (change.nextState.user != change.currentState.user) {
       print("UserCubit: User entity changed, saving to storage...");
@@ -152,7 +155,7 @@ void updateCertificationsList(List<Certification> certifications) {
     // Emit the new state (this triggers onChange, which saves to SharedPreferences)
     emit(state.copyWith(user: updatedUser));
   }
-  void updateBasicInfo({
+void updateBasicInfo({
     String? firstName,
     String? lastName,
     String? jobTitle,
@@ -161,12 +164,13 @@ void updateCertificationsList(List<Certification> certifications) {
     String? location,
   }) {
     final updatedUser = state.user.copyWith(
-      firstName: firstName,
-      lastName: lastName,
-      jobTitle: jobTitle,
-      phoneNumber: phone,
-      email: email,
-      location: location,
+
+      firstName: firstName ?? state.user.firstName,
+      lastName: lastName ?? state.user.lastName,
+      jobTitle: jobTitle ?? state.user.jobTitle,
+      phoneNumber: phone ?? state.user.phoneNumber,
+      email: email ?? state.user.email,
+      location: location ?? state.user.location,
     );
     emit(state.copyWith(user: updatedUser));
   }
@@ -286,6 +290,7 @@ void updateCertificationsList(List<Certification> certifications) {
   }
 
   Future<void> _handleFetchUserProfile() async {
+    print("fetching now");
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
@@ -293,8 +298,7 @@ void updateCertificationsList(List<Certification> certifications) {
         return;
       }
 
-      // 'skills' and 'languages' are columns in 'profiles', so '*' captures them.
-      // We only need specific joins for separate tables (educations, work_experiences, certifications).
+
       final response = await _supabase
           .from('profiles')
           .select('''
@@ -307,7 +311,9 @@ void updateCertificationsList(List<Certification> certifications) {
           .single();
 
       final fetchedUser = _mapSupabaseResponseToEntity(response);
-      print("Your entity: $fetchedUser");
+final userMap = fetchedUser.toJson();
+      final prettyString = const JsonEncoder.withIndent('  ').convert(userMap);
+      print(prettyString);
       
       emit(state.copyWith(user: fetchedUser));
       _saveUserToStorage(fetchedUser);
@@ -529,12 +535,10 @@ void updateCertificationsList(List<Certification> certifications) {
         summary: data['summary'] ?? '',
       );
     } catch (e) {
-      print("Raw AI Response: $responseText");
       throw Exception("Failed to parse AI JSON: $e");
     }
   }
   Future<void> _handleResumeUploadAndExtraction() async {
-    print("handeling resume upload and extraction now");
     try {
       emit(state.copyWith(isResumeLoading: true, resumeError: null));
 

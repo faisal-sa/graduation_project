@@ -1,62 +1,69 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:graduation_project/features/individuals/features/job_preferences/domain/entities/job_preferences_entity.dart';
 
-class JobPreferencesModel extends JobPreferencesEntity {
-  const JobPreferencesModel({
-    super.targetRoles,
-    super.minSalary,
-    super.maxSalary,
-    super.salaryCurrency,
-    super.currentWorkStatus,
-    super.employmentTypes,
-    super.workModes,
-    super.canRelocate,
-    super.canStartImmediately,
-    super.noticePeriodDays,
-  });
 
-  factory JobPreferencesModel.fromJson(Map<String, dynamic> json) {
-    return JobPreferencesModel(
-      targetRoles: List<String>.from(json['target_roles'] ?? []),
-      minSalary: json['min_salary'],
-      maxSalary: json['max_salary'],
-      salaryCurrency: json['salary_currency'],
-      currentWorkStatus: json['current_work_status'],
-      employmentTypes: List<String>.from(json['employment_types'] ?? []),
-      workModes: List<String>.from(json['work_modes'] ?? []),
-      canRelocate: json['can_relocate'] ?? false,
-      canStartImmediately: json['can_start_immediately'] ?? false,
-      noticePeriodDays: json['notice_period_days'],
-    );
-  }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'target_roles': targetRoles,
-      'min_salary': minSalary,
-      'max_salary': maxSalary,
-      'salary_currency': salaryCurrency,
-      'current_work_status': currentWorkStatus,
-      'employment_types': employmentTypes,
-      'work_modes': workModes,
-      'can_relocate': canRelocate,
-      'can_start_immediately': canStartImmediately,
-      'notice_period_days': noticePeriodDays,
-      'updated_at': DateTime.now().toIso8601String(),
-    };
-  }
+part 'job_preferences_model.freezed.dart';
+part 'job_preferences_model.g.dart';
+
+@freezed
+abstract class JobPreferencesModel with _$JobPreferencesModel {
+  const JobPreferencesModel._();
+
+  const factory JobPreferencesModel({
+    @JsonKey(name: 'target_roles') @Default([]) List<String> targetRoles,
+    @JsonKey(name: 'min_salary')
+    num? minSalary, // Changed to num to allow int/double
+    @JsonKey(name: 'max_salary') num? maxSalary,
+    @JsonKey(name: 'salary_currency') String? salaryCurrency,
+    @JsonKey(name: 'current_work_status') String? currentWorkStatus,
+    @JsonKey(name: 'employment_types')
+    @Default([])
+    List<String> employmentTypes,
+    @JsonKey(name: 'work_modes') @Default([]) List<String> workModes,
+    @JsonKey(name: 'can_relocate') @Default(false) bool canRelocate,
+    @JsonKey(name: 'can_start_immediately')
+    @Default(false)
+    bool canStartImmediately,
+    @JsonKey(name: 'notice_period_days') int? noticePeriodDays,
+  }) = _JobPreferencesModel;
+
+  factory JobPreferencesModel.fromJson(Map<String, dynamic> json) =>
+      _$JobPreferencesModelFromJson(json);
 
   factory JobPreferencesModel.fromEntity(JobPreferencesEntity entity) {
     return JobPreferencesModel(
-      targetRoles: entity.targetRoles,
+      targetRoles: entity.targetRoles ?? [],
       minSalary: entity.minSalary,
       maxSalary: entity.maxSalary,
       salaryCurrency: entity.salaryCurrency,
       currentWorkStatus: entity.currentWorkStatus,
-      employmentTypes: entity.employmentTypes,
-      workModes: entity.workModes,
-      canRelocate: entity.canRelocate,
-      canStartImmediately: entity.canStartImmediately,
+      employmentTypes: entity.employmentTypes ?? [],
+      workModes: entity.workModes ?? [],
+      canRelocate: entity.canRelocate ?? false,
+      canStartImmediately: entity.canStartImmediately ?? false,
       noticePeriodDays: entity.noticePeriodDays,
     );
+  }
+JobPreferencesEntity toEntity() {
+    return JobPreferencesEntity(
+      targetRoles: targetRoles,
+      minSalary: minSalary?.toInt(), // Safely convert num? to int?
+      maxSalary: maxSalary?.toInt(),
+      salaryCurrency: salaryCurrency,
+      currentWorkStatus: currentWorkStatus,
+      employmentTypes: employmentTypes,
+      workModes: workModes,
+      canRelocate: canRelocate,
+      canStartImmediately: canStartImmediately,
+      noticePeriodDays: noticePeriodDays,
+    );
+  }
+
+  // Custom method to include updated_at
+  Map<String, dynamic> toApiJson() {
+    final json = toJson();
+    json['updated_at'] = DateTime.now().toIso8601String();
+    return json;
   }
 }

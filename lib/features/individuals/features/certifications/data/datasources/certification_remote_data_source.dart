@@ -77,7 +77,7 @@ class CertificationRemoteDataSourceImpl
 
       // 3. Update the model object using copyWith
       // This creates a new object with the new URL, keeping all other data the same
-      modelToUpdate = model.copyWith(credentialUrlModel: newUrl);
+      modelToUpdate = model.copyWith(credentialUrl: newUrl);
 
       // 4. Delete the OLD file from storage (cleanup)
       if (oldUrl != null) {
