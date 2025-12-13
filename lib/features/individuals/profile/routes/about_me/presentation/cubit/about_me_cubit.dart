@@ -17,7 +17,6 @@ class AboutMeCubit extends Cubit<AboutMeState> {
         existingVideoUrl: currentVideoUrl,
         status: FormStatus.initial,
     );
-    print("emitting this state : $mystate");
     emit(mystate
     );
   }

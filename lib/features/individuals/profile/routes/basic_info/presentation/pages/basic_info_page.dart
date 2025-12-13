@@ -110,11 +110,9 @@ class BasicInfoPage extends HookWidget {
                 label: 'Location',
                 hint: 'Select City',
                 items: saudiCities,
-                value: selectedLocation.value, // Bind to Hook State
+                value: selectedLocation.value, 
                 onChanged: (newValue) {
-                  // A. Update UI
                   selectedLocation.value = newValue;
-                  // B. Update Controller (So the Save button below works)
                   locationCtrl.text = newValue ?? '';
                 },
               ),

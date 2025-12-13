@@ -75,95 +75,119 @@ import '../../features/CRinfo/domain/repositories/cr_info_repository.dart'
 import '../../features/CRinfo/domain/usecases/get_cr_info.dart' as _i333;
 import '../../features/CRinfo/presentation/cubit/cr_info_cubit.dart' as _i550;
 import '../../features/individuals/profile/routes/about_me/data/datasources/about_me_remote_data_source.dart'
-    as _i733;
+    as _i950;
 import '../../features/individuals/profile/routes/about_me/data/repositories/about_me_repository_impl.dart'
-    as _i633;
+    as _i506;
 import '../../features/individuals/profile/routes/about_me/domain/repositories/about_me_repository.dart'
-    as _i542;
+    as _i1046;
 import '../../features/individuals/profile/routes/about_me/domain/usecases/delete_about_me_video_use_case.dart'
-    as _i1047;
+    as _i945;
 import '../../features/individuals/profile/routes/about_me/domain/usecases/save_about_me_use_case.dart'
-    as _i250;
+    as _i689;
 import '../../features/individuals/profile/routes/about_me/presentation/cubit/about_me_cubit.dart'
-    as _i781;
+    as _i661;
 import '../../features/individuals/profile/routes/basic_info/data/datasources/basic_info_remote_data_source.dart'
-    as _i25;
+    as _i166;
 import '../../features/individuals/profile/routes/basic_info/data/repositories/basic_info_repository_impl.dart'
-    as _i500;
+    as _i720;
 import '../../features/individuals/profile/routes/basic_info/domain/repositories/basic_info_repository.dart'
-    as _i591;
+    as _i216;
 import '../../features/individuals/profile/routes/basic_info/domain/usecases/save_basic_info_usecase.dart'
-    as _i961;
+    as _i700;
 import '../../features/individuals/profile/routes/basic_info/presentation/cubit/basic_info_cubit.dart'
-    as _i37;
+    as _i170;
 import '../../features/individuals/profile/routes/certifications/data/datasources/certification_remote_data_source.dart'
-    as _i607;
+    as _i513;
 import '../../features/individuals/profile/routes/certifications/data/repositories/certification_repository_impl.dart'
-    as _i852;
+    as _i119;
 import '../../features/individuals/profile/routes/certifications/domain/repositories/certification_repository.dart'
-    as _i320;
+    as _i439;
 import '../../features/individuals/profile/routes/certifications/domain/usecases/add_certification_usecase.dart'
-    as _i289;
+    as _i3;
 import '../../features/individuals/profile/routes/certifications/domain/usecases/delete_certification_usecase.dart'
-    as _i244;
+    as _i1063;
 import '../../features/individuals/profile/routes/certifications/domain/usecases/get_certifications_usecase.dart'
-    as _i440;
+    as _i603;
 import '../../features/individuals/profile/routes/certifications/domain/usecases/update_certification_usecase.dart'
-    as _i860;
+    as _i973;
 import '../../features/individuals/profile/routes/certifications/presentation/cubit/certification_cubit.dart'
-    as _i848;
+    as _i516;
 import '../../features/individuals/profile/routes/education/data/datasources/education_remote_data_source.dart'
-    as _i380;
+    as _i31;
 import '../../features/individuals/profile/routes/education/data/repositories/education_repository_impl.dart'
-    as _i999;
+    as _i9;
 import '../../features/individuals/profile/routes/education/domain/repositories/education_repository.dart'
-    as _i843;
+    as _i916;
 import '../../features/individuals/profile/routes/education/domain/usecases/add_education_usecase.dart'
-    as _i965;
+    as _i33;
 import '../../features/individuals/profile/routes/education/domain/usecases/delete_education_usecase.dart'
-    as _i947;
+    as _i302;
 import '../../features/individuals/profile/routes/education/domain/usecases/get_educations_usecase.dart'
-    as _i947;
+    as _i871;
 import '../../features/individuals/profile/routes/education/domain/usecases/update_education_usecase.dart'
-    as _i906;
+    as _i117;
 import '../../features/individuals/profile/routes/education/presentation/cubit/education_cubit.dart'
-    as _i803;
+    as _i372;
 import '../../features/individuals/profile/routes/job_preferences/data/datasources/job_preferences_remote_datasource.dart'
-    as _i466;
+    as _i281;
 import '../../features/individuals/profile/routes/job_preferences/data/repositories/job_preferences_repository_impl.dart'
-    as _i942;
+    as _i262;
 import '../../features/individuals/profile/routes/job_preferences/domain/repositories/job_preferences_repository.dart'
-    as _i248;
+    as _i570;
 import '../../features/individuals/profile/routes/job_preferences/domain/usecases/get_job_preferences_usecase.dart'
-    as _i43;
+    as _i39;
 import '../../features/individuals/profile/routes/job_preferences/domain/usecases/update_job_preferences_usecase.dart'
-    as _i476;
+    as _i565;
 import '../../features/individuals/profile/routes/job_preferences/presentation/cubit/job_preferences_cubit.dart'
-    as _i387;
+    as _i3;
 import '../../features/individuals/profile/routes/skills_languages/data/datasources/skills_languages_remote_data_source.dart'
-    as _i354;
+    as _i377;
 import '../../features/individuals/profile/routes/skills_languages/data/repositories/skills_language_repo_impl.dart'
-    as _i221;
+    as _i693;
 import '../../features/individuals/profile/routes/skills_languages/domain/repositories/skills_languages_repository.dart'
-    as _i122;
+    as _i736;
 import '../../features/individuals/profile/routes/skills_languages/presentation/cubit/skills_languages_cubit.dart'
-    as _i201;
+    as _i758;
 import '../../features/individuals/profile/routes/work_experience/data/datasources/work_experience_remote_data_source.dart'
-    as _i271;
+    as _i1005;
 import '../../features/individuals/profile/routes/work_experience/data/repositories/work_experience_repository_impl.dart'
-    as _i51;
+    as _i902;
 import '../../features/individuals/profile/routes/work_experience/domain/repositories/work_experience_repository.dart'
-    as _i651;
+    as _i757;
 import '../../features/individuals/profile/routes/work_experience/domain/usecases/add_work_experience_usecase.dart'
-    as _i794;
+    as _i718;
 import '../../features/individuals/profile/routes/work_experience/domain/usecases/delete_work_experience_usecase.dart'
-    as _i176;
+    as _i989;
 import '../../features/individuals/profile/routes/work_experience/domain/usecases/get_work_experiences_usecase.dart'
-    as _i786;
+    as _i894;
 import '../../features/individuals/profile/routes/work_experience/domain/usecases/update_work_experience_usecase.dart'
-    as _i56;
+    as _i1033;
 import '../../features/individuals/profile/routes/work_experience/presentation/cubit/work_experience_cubit.dart'
-    as _i760;
+    as _i906;
+import '../../features/individuals/shared/user/data/datasources/AI_datasource.dart'
+    as _i441;
+import '../../features/individuals/shared/user/data/datasources/user_local_datasource.dart'
+    as _i706;
+import '../../features/individuals/shared/user/data/datasources/user_remote_datasource.dart'
+    as _i83;
+import '../../features/individuals/shared/user/data/repositories/user_repository_impl.dart'
+    as _i468;
+import '../../features/individuals/shared/user/domain/repositories/user_repository.dart'
+    as _i369;
+import '../../features/individuals/shared/user/domain/usecases/cache_user.dart'
+    as _i736;
+import '../../features/individuals/shared/user/domain/usecases/fetch_user_profile.dart'
+    as _i54;
+import '../../features/individuals/shared/user/domain/usecases/get_cached_user.dart'
+    as _i188;
+import '../../features/individuals/shared/user/domain/usecases/parse_resume_with_ai.dart'
+    as _i188;
+import '../../features/individuals/shared/user/domain/usecases/sync_user_to_remote.dart'
+    as _i318;
+import '../../features/individuals/shared/user/domain/usecases/update_user.dart'
+    as _i939;
+import '../../features/individuals/shared/user/presentation/cubit/user_cubit.dart'
+    as _i792;
 import '../../features/payment/data/datasources/payment_remote_data_source.dart'
     as _i811;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -172,24 +196,6 @@ import '../../features/payment/domain/usecases/process_payment_usecase.dart'
     as _i432;
 import '../../features/payment/export_payment.dart' as _i903;
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
-import '../../features/individuals/shared/user/data/datasources/AI_datasource.dart' as _i741;
-import '../../features/individuals/shared/user/data/datasources/user_local_datasource.dart'
-    as _i156;
-import '../../features/individuals/shared/user/data/datasources/user_remote_datasource.dart'
-    as _i390;
-import '../../features/individuals/shared/user/data/repositories/user_repository_impl.dart'
-    as _i310;
-import '../../features/individuals/shared/user/domain/repositories/user_repository.dart'
-    as _i223;
-import '../../features/individuals/shared/user/domain/usecases/cache_user.dart' as _i210;
-import '../../features/individuals/shared/user/domain/usecases/fetch_user_profile.dart' as _i439;
-import '../../features/individuals/shared/user/domain/usecases/get_cached_user.dart' as _i597;
-import '../../features/individuals/shared/user/domain/usecases/parse_resume_with_ai.dart'
-    as _i372;
-import '../../features/individuals/shared/user/domain/usecases/sync_user_to_remote.dart'
-    as _i1043;
-import '../../features/individuals/shared/user/domain/usecases/update_user.dart' as _i228;
-import '../../features/individuals/shared/user/presentation/cubit/user_cubit.dart' as _i695;
 import '../env_config/env_config.dart' as _i113;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -211,8 +217,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i187.GenerativeModel>(
       () => registerModule.generativeModel,
     );
-    gh.factory<_i156.UserLocalDataSource>(
-      () => _i156.UserLocalDataSource(gh<_i460.SharedPreferences>()),
+    gh.factory<_i706.UserLocalDataSource>(
+      () => _i706.UserLocalDataSource(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i950.AboutMeRemoteDataSource>(
+      () => _i950.AboutMeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
+    gh.lazySingleton<_i31.EducationRemoteDataSource>(
+      () => _i31.EducationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
     gh.lazySingleton<_i149.CandidateRemoteDataSource>(
       () => _i149.CandidateRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -220,11 +232,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i252.CompanyRemoteDataSource>(
       () => _i252.CompanyRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
-    gh.factory<_i390.UserRemoteDataSource>(
-      () => _i390.UserRemoteDataSource(gh<_i454.SupabaseClient>()),
+    gh.factory<_i83.UserRemoteDataSource>(
+      () => _i83.UserRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
-    gh.factory<_i741.AIDataSource>(
-      () => _i741.AIDataSource(gh<_i187.GenerativeModel>()),
+    gh.factory<_i441.AIDataSource>(
+      () => _i441.AIDataSource(gh<_i187.GenerativeModel>()),
     );
     gh.lazySingleton<_i309.CandidateRepository>(
       () =>
@@ -233,33 +245,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i811.PaymentRemoteDataSource>(
       () => _i811.PaymentRemoteDataSourceImpl(),
     );
-    gh.lazySingleton<_i733.AboutMeRemoteDataSource>(
-      () => _i733.AboutMeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
     gh.lazySingleton<_i697.WathqRemoteDataSource>(
       () => _i697.WathqRemoteDataSourceImpl(),
     );
     gh.lazySingleton<_i861.CrInfoRepository>(
       () => _i319.CrInfoRepositoryImpl(gh<_i697.WathqRemoteDataSource>()),
     );
-    gh.lazySingleton<_i542.AboutMeRepository>(
-      () => _i633.AboutMeRepositoryImpl(
-        gh<_i733.AboutMeRemoteDataSource>(),
-        gh<_i454.SupabaseClient>(),
+    gh.lazySingleton<_i369.UserRepository>(
+      () => _i468.UserRepositoryImpl(
+        remoteDataSource: gh<_i83.UserRemoteDataSource>(),
+        localDataSource: gh<_i706.UserLocalDataSource>(),
+        aiDataSource: gh<_i441.AIDataSource>(),
       ),
     );
-    gh.lazySingleton<_i380.EducationRemoteDataSource>(
-      () => _i380.EducationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i466.JobPreferencesRemoteDataSource>(
+    gh.lazySingleton<_i281.JobPreferencesRemoteDataSource>(
       () =>
-          _i466.JobPreferencesRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i1047.DeleteAboutMeVideoUseCase>(
-      () => _i1047.DeleteAboutMeVideoUseCase(gh<_i542.AboutMeRepository>()),
-    );
-    gh.lazySingleton<_i250.SaveAboutMeUseCase>(
-      () => _i250.SaveAboutMeUseCase(gh<_i542.AboutMeRepository>()),
+          _i281.JobPreferencesRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
     gh.lazySingleton<_i161.AuthRemoteDataSource>(
       () => _i161.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -273,63 +274,77 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1061.CandidateProfileCubit>(
       () => _i1061.CandidateProfileCubit(gh<_i309.CandidateRepository>()),
     );
-    gh.lazySingleton<_i223.UserRepository>(
-      () => _i310.UserRepositoryImpl(
-        remoteDataSource: gh<_i390.UserRemoteDataSource>(),
-        localDataSource: gh<_i156.UserLocalDataSource>(),
-        aiDataSource: gh<_i741.AIDataSource>(),
-      ),
-    );
-    gh.factory<_i210.CacheUser>(
-      () => _i210.CacheUser(gh<_i223.UserRepository>()),
-    );
-    gh.factory<_i439.FetchUserProfile>(
-      () => _i439.FetchUserProfile(gh<_i223.UserRepository>()),
-    );
-    gh.factory<_i597.GetCachedUser>(
-      () => _i597.GetCachedUser(gh<_i223.UserRepository>()),
-    );
-    gh.factory<_i372.ParseResumeWithAI>(
-      () => _i372.ParseResumeWithAI(gh<_i223.UserRepository>()),
-    );
-    gh.factory<_i1043.SyncUserToRemote>(
-      () => _i1043.SyncUserToRemote(gh<_i223.UserRepository>()),
-    );
-    gh.factory<_i228.UpdateUser>(
-      () => _i228.UpdateUser(gh<_i223.UserRepository>()),
-    );
-    gh.lazySingleton<_i843.EducationRepository>(
-      () =>
-          _i999.EducationRepositoryImpl(gh<_i380.EducationRemoteDataSource>()),
+    gh.lazySingleton<_i513.CertificationRemoteDataSource>(
+      () => _i513.CertificationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
     gh.factory<_i333.GetCrInfo>(
       () => _i333.GetCrInfo(gh<_i861.CrInfoRepository>()),
     );
-    gh.lazySingleton<_i607.CertificationRemoteDataSource>(
-      () => _i607.CertificationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    gh.lazySingleton<_i916.EducationRepository>(
+      () => _i9.EducationRepositoryImpl(gh<_i31.EducationRemoteDataSource>()),
     );
-    gh.lazySingleton<_i354.SkillsLanguagesRemoteDataSource>(
-      () =>
-          _i354.SkillsLanguagesRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i271.WorkExperienceRemoteDataSource>(
-      () =>
-          _i271.WorkExperienceRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i25.BasicInfoRemoteDataSource>(
-      () => _i25.BasicInfoRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i248.JobPreferencesRepository>(
-      () => _i942.JobPreferencesRepositoryImpl(
-        gh<_i466.JobPreferencesRemoteDataSource>(),
+    gh.lazySingleton<_i1046.AboutMeRepository>(
+      () => _i506.AboutMeRepositoryImpl(
+        gh<_i950.AboutMeRemoteDataSource>(),
+        gh<_i454.SupabaseClient>(),
       ),
+    );
+    gh.factory<_i736.CacheUser>(
+      () => _i736.CacheUser(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i54.FetchUserProfile>(
+      () => _i54.FetchUserProfile(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i188.GetCachedUser>(
+      () => _i188.GetCachedUser(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i188.ParseResumeWithAI>(
+      () => _i188.ParseResumeWithAI(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i318.SyncUserToRemote>(
+      () => _i318.SyncUserToRemote(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i939.UpdateUser>(
+      () => _i939.UpdateUser(gh<_i369.UserRepository>()),
+    );
+    gh.lazySingleton<_i377.SkillsLanguagesRemoteDataSource>(
+      () =>
+          _i377.SkillsLanguagesRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
+    gh.lazySingleton<_i166.BasicInfoRemoteDataSource>(
+      () => _i166.BasicInfoRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
+    gh.lazySingleton<_i1005.WorkExperienceRemoteDataSource>(
+      () =>
+          _i1005.WorkExperienceRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
+    gh.lazySingleton<_i792.UserCubit>(
+      () => _i792.UserCubit(
+        gh<_i188.GetCachedUser>(),
+        gh<_i736.CacheUser>(),
+        gh<_i54.FetchUserProfile>(),
+        gh<_i188.ParseResumeWithAI>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
+    gh.lazySingleton<_i33.AddEducationUseCase>(
+      () => _i33.AddEducationUseCase(gh<_i916.EducationRepository>()),
+    );
+    gh.lazySingleton<_i302.DeleteEducationUseCase>(
+      () => _i302.DeleteEducationUseCase(gh<_i916.EducationRepository>()),
+    );
+    gh.lazySingleton<_i871.GetEducationsUseCase>(
+      () => _i871.GetEducationsUseCase(gh<_i916.EducationRepository>()),
+    );
+    gh.lazySingleton<_i117.UpdateEducationUseCase>(
+      () => _i117.UpdateEducationUseCase(gh<_i916.EducationRepository>()),
     );
     gh.factory<_i786.CompanyRepository>(
       () => _i624.CompanyRepositoryImpl(gh<_i252.CompanyRemoteDataSource>()),
     );
-    gh.lazySingleton<_i651.WorkExperienceRepository>(
-      () => _i51.WorkExperienceRepositoryImpl(
-        gh<_i271.WorkExperienceRemoteDataSource>(),
+    gh.lazySingleton<_i570.JobPreferencesRepository>(
+      () => _i262.JobPreferencesRepositoryImpl(
+        gh<_i281.JobPreferencesRemoteDataSource>(),
       ),
     );
     gh.lazySingleton<_i787.AuthRepository>(
@@ -344,67 +359,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i742.VerifyCompanyQR>(
       () => _i742.VerifyCompanyQR(gh<_i786.CompanyRepository>()),
     );
-    gh.lazySingleton<_i695.UserCubit>(
-      () => _i695.UserCubit(
-        gh<_i597.GetCachedUser>(),
-        gh<_i210.CacheUser>(),
-        gh<_i439.FetchUserProfile>(),
-        gh<_i372.ParseResumeWithAI>(),
-        gh<_i454.SupabaseClient>(),
+    gh.lazySingleton<_i757.WorkExperienceRepository>(
+      () => _i902.WorkExperienceRepositoryImpl(
+        gh<_i1005.WorkExperienceRemoteDataSource>(),
       ),
     );
-    gh.lazySingleton<_i965.AddEducationUseCase>(
-      () => _i965.AddEducationUseCase(gh<_i843.EducationRepository>()),
-    );
-    gh.lazySingleton<_i947.DeleteEducationUseCase>(
-      () => _i947.DeleteEducationUseCase(gh<_i843.EducationRepository>()),
-    );
-    gh.lazySingleton<_i947.GetEducationsUseCase>(
-      () => _i947.GetEducationsUseCase(gh<_i843.EducationRepository>()),
-    );
-    gh.lazySingleton<_i906.UpdateEducationUseCase>(
-      () => _i906.UpdateEducationUseCase(gh<_i843.EducationRepository>()),
-    );
-    gh.factory<_i803.EducationCubit>(
-      () => _i803.EducationCubit(
-        gh<_i947.GetEducationsUseCase>(),
-        gh<_i947.DeleteEducationUseCase>(),
-        gh<_i965.AddEducationUseCase>(),
-        gh<_i906.UpdateEducationUseCase>(),
-      ),
-    );
-    gh.lazySingleton<_i320.CertificationRepository>(
-      () => _i852.CertificationRepositoryImpl(
-        gh<_i607.CertificationRemoteDataSource>(),
-        gh<_i454.SupabaseClient>(),
-      ),
-    );
-    gh.factory<_i289.AddCertificationUseCase>(
-      () => _i289.AddCertificationUseCase(gh<_i320.CertificationRepository>()),
-    );
-    gh.factory<_i244.DeleteCertificationUseCase>(
-      () =>
-          _i244.DeleteCertificationUseCase(gh<_i320.CertificationRepository>()),
-    );
-    gh.factory<_i440.GetCertificationsUseCase>(
-      () => _i440.GetCertificationsUseCase(gh<_i320.CertificationRepository>()),
-    );
-    gh.factory<_i860.UpdateCertificationUseCase>(
-      () =>
-          _i860.UpdateCertificationUseCase(gh<_i320.CertificationRepository>()),
-    );
-    gh.factory<_i781.AboutMeCubit>(
-      () => _i781.AboutMeCubit(
-        gh<_i250.SaveAboutMeUseCase>(),
-        gh<_i1047.DeleteAboutMeVideoUseCase>(),
-      ),
-    );
-    gh.lazySingleton<_i43.GetJobPreferencesUseCase>(
-      () => _i43.GetJobPreferencesUseCase(gh<_i248.JobPreferencesRepository>()),
-    );
-    gh.lazySingleton<_i476.UpdateJobPreferencesUseCase>(
-      () => _i476.UpdateJobPreferencesUseCase(
-        gh<_i248.JobPreferencesRepository>(),
+    gh.lazySingleton<_i736.SkillsLanguagesRepository>(
+      () => _i693.SkillsLanguagesRepositoryImpl(
+        gh<_i377.SkillsLanguagesRemoteDataSource>(),
       ),
     );
     gh.lazySingleton<_i243.RemoveCandidateBookmark>(
@@ -428,6 +390,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i923.UpdateCompanyProfile>(
       () => _i923.UpdateCompanyProfile(gh<_i786.CompanyRepository>()),
     );
+    gh.lazySingleton<_i216.BasicInfoRepository>(
+      () =>
+          _i720.BasicInfoRepositoryImpl(gh<_i166.BasicInfoRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i439.CertificationRepository>(
+      () => _i119.CertificationRepositoryImpl(
+        gh<_i513.CertificationRemoteDataSource>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
     gh.lazySingleton<_i432.ProcessPaymentUseCase>(
       () => _i432.ProcessPaymentUseCase(gh<_i903.PaymentRepository>()),
     );
@@ -447,56 +419,72 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i550.CrInfoCubit>(
       () => _i550.CrInfoCubit(getCrInfo: gh<_i333.GetCrInfo>()),
     );
-    gh.factory<_i387.JobPreferencesCubit>(
-      () => _i387.JobPreferencesCubit(
-        gh<_i43.GetJobPreferencesUseCase>(),
-        gh<_i476.UpdateJobPreferencesUseCase>(),
+    gh.lazySingleton<_i39.GetJobPreferencesUseCase>(
+      () => _i39.GetJobPreferencesUseCase(gh<_i570.JobPreferencesRepository>()),
+    );
+    gh.lazySingleton<_i565.UpdateJobPreferencesUseCase>(
+      () => _i565.UpdateJobPreferencesUseCase(
+        gh<_i570.JobPreferencesRepository>(),
       ),
     );
-    gh.lazySingleton<_i122.SkillsLanguagesRepository>(
-      () => _i221.SkillsLanguagesRepositoryImpl(
-        gh<_i354.SkillsLanguagesRemoteDataSource>(),
+    gh.lazySingleton<_i700.SaveBasicInfoUseCase>(
+      () => _i700.SaveBasicInfoUseCase(gh<_i216.BasicInfoRepository>()),
+    );
+    gh.lazySingleton<_i945.DeleteAboutMeVideoUseCase>(
+      () => _i945.DeleteAboutMeVideoUseCase(gh<_i1046.AboutMeRepository>()),
+    );
+    gh.lazySingleton<_i689.SaveAboutMeUseCase>(
+      () => _i689.SaveAboutMeUseCase(gh<_i1046.AboutMeRepository>()),
+    );
+    gh.factory<_i3.AddCertificationUseCase>(
+      () => _i3.AddCertificationUseCase(gh<_i439.CertificationRepository>()),
+    );
+    gh.factory<_i1063.DeleteCertificationUseCase>(
+      () => _i1063.DeleteCertificationUseCase(
+        gh<_i439.CertificationRepository>(),
       ),
     );
-    gh.lazySingleton<_i591.BasicInfoRepository>(
-      () => _i500.BasicInfoRepositoryImpl(gh<_i25.BasicInfoRemoteDataSource>()),
+    gh.factory<_i603.GetCertificationsUseCase>(
+      () => _i603.GetCertificationsUseCase(gh<_i439.CertificationRepository>()),
     );
-    gh.factory<_i848.CertificationCubit>(
-      () => _i848.CertificationCubit(
-        gh<_i440.GetCertificationsUseCase>(),
-        gh<_i244.DeleteCertificationUseCase>(),
-        gh<_i289.AddCertificationUseCase>(),
-        gh<_i860.UpdateCertificationUseCase>(),
-      ),
-    );
-    gh.lazySingleton<_i794.AddWorkExperienceUseCase>(
+    gh.factory<_i973.UpdateCertificationUseCase>(
       () =>
-          _i794.AddWorkExperienceUseCase(gh<_i651.WorkExperienceRepository>()),
+          _i973.UpdateCertificationUseCase(gh<_i439.CertificationRepository>()),
     );
-    gh.lazySingleton<_i176.DeleteWorkExperienceUseCase>(
-      () => _i176.DeleteWorkExperienceUseCase(
-        gh<_i651.WorkExperienceRepository>(),
+    gh.factory<_i3.JobPreferencesCubit>(
+      () => _i3.JobPreferencesCubit(
+        gh<_i39.GetJobPreferencesUseCase>(),
+        gh<_i565.UpdateJobPreferencesUseCase>(),
       ),
     );
-    gh.lazySingleton<_i786.GetWorkExperiencesUseCase>(
+    gh.factory<_i372.EducationCubit>(
+      () => _i372.EducationCubit(
+        gh<_i871.GetEducationsUseCase>(),
+        gh<_i302.DeleteEducationUseCase>(),
+        gh<_i33.AddEducationUseCase>(),
+        gh<_i117.UpdateEducationUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i718.AddWorkExperienceUseCase>(
       () =>
-          _i786.GetWorkExperiencesUseCase(gh<_i651.WorkExperienceRepository>()),
+          _i718.AddWorkExperienceUseCase(gh<_i757.WorkExperienceRepository>()),
     );
-    gh.lazySingleton<_i56.UpdateWorkExperienceUseCase>(
-      () => _i56.UpdateWorkExperienceUseCase(
-        gh<_i651.WorkExperienceRepository>(),
+    gh.lazySingleton<_i989.DeleteWorkExperienceUseCase>(
+      () => _i989.DeleteWorkExperienceUseCase(
+        gh<_i757.WorkExperienceRepository>(),
       ),
     );
-    gh.factory<_i201.SkillsLanguagesCubit>(
-      () => _i201.SkillsLanguagesCubit(gh<_i122.SkillsLanguagesRepository>()),
+    gh.lazySingleton<_i894.GetWorkExperiencesUseCase>(
+      () =>
+          _i894.GetWorkExperiencesUseCase(gh<_i757.WorkExperienceRepository>()),
     );
-    gh.factory<_i760.WorkExperienceCubit>(
-      () => _i760.WorkExperienceCubit(
-        gh<_i786.GetWorkExperiencesUseCase>(),
-        gh<_i176.DeleteWorkExperienceUseCase>(),
-        gh<_i794.AddWorkExperienceUseCase>(),
-        gh<_i56.UpdateWorkExperienceUseCase>(),
+    gh.lazySingleton<_i1033.UpdateWorkExperienceUseCase>(
+      () => _i1033.UpdateWorkExperienceUseCase(
+        gh<_i757.WorkExperienceRepository>(),
       ),
+    );
+    gh.factory<_i758.SkillsLanguagesCubit>(
+      () => _i758.SkillsLanguagesCubit(gh<_i736.SkillsLanguagesRepository>()),
     );
     gh.factory<_i111.GetCurrentUser>(
       () => _i111.GetCurrentUser(gh<_i787.AuthRepository>()),
@@ -514,11 +502,30 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i513.PaymentCubit>(
       () => _i513.PaymentCubit(gh<_i903.ProcessPaymentUseCase>()),
     );
-    gh.lazySingleton<_i961.SaveBasicInfoUseCase>(
-      () => _i961.SaveBasicInfoUseCase(gh<_i591.BasicInfoRepository>()),
+    gh.factory<_i661.AboutMeCubit>(
+      () => _i661.AboutMeCubit(
+        gh<_i689.SaveAboutMeUseCase>(),
+        gh<_i945.DeleteAboutMeVideoUseCase>(),
+      ),
     );
-    gh.factory<_i37.BasicInfoCubit>(
-      () => _i37.BasicInfoCubit(gh<_i961.SaveBasicInfoUseCase>()),
+    gh.factory<_i516.CertificationCubit>(
+      () => _i516.CertificationCubit(
+        gh<_i603.GetCertificationsUseCase>(),
+        gh<_i1063.DeleteCertificationUseCase>(),
+        gh<_i3.AddCertificationUseCase>(),
+        gh<_i973.UpdateCertificationUseCase>(),
+      ),
+    );
+    gh.factory<_i170.BasicInfoCubit>(
+      () => _i170.BasicInfoCubit(gh<_i700.SaveBasicInfoUseCase>()),
+    );
+    gh.factory<_i906.WorkExperienceCubit>(
+      () => _i906.WorkExperienceCubit(
+        gh<_i894.GetWorkExperiencesUseCase>(),
+        gh<_i989.DeleteWorkExperienceUseCase>(),
+        gh<_i718.AddWorkExperienceUseCase>(),
+        gh<_i1033.UpdateWorkExperienceUseCase>(),
+      ),
     );
     gh.factory<_i117.AuthCubit>(
       () => _i117.AuthCubit(
