@@ -8,9 +8,6 @@ class AiScoreCard extends StatelessWidget {
   final String candidateName;
   final String skills;
   final String currentJobTitle;
-
-  // هذا العنوان يجب أن يأتي من ما تبحث عنه الشركة حالياً
-  // يمكنك تمريره أو تثبيته مؤقتاً للتجربة
   final String targetJobTitle;
 
   const AiScoreCard({
@@ -18,7 +15,7 @@ class AiScoreCard extends StatelessWidget {
     required this.candidateName,
     required this.skills,
     required this.currentJobTitle,
-    this.targetJobTitle = "Software Engineer", // قيمة افتراضية للتجربة
+    required this.targetJobTitle,
   });
 
   @override
@@ -124,14 +121,58 @@ class AiScoreCard extends StatelessWidget {
             }
 
             if (state is AiError) {
-              return Row(
+              final isQuotaError =
+                  state.message.contains("quota") ||
+                  state.message.contains("429");
+              final isRetiredError = state.message.contains("retired");
+
+              String displayMessage;
+              if (isQuotaError) {
+                displayMessage =
+                    "Usage limit reached. Please wait ~30 seconds and try again.";
+              } else if (isRetiredError) {
+                displayMessage =
+                    "Model version issue. Retrying with updated settings...";
+              } else {
+                displayMessage = "Analysis failed: ${state.message}";
+              }
+
+              return Column(
                 children: [
-                  const Icon(Icons.error_outline, color: Colors.red),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      "AI Error: ${state.message}",
-                      style: const TextStyle(fontSize: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.red),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          displayMessage,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        context.read<AiAnalysisCubit>().analyzeProfile(
+                          candidateName: candidateName,
+                          skills: skills,
+                          jobTitle: currentJobTitle,
+                          targetJobTitle: targetJobTitle,
+                        );
+                      },
+                      icon: const Icon(Icons.refresh, size: 16),
+                      label: const Text("Retry Analysis"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigo,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                      ),
                     ),
                   ),
                 ],

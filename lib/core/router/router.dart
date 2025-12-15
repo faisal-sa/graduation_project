@@ -3,6 +3,7 @@ import 'package:graduation_project/features/CRinfo/presentation/cubit/cr_info_cu
 import 'package:graduation_project/features/candidate_details/presentation/screens/candidate_profile_page.dart';
 import 'package:graduation_project/features/company_bookmarks/presentation/blocs/bloc/bookmarks_bloc.dart';
 import 'package:graduation_project/features/company_bookmarks/presentation/screens/company_bookmarks_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/complete_company_profile_page.dart';
 import 'package:graduation_project/features/company_search/presentation/blocs/bloc/search_bloc.dart';
 import 'package:graduation_project/features/company_search/presentation/screens/candidate_results_page.dart';
 import 'package:graduation_project/features/company_search/presentation/screens/company_search_page.dart';
@@ -15,7 +16,6 @@ import 'package:graduation_project/features/company_portal/presentation/screens/
 import 'package:graduation_project/features/company_portal/presentation/screens/onboarding/company_qr_page.dart';
 
 import 'package:graduation_project/features/company_portal/presentation/screens/profile/company_settings_page.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/profile/complete_company_profile_page.dart';
 
 // keep it here for now
 final _rootNavigatorKey = GlobalKey<NavigatorState>();

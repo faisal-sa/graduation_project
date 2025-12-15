@@ -14,7 +14,6 @@ class SearchRepositoryImpl implements SearchRepository {
   SearchRepositoryImpl(this._remoteDataSource);
 
   Failure _mapExceptionToFailure(Exception e) {
-    // منطق تحويل الخطأ (يمكن نقله لملف مشترك)
     if (e.toString().contains('SupabaseException')) {
       return ServerFailure(e.toString());
     }
@@ -45,7 +44,6 @@ class SearchRepositoryImpl implements SearchRepository {
       );
 
       final entities = results.map<CandidateEntity>((data) {
-        // استخدام المودل المشترك للتحويل
         final CandidateModel model = CandidateModelMapper.ensureInitialized()
             .decodeMap(data);
         return model.toEntity();

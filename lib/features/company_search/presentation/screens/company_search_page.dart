@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/features/company_search/presentation/blocs/bloc/search_bloc.dart';
-// تأكد من أن المسار يشير إلى مكان SearchBloc الجديد
 import 'widgets/modern_search_field.dart';
 import 'widgets/modern_dropdown.dart';
 
@@ -49,11 +48,51 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
   }
 
   void _performSearch(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      final city = _cityController.text.trim();
-      final skill = _skillController.text.trim();
+    // 1. Prepare the values
+    final city = _cityController.text.trim();
+    final skill = _skillController.text.trim();
 
-      // استخدام الحدث الجديد PerformSearchEvent الخاص بـ SearchBloc
+    // 2. Check if all search criteria are empty
+    // We check: Text inputs, selected lists, job title, and the switch
+    bool isCriteriaEmpty =
+        city.isEmpty &&
+        skill.isEmpty &&
+        (selectedJobTitle == null || selectedJobTitle!.isEmpty) &&
+        selectedTypes.isEmpty &&
+        selectedLanguages.isEmpty &&
+        selectedModes.isEmpty &&
+        targetRolesList.isEmpty &&
+        !canRelocateValue;
+
+    // 3. If everything is empty, display an error message and stop the process
+    if (isCriteriaEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Please enter a skill, location, or select at least one filter to search',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red.shade400,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(20),
+        ),
+      );
+      return; // Stop execution here
+    }
+
+    // 4. If the check passes, continue the search process as usual
+    if (_formKey.currentState!.validate()) {
       context.read<SearchBloc>().add(
         PerformSearchEvent(
           location: city.isNotEmpty ? city : null,
@@ -69,7 +108,6 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
         ),
       );
 
-      // تمرير الـ Bloc للصفحة التالية
       context.pushNamed(
         'company-search-results',
         extra: context.read<SearchBloc>(),

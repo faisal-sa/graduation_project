@@ -16,6 +16,10 @@ class CandidateProfileEntity extends Equatable {
 
   // New Fields
   final String? introVideoUrl;
+
+  // ✅ 1. إضافة حقل رابط السيرة الذاتية
+  final String? cvUrl;
+
   final List<String> employmentTypes;
   final List<String> skills;
   final bool canRelocate;
@@ -41,7 +45,6 @@ class CandidateProfileEntity extends Equatable {
   final bool isUnlocked;
   final bool isBookmarked;
 
-  // ✅✅ إضافة Getter للاسم الكامل لتسهيل الاستخدام ✅✅
   String get fullName => '$firstName $lastName';
 
   const CandidateProfileEntity({
@@ -53,6 +56,7 @@ class CandidateProfileEntity extends Equatable {
     this.avatarUrl,
     this.location,
     this.introVideoUrl,
+    this.cvUrl, // ✅ إضافة للـ Constructor
     this.employmentTypes = const [],
     this.skills = const [],
     this.canRelocate = false,
@@ -83,6 +87,7 @@ class CandidateProfileEntity extends Equatable {
     String? avatarUrl,
     String? location,
     String? introVideoUrl,
+    String? cvUrl, // ✅ إضافة هنا
     List<String>? employmentTypes,
     List<String>? skills,
     bool? canRelocate,
@@ -112,6 +117,7 @@ class CandidateProfileEntity extends Equatable {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       location: location ?? this.location,
       introVideoUrl: introVideoUrl ?? this.introVideoUrl,
+      cvUrl: cvUrl ?? this.cvUrl, // ✅ التحديث هنا
       employmentTypes: employmentTypes ?? this.employmentTypes,
       skills: skills ?? this.skills,
       canRelocate: canRelocate ?? this.canRelocate,
@@ -144,6 +150,7 @@ class CandidateProfileEntity extends Equatable {
     avatarUrl,
     location,
     introVideoUrl,
+    cvUrl, // ✅ إضافته للمقارنة
     employmentTypes,
     skills,
     canRelocate,

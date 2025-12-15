@@ -17,6 +17,7 @@ class CandidateModel with CandidateModelMappable {
   final String? job_title;
   final dynamic skills;
   final String? avatar_url;
+  final bool? bookmarked;
 
   const CandidateModel({
     this.id,
@@ -28,6 +29,7 @@ class CandidateModel with CandidateModelMappable {
     this.job_title,
     this.skills,
     this.avatar_url,
+    this.bookmarked,
   });
 
   CandidateEntity toEntity() {
@@ -70,6 +72,7 @@ class CandidateModel with CandidateModelMappable {
       city: city,
       jobTitle: job,
       avatarUrl: image,
+      bookmarked: bookmarked ?? false,
     );
   }
 }

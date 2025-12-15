@@ -41,3 +41,16 @@ class PerformSearchEvent extends SearchEvent {
 }
 
 class ResetSearchEvent extends SearchEvent {}
+
+class UpdateLocalBookmarkEvent extends SearchEvent {
+  final String candidateId;
+  final bool isBookmarked;
+
+  const UpdateLocalBookmarkEvent({
+    required this.candidateId,
+    required this.isBookmarked,
+  });
+
+  @override
+  List<Object?> get props => [candidateId, isBookmarked];
+}

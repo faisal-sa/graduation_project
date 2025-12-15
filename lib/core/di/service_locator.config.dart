@@ -16,6 +16,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import '../../features/ai_analysis/data/data_sources/ai_analysis_data_source.dart'
     as _i1065;
+import '../../features/ai_analysis/data/data_sources/ai_local_data_source.dart'
+    as _i32;
 import '../../features/ai_analysis/data/repositories/ai_analysis_repository_impl.dart'
     as _i944;
 import '../../features/ai_analysis/domain/repositories/ai_analysis_repository.dart'
@@ -214,14 +216,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.prefs,
       preResolve: true,
     );
+    gh.singleton<_i32.AiLocalDataSource>(() => _i32.AiLocalDataSource());
+    gh.lazySingleton<_i1065.AiRemoteDataSource>(
+      () => _i1065.AiRemoteDataSource(),
+    );
     gh.lazySingleton<_i149.CandidateRemoteDataSource>(
       () => _i149.CandidateRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
     gh.lazySingleton<_i171.UserCubit>(
       () => _i171.UserCubit(gh<_i460.SharedPreferences>()),
-    );
-    gh.lazySingleton<_i1065.AiRemoteDataSource>(
-      () => _i1065.AiRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
     gh.lazySingleton<_i626.BookmarksRemoteDataSource>(
       () => _i626.BookmarksRemoteDataSource(gh<_i454.SupabaseClient>()),
@@ -245,9 +248,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i697.WathqRemoteDataSource>(
       () => _i697.WathqRemoteDataSourceImpl(),
     );
-    gh.factory<_i497.AiRepository>(
-      () => _i944.AiRepositoryImpl(gh<_i1065.AiRemoteDataSource>()),
-    );
     gh.lazySingleton<_i861.CrInfoRepository>(
       () => _i319.CrInfoRepositoryImpl(gh<_i697.WathqRemoteDataSource>()),
     );
@@ -259,9 +259,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i380.EducationRemoteDataSource>(
       () => _i380.EducationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.factory<_i335.AiAnalysisCubit>(
-      () => _i335.AiAnalysisCubit(gh<_i497.AiRepository>()),
     );
     gh.lazySingleton<_i466.JobPreferencesRemoteDataSource>(
       () =>
@@ -314,6 +311,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i248.JobPreferencesRepository>(
       () => _i942.JobPreferencesRepositoryImpl(
         gh<_i466.JobPreferencesRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i497.AiRepository>(
+      () => _i944.AiRepositoryImpl(
+        gh<_i1065.AiRemoteDataSource>(),
+        gh<_i32.AiLocalDataSource>(),
       ),
     );
     gh.factory<_i104.SearchRepository>(
@@ -408,6 +411,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i923.UpdateCompanyProfile>(
       () => _i923.UpdateCompanyProfile(gh<_i786.CompanyRepository>()),
+    );
+    gh.factory<_i335.AiAnalysisCubit>(
+      () => _i335.AiAnalysisCubit(gh<_i497.AiRepository>()),
     );
     gh.lazySingleton<_i432.ProcessPaymentUseCase>(
       () => _i432.ProcessPaymentUseCase(gh<_i903.PaymentRepository>()),

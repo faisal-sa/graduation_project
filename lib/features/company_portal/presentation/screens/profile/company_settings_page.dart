@@ -56,15 +56,6 @@ class CompanySettingsPage extends StatelessWidget {
                         showDivider:
                             false, // Last item in group needs no divider
                       ),
-                      _SettingsTile(
-                        icon: Icons.verified_user,
-                        iconColor: Colors.purpleAccent,
-                        title: 'Verify Company (Wathq)',
-                        onTap: () => context.pushNamed('verify-cr'),
-
-                        showDivider:
-                            false, // Last item in group needs no divider
-                      ),
                     ],
                   ),
 

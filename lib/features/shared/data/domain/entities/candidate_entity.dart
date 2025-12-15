@@ -1,5 +1,3 @@
-// lib/features/company_portal/domain/entities/candidate_entity.dart
-
 import 'package:equatable/equatable.dart';
 
 class CandidateEntity extends Equatable {
@@ -21,6 +19,26 @@ class CandidateEntity extends Equatable {
     this.avatarUrl,
   });
 
+  CandidateEntity copyWith({
+    String? id,
+    String? fullName,
+    String? skills,
+    String? city,
+    bool? bookmarked,
+    String? jobTitle,
+    String? avatarUrl,
+  }) {
+    return CandidateEntity(
+      id: id ?? this.id,
+      fullName: fullName ?? this.fullName,
+      skills: skills ?? this.skills,
+      city: city ?? this.city,
+      bookmarked: bookmarked ?? this.bookmarked,
+      jobTitle: jobTitle ?? this.jobTitle,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+    );
+  }
+
   @override
   bool? get stringify => true;
 
@@ -31,6 +49,7 @@ class CandidateEntity extends Equatable {
     skills,
     city,
     bookmarked,
+    jobTitle,
     avatarUrl,
   ];
 }

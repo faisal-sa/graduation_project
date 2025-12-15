@@ -62,7 +62,38 @@ class SearchRemoteDataSource {
       }
 
       final result = await query;
-      return List<Map<String, dynamic>>.from(result);
+
+      final List<Map<String, dynamic>> candidates =
+          List<Map<String, dynamic>>.from(result);
+
+      final companyId = supabase.auth.currentUser?.id;
+
+      for (var candidate in candidates) {
+        candidate['bookmarked'] = false;
+      }
+
+      if (companyId != null && candidates.isNotEmpty) {
+        try {
+          final bookmarksResponse = await supabase
+              .from('company_bookmarks')
+              .select('candidate_id')
+              .eq('company_id', companyId);
+
+          final Set<String> bookmarkedIds = (bookmarksResponse as List)
+              .map((e) => e['candidate_id'] as String)
+              .toSet();
+
+          for (var candidate in candidates) {
+            if (bookmarkedIds.contains(candidate['id'])) {
+              candidate['bookmarked'] = true;
+            }
+          }
+        } catch (e) {
+          print("Error fetching bookmarks: $e");
+        }
+      }
+
+      return candidates;
     } on PostgrestException catch (e) {
       throw SupabaseException(e.message ?? 'Database error during search.');
     } catch (e) {

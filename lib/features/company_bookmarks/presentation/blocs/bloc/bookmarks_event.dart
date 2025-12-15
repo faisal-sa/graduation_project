@@ -37,3 +37,13 @@ class RemoveBookmarkEvent extends BookmarksEvent {
   @override
   List<Object?> get props => [candidateId, companyId];
 }
+
+class ToggleBookmarkEvent extends BookmarksEvent {
+  final String candidateId;
+  // يمكن إضافة companyId إذا كنت لا تجلبه من داخل البلوك
+
+  const ToggleBookmarkEvent({required this.candidateId});
+
+  @override
+  List<Object> get props => [candidateId];
+}

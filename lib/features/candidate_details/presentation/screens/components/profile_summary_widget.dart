@@ -128,8 +128,6 @@ class ProfileSummaryWidget extends StatelessWidget {
     );
   }
 
-  // ❌ تم حذف _buildVideoSection لأننا استخدمنا InlineVideoPlayer بدلاً منها
-
   Widget _buildTag(IconData icon, String label, Color color) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),

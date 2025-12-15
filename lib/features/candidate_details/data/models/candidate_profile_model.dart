@@ -37,6 +37,10 @@ class CandidateProfileModel extends CandidateProfileEntity {
     super.avatarUrl,
     super.location,
     super.introVideoUrl,
+
+    // ✅ 1. إضافة تمرير cvUrl هنا
+    super.cvUrl,
+
     super.employmentTypes = const [],
     required super.skills,
     super.canRelocate = false,
@@ -55,7 +59,7 @@ class CandidateProfileModel extends CandidateProfileEntity {
     required this.educations,
     required this.certifications,
     required super.isUnlocked,
-    super.isBookmarked = false, // <---
+    super.isBookmarked = false,
   }) : super(
          experiences: experiences,
          educations: educations,
@@ -67,7 +71,6 @@ class CandidateProfileModel extends CandidateProfileEntity {
     bool isUnlocked,
     bool isBookmarked,
   ) {
-    // ننشئ نسخة قابلة للتعديل
     final sensitiveJson = Map<String, dynamic>.from(json);
 
     if (sensitiveJson['first_name'] == null) {
@@ -81,9 +84,9 @@ class CandidateProfileModel extends CandidateProfileEntity {
     if (!isUnlocked) {
       sensitiveJson['email'] = null;
       sensitiveJson['phone_number'] = null;
+      sensitiveJson['cv_url'] = null;
     }
 
-    // 3. التحقق من القوائم
     if (sensitiveJson['work_experiences'] == null) {
       sensitiveJson['work_experiences'] = [];
     }

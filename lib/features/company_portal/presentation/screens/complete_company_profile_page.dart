@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:toastification/toastification.dart'; // ✅ Import the package
+import 'package:toastification/toastification.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 import 'package:graduation_project/features/shared/data/domain/entities/company_entity.dart';
@@ -32,6 +32,8 @@ class _CompleteCompanyProfilePageState
 
   String? selectedSize;
 
+  bool _isSaving = false;
+
   final sizeOptions = [
     '1-50 employees',
     '51-200 employees',
@@ -50,6 +52,32 @@ class _CompleteCompanyProfilePageState
     addressController = TextEditingController();
     emailController = TextEditingController();
     phoneController = TextEditingController();
+
+    _fetchInitialData();
+  }
+
+  void _fetchInitialData() {
+    final userId = serviceLocator.get<SupabaseClient>().auth.currentUser?.id;
+    if (userId != null) {
+      context.read<CompanyBloc>().add(GetCompanyProfileEvent(userId));
+    }
+  }
+
+  void _populateControllers(CompanyEntity company) {
+    nameController.text = company.companyName;
+    industryController.text = company.industry;
+    cityController.text = company.city;
+    descController.text = company.description;
+    websiteController.text = company.website ?? '';
+    addressController.text = company.address ?? '';
+    emailController.text = company.email ?? '';
+    phoneController.text = company.phone ?? '';
+
+    if (sizeOptions.contains(company.companySize)) {
+      setState(() {
+        selectedSize = company.companySize;
+      });
+    }
   }
 
   @override
@@ -65,11 +93,15 @@ class _CompleteCompanyProfilePageState
     super.dispose();
   }
 
-  void _saveProfile(CompanyEntity company) {
+  void _saveProfile(CompanyEntity currentCompany) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final updated = company.copyWith(
+      setState(() {
+        _isSaving = true;
+      });
+
+      final updated = currentCompany.copyWith(
         companyName: nameController.text.trim(),
         industry: industryController.text.trim(),
         city: cityController.text.trim(),
@@ -78,7 +110,7 @@ class _CompleteCompanyProfilePageState
         address: addressController.text.trim(),
         email: emailController.text.trim(),
         phone: phoneController.text.trim(),
-        companySize: selectedSize ?? company.companySize,
+        companySize: selectedSize ?? currentCompany.companySize,
         updatedAt: DateTime.now(),
       );
 
@@ -95,46 +127,47 @@ class _CompleteCompanyProfilePageState
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      // Sticky Action Bar
       bottomNavigationBar: _buildBottomBar(context, primaryColor),
       body: BlocConsumer<CompanyBloc, CompanyState>(
         listener: (context, state) async {
           if (state is CompanyLoaded) {
-            final userId = serviceLocator
-                .get<SupabaseClient>()
-                .auth
-                .currentUser
-                ?.id;
-            if (userId != null) {
-              await CompanyLocalStorage.saveCompanyId(userId);
-            }
+            if (!_isSaving) {
+              _populateControllers(state.company);
+            } else {
+              setState(() {
+                _isSaving = false;
+              });
 
-            if (mounted) {
-              // ✅ Modern Success Notification
-              toastification.show(
-                context: context,
-                type: ToastificationType.success,
-                style: ToastificationStyle.flatColored,
-                title: const Text('Profile Saved'),
-                description: const Text(
-                  'Your company details have been updated.',
-                ),
-                alignment: Alignment.topRight,
-                autoCloseDuration: const Duration(seconds: 4),
-                borderRadius: BorderRadius.circular(12.0),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x07000000),
-                    blurRadius: 16,
-                    offset: Offset(0, 16),
-                    spreadRadius: 0,
+              final userId = serviceLocator
+                  .get<SupabaseClient>()
+                  .auth
+                  .currentUser
+                  ?.id;
+              if (userId != null) {
+                await CompanyLocalStorage.saveCompanyId(userId);
+              }
+
+              if (mounted) {
+                toastification.show(
+                  context: context,
+                  type: ToastificationType.success,
+                  style: ToastificationStyle.flatColored,
+                  title: const Text('Profile Saved'),
+                  description: const Text(
+                    'Your company details have been updated.',
                   ),
-                ],
-              );
-              context.go('/company/search');
+                  alignment: Alignment.topRight,
+                  autoCloseDuration: const Duration(seconds: 4),
+                  borderRadius: BorderRadius.circular(12.0),
+                );
+                context.go('/company/search');
+              }
             }
           } else if (state is CompanyError) {
-            // ✅ Modern Error Notification
+            setState(() {
+              _isSaving = false;
+            });
+
             toastification.show(
               context: context,
               type: ToastificationType.error,
@@ -147,6 +180,10 @@ class _CompleteCompanyProfilePageState
           }
         },
         builder: (context, state) {
+          if (state is CompanyLoading && !_isSaving) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           final company = (state is CompanyLoaded)
               ? state.company
               : CompanyEntity(
@@ -188,7 +225,6 @@ class _CompleteCompanyProfilePageState
                         _buildSectionTitle('Essentials'),
                         const SizedBox(height: 10),
 
-                        // Form Fields
                         _ModernTextField(
                           controller: nameController,
                           label: 'Company Name',
@@ -318,8 +354,10 @@ class _CompleteCompanyProfilePageState
       child: SafeArea(
         child: BlocBuilder<CompanyBloc, CompanyState>(
           builder: (context, state) {
+            final isSavingNow = state is CompanyLoading && _isSaving;
+
             return ElevatedButton(
-              onPressed: state is CompanyLoading
+              onPressed: isSavingNow
                   ? null
                   : () {
                       final company = (state is CompanyLoaded)
@@ -344,7 +382,7 @@ class _CompleteCompanyProfilePageState
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: state is CompanyLoading
+              child: isSavingNow
                   ? const SizedBox(
                       height: 20,
                       width: 20,
@@ -367,8 +405,6 @@ class _CompleteCompanyProfilePageState
     );
   }
 }
-
-// --- Modern Widget Components ---
 
 class _ModernTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -485,17 +521,16 @@ class _ModernDropdown extends StatelessWidget {
       ),
       child: DropdownButtonFormField<String>(
         initialValue: value,
-        isExpanded: true, // Prevents the overflow error
-        dropdownColor: Colors.white, // ✅ Makes the popup background pure white
-        borderRadius: BorderRadius.circular(16), // ✅ Rounds the popup corners
-        elevation: 4, // ✅ Adds a soft shadow to the popup
+        isExpanded: true,
+        dropdownColor: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        elevation: 4,
         icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey),
         style: const TextStyle(
           color: Colors.black87,
           fontSize: 14,
-          fontWeight: FontWeight.w500, // Slightly bolder text
-          fontFamily:
-              'Segoe UI', // Optional: keeps font consistent if using one
+          fontWeight: FontWeight.w500,
+          fontFamily: 'Segoe UI',
         ),
         items: items
             .map(

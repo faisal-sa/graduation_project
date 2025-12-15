@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/features/company_bookmarks/presentation/blocs/bloc/bookmarks_bloc.dart';
 import 'package:graduation_project/features/company_search/presentation/blocs/bloc/search_bloc.dart';
+import 'package:graduation_project/features/company_search/presentation/screens/widgets/candidate_rich_card.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
-
-import 'widgets/candidate_rich_card.dart';
 
 class CandidateResultsPage extends StatelessWidget {
   const CandidateResultsPage({super.key});
@@ -13,31 +13,27 @@ class CandidateResultsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).primaryColor;
-    const backgroundColor = Color(0xFFF8F9FD);
+    const backgroundColor = Color(0xFFF2F4F8);
+    final companyId = Supabase.instance.client.auth.currentUser?.id ?? '';
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      // 1. استخدام MultiBlocListener للاستماع للأحداث من كلا الـ Blocين
       body: MultiBlocListener(
         listeners: [
-          // أ) الاستماع لنجاح عملية الحفظ/الإزالة (من BookmarksBloc)
           BlocListener<BookmarksBloc, BookmarksState>(
             listener: (context, state) {
-              if (state is BookmarkOperationSuccess) {
+              if (state is BookmarksError) {
                 toastification.show(
                   context: context,
-                  type: ToastificationType.success,
+                  type: ToastificationType.error,
                   style: ToastificationStyle.flatColored,
-                  title: Text(
-                    state.message,
-                  ), // "Removed successfully" or "Saved"
+                  title: const Text('Action Failed'),
+                  description: Text(state.message),
                   autoCloseDuration: const Duration(seconds: 3),
-                  alignment: Alignment.bottomCenter,
                 );
               }
             },
           ),
-          // ب) الاستماع لأخطاء البحث (من SearchBloc)
           BlocListener<SearchBloc, SearchState>(
             listener: (context, state) {
               if (state is SearchError) {
@@ -45,32 +41,56 @@ class CandidateResultsPage extends StatelessWidget {
                   context: context,
                   type: ToastificationType.error,
                   style: ToastificationStyle.flatColored,
-                  title: const Text('Search Failed'),
+                  title: const Text('Search Error'),
                   description: Text(state.message),
                   autoCloseDuration: const Duration(seconds: 4),
-                  alignment: Alignment.topCenter,
                 );
               }
             },
           ),
         ],
-        // 2. بناء الواجهة بناءً على حالة البحث فقط (SearchBloc)
         child: BlocBuilder<SearchBloc, SearchState>(
           builder: (context, state) {
-            // حالة التحميل
             if (state is SearchLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator.adaptive(),
+                    SizedBox(height: 16),
+                    Text(
+                      "Finding best matches...",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              );
             }
 
-            // حالة عرض النتائج (الاسم الجديد)
             if (state is SearchResultsLoaded) {
               final candidates = state.candidates;
 
               return CustomScrollView(
+                physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverAppBar.medium(
                     backgroundColor: backgroundColor,
-                    surfaceTintColor: Colors.transparent,
+                    scrolledUnderElevation: 0,
+                    leading: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_rounded,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                        onPressed: () => context.pop(),
+                      ),
+                    ),
                     title: const Text(
                       'Search Results',
                       style: TextStyle(
@@ -78,45 +98,123 @@ class CandidateResultsPage extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    leading: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-                      onPressed: () => context.pop(),
-                    ),
                     actions: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 20.0),
-                          child: Text(
-                            "${candidates.length} Found",
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.bold,
-                            ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          "${candidates.length} Found",
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
                           ),
                         ),
                       ),
                     ],
                   ),
-
                   if (candidates.isEmpty)
                     SliverFillRemaining(child: _buildEmptyState())
                   else
                     SliverPadding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
+                        horizontal: 16,
                         vertical: 10,
                       ),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: CandidateRichCard(
-                              candidate: candidates[index],
-                              primaryColor: primaryColor,
-                              // نعتمد هنا على أن الكيان يحتوي على خاصية bookmarked
-                              // إذا لم تكن موجودة، يمكنك تمرير false مؤقتاً
-                              isBookmarked: candidates[index].bookmarked,
+                          final candidate = candidates[index];
+
+                          return TweenAnimationBuilder<double>(
+                            duration: Duration(
+                              milliseconds: 300 + (index * 50),
                             ),
+                            tween: Tween(begin: 0.0, end: 1.0),
+                            curve: Curves.easeOutQuad,
+                            builder: (context, value, child) {
+                              return Transform.translate(
+                                offset: Offset(0, 20 * (1 - value)),
+                                child: Opacity(
+                                  opacity: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 16.0,
+                                    ),
+                                    child: _buildModernCardWrapper(
+                                      child: // داخل ListView.builder
+                                      CandidateRichCard(
+                                        candidate: candidate,
+                                        primaryColor: primaryColor,
+
+                                        initialIsBookmarked:
+                                            candidate.bookmarked,
+
+                                        onTap: () async {
+                                          final bool? result = await context
+                                              .pushNamed<bool>(
+                                                'candidate-details',
+                                                pathParameters: {
+                                                  'id': candidate.id,
+                                                },
+                                              );
+
+                                          if (result != null &&
+                                              result != candidate.bookmarked) {
+                                            if (context.mounted) {
+                                              context.read<SearchBloc>().add(
+                                                UpdateLocalBookmarkEvent(
+                                                  candidateId: candidate.id,
+                                                  isBookmarked: result,
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        },
+
+                                        onBookmarkToggle:
+                                            (bool isNowBookmarked) {
+                                              if (isNowBookmarked) {
+                                                context
+                                                    .read<BookmarksBloc>()
+                                                    .add(
+                                                      AddBookmarkEvent(
+                                                        candidateId:
+                                                            candidate.id,
+                                                        companyId: companyId,
+                                                      ),
+                                                    );
+                                              } else {
+                                                context
+                                                    .read<BookmarksBloc>()
+                                                    .add(
+                                                      RemoveBookmarkEvent(
+                                                        candidateId:
+                                                            candidate.id,
+                                                        companyId: companyId,
+                                                      ),
+                                                    );
+                                              }
+
+                                              context.read<SearchBloc>().add(
+                                                UpdateLocalBookmarkEvent(
+                                                  candidateId: candidate.id,
+                                                  isBookmarked: isNowBookmarked,
+                                                ),
+                                              );
+                                            },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         }, childCount: candidates.length),
                       ),
@@ -124,12 +222,27 @@ class CandidateResultsPage extends StatelessWidget {
                 ],
               );
             }
-
-            // الحالة الافتراضية
             return _buildEmptyState();
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildModernCardWrapper({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(borderRadius: BorderRadius.circular(24), child: child),
     );
   }
 
@@ -138,38 +251,15 @@ class CandidateResultsPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.all(30),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.search_off_rounded,
-              size: 60,
-              color: Colors.grey[300],
-            ),
-          ),
+          Icon(Icons.search_off_rounded, size: 50, color: Colors.grey[400]),
           const SizedBox(height: 24),
           Text(
-            'No candidates found',
+            'No Candidates Found',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w700,
               color: Colors.grey[800],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Try adjusting your filters or location.',
-            style: TextStyle(color: Colors.grey[500], fontSize: 15),
           ),
         ],
       ),

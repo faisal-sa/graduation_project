@@ -1,3 +1,10 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
+// ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
+
 part of 'candidate_profile_model.dart';
 
 class CandidateProfileModelMapper
@@ -63,6 +70,13 @@ class CandidateProfileModelMapper
     'introVideoUrl',
     _$introVideoUrl,
     key: r'intro_video_url',
+    opt: true,
+  );
+  static String? _$cvUrl(CandidateProfileModel v) => v.cvUrl;
+  static const Field<CandidateProfileModel, String> _f$cvUrl = Field(
+    'cvUrl',
+    _$cvUrl,
+    key: r'cv_url',
     opt: true,
   );
   static List<String> _$employmentTypes(CandidateProfileModel v) =>
@@ -213,6 +227,7 @@ class CandidateProfileModelMapper
     #avatarUrl: _f$avatarUrl,
     #location: _f$location,
     #introVideoUrl: _f$introVideoUrl,
+    #cvUrl: _f$cvUrl,
     #employmentTypes: _f$employmentTypes,
     #skills: _f$skills,
     #canRelocate: _f$canRelocate,
@@ -244,6 +259,7 @@ class CandidateProfileModelMapper
       avatarUrl: data.dec(_f$avatarUrl),
       location: data.dec(_f$location),
       introVideoUrl: data.dec(_f$introVideoUrl),
+      cvUrl: data.dec(_f$cvUrl),
       employmentTypes: data.dec(_f$employmentTypes),
       skills: data.dec(_f$skills),
       canRelocate: data.dec(_f$canRelocate),
@@ -296,3 +312,4 @@ mixin CandidateProfileModelMappable {
     );
   }
 }
+

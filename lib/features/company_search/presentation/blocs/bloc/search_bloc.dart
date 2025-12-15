@@ -14,6 +14,28 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc(this._searchCandidatesUseCase) : super(SearchInitial()) {
     on<PerformSearchEvent>(_onPerformSearch);
     on<ResetSearchEvent>((event, emit) => emit(SearchInitial()));
+    on<UpdateLocalBookmarkEvent>(_onUpdateLocalBookmark);
+  }
+
+  void _onUpdateLocalBookmark(
+    UpdateLocalBookmarkEvent event,
+    Emitter<SearchState> emit,
+  ) {
+    if (state is SearchResultsLoaded) {
+      final currentState = state as SearchResultsLoaded;
+
+      final List<CandidateEntity> updatedList = List.of(
+        currentState.candidates,
+      );
+
+      final index = updatedList.indexWhere((c) => c.id == event.candidateId);
+      if (index != -1) {
+        updatedList[index] = updatedList[index].copyWith(
+          bookmarked: event.isBookmarked,
+        );
+        emit(SearchResultsLoaded(updatedList));
+      }
+    }
   }
 
   Future<void> _onPerformSearch(

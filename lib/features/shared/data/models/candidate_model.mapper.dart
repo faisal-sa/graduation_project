@@ -76,6 +76,12 @@ class CandidateModelMapper extends ClassMapperBase<CandidateModel> {
     _$avatar_url,
     opt: true,
   );
+  static bool? _$bookmarked(CandidateModel v) => v.bookmarked;
+  static const Field<CandidateModel, bool> _f$bookmarked = Field(
+    'bookmarked',
+    _$bookmarked,
+    opt: true,
+  );
 
   @override
   final MappableFields<CandidateModel> fields = const {
@@ -88,6 +94,7 @@ class CandidateModelMapper extends ClassMapperBase<CandidateModel> {
     #job_title: _f$job_title,
     #skills: _f$skills,
     #avatar_url: _f$avatar_url,
+    #bookmarked: _f$bookmarked,
   };
 
   static CandidateModel _instantiate(DecodingData data) {
@@ -101,6 +108,7 @@ class CandidateModelMapper extends ClassMapperBase<CandidateModel> {
       job_title: data.dec(_f$job_title),
       skills: data.dec(_f$skills),
       avatar_url: data.dec(_f$avatar_url),
+      bookmarked: data.dec(_f$bookmarked),
     );
   }
 
@@ -178,6 +186,7 @@ abstract class CandidateModelCopyWith<$R, $In extends CandidateModel, $Out>
     String? job_title,
     dynamic skills,
     String? avatar_url,
+    bool? bookmarked,
   });
   CandidateModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
@@ -212,6 +221,7 @@ class _CandidateModelCopyWithImpl<$R, $Out>
     Object? job_title = $none,
     Object? skills = $none,
     Object? avatar_url = $none,
+    Object? bookmarked = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != $none) #id: id,
@@ -223,6 +233,7 @@ class _CandidateModelCopyWithImpl<$R, $Out>
       if (job_title != $none) #job_title: job_title,
       if (skills != $none) #skills: skills,
       if (avatar_url != $none) #avatar_url: avatar_url,
+      if (bookmarked != $none) #bookmarked: bookmarked,
     }),
   );
   @override
@@ -236,6 +247,7 @@ class _CandidateModelCopyWithImpl<$R, $Out>
     job_title: data.get(#job_title, or: $value.job_title),
     skills: data.get(#skills, or: $value.skills),
     avatar_url: data.get(#avatar_url, or: $value.avatar_url),
+    bookmarked: data.get(#bookmarked, or: $value.bookmarked),
   );
 
   @override

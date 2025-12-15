@@ -1,4 +1,3 @@
-// lib/features/company_portal/data/data_sources/company_remote_data_source.dart
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,7 +6,7 @@ class SupabaseException implements Exception {
   SupabaseException(this.message);
 
   @override
-  String toString() => 'SupabaseException: $message';
+  String toString() => message;
 }
 
 @LazySingleton()
@@ -19,13 +18,13 @@ class CompanyRemoteDataSource {
     try {
       return call();
     } on PostgrestException catch (e) {
-      throw SupabaseException(e.message ?? 'A database error occurred.');
+      throw SupabaseException(e.message);
     } on AuthException catch (e) {
-      throw SupabaseException(e.message ?? 'An authentication error occurred.');
+      throw SupabaseException(e.message);
     } on SupabaseException {
       rethrow;
     } catch (e) {
-      throw SupabaseException('An unexpected error occurred: ${e.toString()}');
+      throw SupabaseException('حدث خطأ غير متوقع: ${e.toString()}');
     }
   }
 
@@ -41,20 +40,20 @@ class CompanyRemoteDataSource {
 
       final user = authResponse.user;
       if (user == null || user.id.isEmpty) {
-        throw SupabaseException(
-          'No valid user ID. Please verify signup and retry.',
-        );
+        throw SupabaseException('فشل إنشاء المستخدم.');
       }
+
       final response = await supabase
           .from('companies')
           .insert({
             'user_id': user.id,
             'email': email,
-            'company_name': 'Untitled Company',
-            'industry': '',
+            'company_name': 'New Company',
+            'industry': 'Pending',
           })
-          .select('*')
+          .select()
           .single();
+
       return Map<String, dynamic>.from(response);
     });
   }
@@ -62,7 +61,7 @@ class CompanyRemoteDataSource {
   Future<Map<String, dynamic>?> getCompanyProfile(String userId) async {
     return await _handleSupabaseCall(() async {
       if (userId.isEmpty) {
-        throw SupabaseException('Invalid userId: cannot be empty.');
+        throw SupabaseException('Invalid userId');
       }
 
       final result = await supabase
@@ -70,6 +69,7 @@ class CompanyRemoteDataSource {
           .select()
           .eq('user_id', userId)
           .maybeSingle();
+
       return result == null ? null : Map<String, dynamic>.from(result);
     });
   }
@@ -78,31 +78,35 @@ class CompanyRemoteDataSource {
     Map<String, dynamic> data,
   ) async {
     return await _handleSupabaseCall(() async {
-      if (supabase.auth.currentUser!.id.isEmpty) {
-        throw SupabaseException('Invalid company ID: cannot be empty.');
+      final currentUser = supabase.auth.currentUser;
+
+      if (currentUser == null) {
+        throw SupabaseException('يجب تسجيل الدخول أولاً.');
       }
 
-      data.addAll({
-        'id': supabase.auth.currentUser!.id,
-        'user_id': supabase.auth.currentUser!.id,
-      });
+      final safeData = Map<String, dynamic>.from(data);
+      safeData.remove('id');
+      safeData.remove('user_id');
+      safeData.remove('created_at');
+      safeData['updated_at'] = DateTime.now().toIso8601String();
+
       final result = await supabase
           .from('companies')
-          .upsert(data)
-          .eq('user_id', supabase.auth.currentUser!.id)
+          .update(safeData)
+          .eq('user_id', currentUser.id)
           .select()
           .single();
-      return result;
+
+      return Map<String, dynamic>.from(result);
     });
   }
 
   Future<Map<String, dynamic>> checkCompanyStatus(String userId) async {
     return await _handleSupabaseCall(() async {
-      final client = supabase;
       bool hasProfile = false;
       bool hasPaid = false;
 
-      final companyResponse = await client
+      final companyResponse = await supabase
           .from('companies')
           .select('id, industry')
           .eq('user_id', userId)
@@ -110,18 +114,10 @@ class CompanyRemoteDataSource {
 
       if (companyResponse != null) {
         final industry = companyResponse['industry'] as String?;
-
-        if (industry != null &&
-            industry.trim().isNotEmpty &&
-            industry != 'Pending') {
+        if (industry != null && industry.isNotEmpty && industry != 'Pending') {
           hasProfile = true;
-        } else {
-          hasProfile = false;
         }
       }
-
-      final companyId = companyResponse?['id'] as String?;
-      if (companyId != null) {}
 
       return {'hasProfile': hasProfile, 'hasPaid': hasPaid};
     });

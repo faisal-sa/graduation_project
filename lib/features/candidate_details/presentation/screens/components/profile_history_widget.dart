@@ -119,8 +119,8 @@ class ProfileHistoryWidget extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(edu.degreeType!),
-            Text(edu.fieldOfStudy!, style: TextStyle(color: Colors.grey[600])),
+            Text(edu.degreeType),
+            Text(edu.fieldOfStudy, style: TextStyle(color: Colors.grey[600])),
             Text(
               "${edu.startDate.year ?? ''} - ${edu.endDate?.year ?? ''}",
               style: TextStyle(color: Colors.grey[500], fontSize: 12.sp),
@@ -157,11 +157,11 @@ class ProfileHistoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              cert.issuingInstitution!,
+              cert.issuingInstitution,
               style: TextStyle(color: Colors.grey[700]),
             ),
             Text(
-              "Issued: ${cert.issueDate!.year}",
+              "Issued: ${cert.issueDate.year}",
               style: TextStyle(color: Colors.grey[500], fontSize: 12.sp),
             ),
           ],
