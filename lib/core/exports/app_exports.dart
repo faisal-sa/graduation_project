@@ -53,11 +53,8 @@ export 'package:graduation_project/features/individuals/navigation/pages/individ
 export 'package:graduation_project/features/CRinfo/cr_info_page.dart';
 
 // Auth
-export 'package:graduation_project/features/auth/presentation/pages/login_page.dart';
-export 'package:graduation_project/features/auth/presentation/pages/signup_page.dart';
+export 'package:graduation_project/features/auth/presentation/pages/auth_head.dart';
 export 'package:graduation_project/features/auth/presentation/pages/otp_verification_page.dart';
 
 // Shared
 export 'package:graduation_project/features/individuals/shared/user/presentation/cubit/user_cubit.dart';
-
-

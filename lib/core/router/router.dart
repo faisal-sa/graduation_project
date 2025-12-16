@@ -1,6 +1,7 @@
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:graduation_project/core/exports/app_exports.dart';
 import 'package:graduation_project/features/CRinfo/presentation/cubit/cr_info_cubit.dart';
+import 'package:graduation_project/features/auth/presentation/pages/auth_head.dart';
 import 'package:graduation_project/features/auth/presentation/pages/new_password_page.dart';
 import 'package:graduation_project/features/auth/presentation/pages/rest_passord_page.dart';
 import 'package:graduation_project/features/candidate_details/presentation/screens/candidate_profile_page.dart';
@@ -31,8 +32,9 @@ final getIt = GetIt.instance;
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
+  initialLocation: '/auth',
   routes: [
+    GoRoute(path: '/auth', builder: (context, state) => const AuthHead()),
     GoRoute(
       path: '/reset-password',
       builder: (context, state) => ResetPasswordPage(),
@@ -43,8 +45,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/intro', builder: (context, state) => const IntroPage()),
-    GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
-    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+
     GoRoute(
       path: '/otp-verification',
       builder: (context, state) {
@@ -183,8 +184,6 @@ final GoRouter router = GoRouter(
 
                     return MultiBlocProvider(
                       providers: [
-                   
-
                         BlocProvider(
                           create: (context) {
                             final cubit = serviceLocator.get<AboutMeCubit>();
@@ -209,7 +208,7 @@ final GoRouter router = GoRouter(
                     final userCubit = serviceLocator.get<UserCubit>();
                     final initialExperiences =
                         userCubit.state.user.workExperiences;
-                        
+
                     return BlocProvider(
                       create: (context) {
                         final cubit = serviceLocator.get<WorkExperienceCubit>();
@@ -228,7 +227,7 @@ final GoRouter router = GoRouter(
                   builder: (context, state) {
                     final userCubit = serviceLocator.get<UserCubit>();
                     final initialEducations = userCubit.state.user.educations;
-    
+
                     return BlocProvider(
                       create: (context) {
                         final cubit = serviceLocator.get<EducationCubit>();
@@ -239,7 +238,7 @@ final GoRouter router = GoRouter(
                     );
                   },
                 ),
-GoRoute(
+                GoRoute(
                   path: 'certification',
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
