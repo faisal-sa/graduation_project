@@ -69,12 +69,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    print("in data source now");
     final response = await _supabase.auth.signInWithPassword(
       email: email,
       password: password,
     );
-    print(response);
 
     if (response.user == null) {
       throw Exception('Sign in failed: User is null');

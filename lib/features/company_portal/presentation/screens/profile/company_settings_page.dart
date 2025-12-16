@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:graduation_project/features/auth/presentation/cubit/auth_state.dart';
 
 class CompanySettingsPage extends StatelessWidget {
   const CompanySettingsPage({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.unauthenticated) {
+          context.go('/auth');
+        }
+      },
+      child: _CompanySettingsContent(),
+    );
+  }
+}
+
+class _CompanySettingsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define colors locally or use your theme
@@ -143,7 +160,7 @@ class CompanySettingsPage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context); // Close sheet
-                        context.go('/login');
+                        context.read<AuthCubit>().signOutUser();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,

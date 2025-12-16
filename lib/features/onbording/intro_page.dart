@@ -32,7 +32,7 @@ class _IntroPageState extends State<IntroPage> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  context.go('/login');
+                  context.go('/auth');
                 },
                 child: const Text(
                   'Skip',
@@ -119,7 +119,7 @@ class _IntroPageState extends State<IntroPage> {
               child: GestureDetector(
                 onTap: () {
                   if (_currentPage == introText.length - 1) {
-                    context.go('/login');
+                    context.go('/auth');
                   } else {
                     _controller.nextPage(
                       duration: const Duration(milliseconds: 350),

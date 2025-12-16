@@ -1,9 +1,11 @@
 import 'package:graduation_project/core/exports/app_exports.dart';
 import 'package:graduation_project/core/utils/validators.dart';
+import 'package:graduation_project/core/utils/snacksoo.dart';
 import 'package:graduation_project/core/widgets/app_text_field.dart';
 import 'package:graduation_project/core/widgets/loading_button.dart';
 import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:graduation_project/features/auth/presentation/cubit/auth_state.dart';
+import 'package:go_router/go_router.dart';
 
 // ===============================================================
 // LOGIN TAB
@@ -29,7 +31,30 @@ class _LoginTabState extends State<LoginTab> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.authenticated) {
+          Snacksoo.show(
+            context,
+            message: 'Login successful!',
+            type: TopSnackBarType.success,
+          );
+          // Navigate based on user role
+          final role = state.role?.toLowerCase() ?? '';
+          if (role == 'company') {
+            context.go('/company/onboarding-router');
+          } else {
+            // Individual users go to insights page
+            context.go('/insights');
+          }
+        } else if (state.status == AuthStatus.error) {
+          Snacksoo.show(
+            context,
+            message: state.message ?? 'An error occurred',
+            type: TopSnackBarType.error,
+          );
+        }
+      },
       builder: (context, state) {
         return Form(
           key: formKey,
@@ -52,7 +77,7 @@ class _LoginTabState extends State<LoginTab> {
               const SizedBox(height: 24),
               loadingBtn(
                 text: 'Login',
-                isLoading: state is AuthLoading,
+                isLoading: state.status == AuthStatus.loading,
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
                     context.read<AuthCubit>().signInUser(

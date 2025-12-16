@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/snacksoo.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -17,18 +18,31 @@ class OTPVerificationPage extends StatelessWidget {
 
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthAuthenticated) {
-          context.go('/');
-        } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+        if (state.status == AuthStatus.authenticated) {
+          Snacksoo.show(
+            context,
+            message: 'OTP verified successfully!',
+            type: TopSnackBarType.success,
           );
-        } else if (state is OTPSent) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('OTP has been resent to your email'),
-              backgroundColor: Colors.green,
-            ),
+          // Navigate based on user role
+          final role = state.role?.toLowerCase() ?? '';
+          if (role == 'company') {
+            context.go('/company/onboarding-router');
+          } else {
+            // Individual users go to insights page
+            context.go('/insights');
+          }
+        } else if (state.status == AuthStatus.error) {
+          Snacksoo.show(
+            context,
+            message: state.message ?? 'An error occurred',
+            type: TopSnackBarType.error,
+          );
+        } else if (state.status == AuthStatus.otpSent) {
+          Snacksoo.show(
+            context,
+            message: 'OTP has been resent to your email',
+            type: TopSnackBarType.success,
           );
         }
       },
@@ -36,6 +50,7 @@ class OTPVerificationPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Verify OTP'),
+            foregroundColor: Colors.white,
             backgroundColor: Colors.blue,
             leading: IconButton(
               onPressed: () => context.pop(),
@@ -118,7 +133,7 @@ class OTPVerificationPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(
-                          onPressed: state is AuthLoading
+                          onPressed: state.status == AuthStatus.loading
                               ? null
                               : () {
                                   if (formKey.currentState!.validate()) {
@@ -136,7 +151,7 @@ class OTPVerificationPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: state is AuthLoading
+                          child: state.status == AuthStatus.loading
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
@@ -155,7 +170,7 @@ class OTPVerificationPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         TextButton(
-                          onPressed: state is AuthLoading
+                          onPressed: state.status == AuthStatus.loading
                               ? null
                               : () {
                                   context.read<AuthCubit>().resendOTPToEmail(

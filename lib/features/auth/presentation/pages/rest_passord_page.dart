@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/snacksoo.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -30,22 +31,23 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is PasswordResetEmailSent) {
+        if (state.status == AuthStatus.passwordResetEmailSent) {
           setState(() {
             _otpSent = true;
             _email = state.email;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('OTP sent! Check your inbox.'),
-              backgroundColor: Colors.green,
-            ),
+          Snacksoo.show(
+            context,
+            message: 'OTP sent! Check your inbox.',
+            type: TopSnackBarType.success,
           );
-        } else if (state is PasswordResetVerified) {
+        } else if (state.status == AuthStatus.passwordResetVerified) {
           context.push('/new-password');
-        } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+        } else if (state.status == AuthStatus.error) {
+          Snacksoo.show(
+            context,
+            message: state.message ?? 'An error occurred',
+            type: TopSnackBarType.error,
           );
         }
       },
@@ -122,7 +124,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(
-                          onPressed: state is AuthLoading
+                          onPressed: state.status == AuthStatus.loading
                               ? null
                               : () {
                                   if (formKey.currentState!.validate()) {
@@ -141,7 +143,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: state is AuthLoading
+                          child: state.status == AuthStatus.loading
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
@@ -197,7 +199,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(
-                          onPressed: state is AuthLoading
+                          onPressed: state.status == AuthStatus.loading
                               ? null
                               : () {
                                   if (formKey.currentState!.validate()) {
@@ -219,7 +221,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: state is AuthLoading
+                          child: state.status == AuthStatus.loading
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
@@ -238,7 +240,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         const SizedBox(height: 16),
                         TextButton(
-                          onPressed: state is AuthLoading
+                          onPressed: state.status == AuthStatus.loading
                               ? null
                               : () {
                                   setState(() {

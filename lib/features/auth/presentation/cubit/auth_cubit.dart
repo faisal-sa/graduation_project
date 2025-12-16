@@ -41,23 +41,23 @@ class AuthCubit extends Cubit<AuthState> {
     required this.sendPasswordResetOTP,
     required this.verifyPasswordResetOTP,
     required this.updatePassword,
-  }) : super(AuthInitial()) {
+  }) : super(AuthState.initial()) {
     checkAuthStatus();
   }
 
   Future<void> checkAuthStatus() async {
-    emit(AuthLoading());
+    emit(AuthState.loading());
     final result = await getCurrentUser(NoParams());
     result.when(
       (user) {
         if (user != null) {
-          emit(AuthAuthenticated(user));
+          emit(AuthState.authenticated(user));
         } else {
-          emit(AuthUnauthenticated());
+          emit(AuthState.unauthenticated());
         }
       },
       (error) {
-        emit(AuthUnauthenticated());
+        emit(AuthState.unauthenticated());
       },
     );
   }
@@ -76,18 +76,26 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
     required String role,
   }) async {
-    emit(AuthLoading());
-    final result = await signUp(
+    emit(AuthState.loading());
+    final signUpResult = await signUp(
       SignUpParams(email: email, password: password, role: role),
     );
 
-    result.when(
-      (success) {
-        // After signup, OTP is usually sent automatically
-        emit(OTPSent(email));
+    await signUpResult.when(
+      (success) async {
+        // Resend OTP after successful signup (for signup type)
+        final otpResult = await resendOTP(ResendOTPParams(email: email));
+        otpResult.when(
+          (success) {
+            emit(AuthState.otpSent(email));
+          },
+          (error) {
+            emit(AuthState.error(_getErrorMessage(error)));
+          },
+        );
       },
-      (error) {
-        emit(AuthError(_getErrorMessage(error)));
+      (error) async {
+        emit(AuthState.error(_getErrorMessage(error)));
       },
     );
   }
@@ -96,46 +104,45 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
   }) async {
-    emit(AuthLoading());
-    print("going here");
+    emit(AuthState.loading());
     final result = await login(LoginParams(email: email, password: password));
 
     result.when(
       (user) {
-        emit(AuthAuthenticated(user, role: user.role));
+        emit(AuthState.authenticated(user, role: user.role));
       },
       (error) {
-        emit(AuthError(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error)));
       },
     );
   }
 
   Future<void> sendOTPToEmail(String email) async {
-    emit(AuthLoading());
+    emit(AuthState.loading());
 
     final result = await sendOTP(SendOTPParams(email: email));
 
     result.when(
       (success) {
-        emit(OTPSent(email));
+        emit(AuthState.otpSent(email));
       },
       (error) {
-        emit(AuthError(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error)));
       },
     );
   }
 
   Future<void> resendOTPToEmail(String email) async {
-    emit(AuthLoading());
+    emit(AuthState.loading());
 
     final result = await resendOTP(ResendOTPParams(email: email));
 
     result.when(
       (success) {
-        emit(OTPSent(email));
+        emit(AuthState.otpSent(email));
       },
       (error) {
-        emit(AuthError(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error)));
       },
     );
   }
@@ -144,29 +151,29 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String token,
   }) async {
-    emit(AuthLoading());
+    emit(AuthState.loading());
 
     final result = await verifyOTP(VerifyOTPParams(email: email, token: token));
 
     result.when(
       (user) {
-        emit(AuthAuthenticated(user, role: user.role));
+        emit(AuthState.authenticated(user, role: user.role));
       },
       (error) {
-        emit(AuthError(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error)));
       },
     );
   }
 
   Future<void> sendPasswordResetOTPToEmail({required String email}) async {
-    emit(AuthLoading());
+    emit(AuthState.loading());
     final result = await sendPasswordResetOTP(
       SendPasswordResetOTPParams(email: email.trim()),
     );
 
     result.when(
-      (success) => emit(PasswordResetEmailSent(email.trim())),
-      (error) => emit(AuthError(_getErrorMessage(error))),
+      (success) => emit(AuthState.passwordResetEmailSent(email.trim())),
+      (error) => emit(AuthState.error(_getErrorMessage(error))),
     );
   }
 
@@ -174,26 +181,39 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String token,
   }) async {
-    emit(AuthLoading());
+    emit(AuthState.loading());
     final result = await verifyPasswordResetOTP(
       VerifyPasswordResetOTPParams(email: email.trim(), token: token.trim()),
     );
 
     result.when(
-      (user) => emit(PasswordResetVerified(user)),
-      (error) => emit(AuthError(_getErrorMessage(error))),
+      (user) => emit(AuthState.passwordResetVerified(user)),
+      (error) => emit(AuthState.error(_getErrorMessage(error))),
     );
   }
 
   Future<void> updateUserPassword({required String newPassword}) async {
-    emit(AuthLoading());
+    emit(AuthState.loading());
     final result = await updatePassword(
       UpdatePasswordParams(newPassword: newPassword),
     );
 
     result.when(
-      (user) => emit(AuthAuthenticated(user, role: user.role)),
-      (error) => emit(AuthError(_getErrorMessage(error))),
+      (user) => emit(AuthState.authenticated(user, role: user.role)),
+      (error) => emit(AuthState.error(_getErrorMessage(error))),
+    );
+  }
+
+  Future<void> signOutUser() async {
+    emit(AuthState.loading());
+    final result = await signOut(NoParams());
+    result.when(
+      (success) {
+        emit(AuthState.unauthenticated());
+      },
+      (error) {
+        emit(AuthState.error(_getErrorMessage(error)));
+      },
     );
   }
 }

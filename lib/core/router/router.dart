@@ -32,7 +32,7 @@ final getIt = GetIt.instance;
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/auth',
+  initialLocation: '/',
   routes: [
     GoRoute(path: '/auth', builder: (context, state) => const AuthHead()),
     GoRoute(

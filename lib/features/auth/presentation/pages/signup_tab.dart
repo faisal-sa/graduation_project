@@ -1,9 +1,12 @@
 import 'package:graduation_project/core/exports/app_exports.dart';
 import 'package:graduation_project/core/utils/validators.dart';
+import 'package:graduation_project/core/utils/snacksoo.dart';
 import 'package:graduation_project/core/widgets/app_text_field.dart';
 import 'package:graduation_project/core/widgets/loading_button.dart';
 import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:graduation_project/features/auth/presentation/cubit/auth_state.dart';
+import 'package:graduation_project/features/auth/presentation/pages/role_chip.dart';
+import 'package:go_router/go_router.dart';
 
 // ===============================================================
 // SIGNUP TAB
@@ -34,7 +37,23 @@ class _SignupTabState extends State<SignupTab> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.otpSent) {
+          Snacksoo.show(
+            context,
+            message: 'OTP sent to ${state.email}',
+            type: TopSnackBarType.success,
+          );
+          context.push('/otp-verification', extra: state.email);
+        } else if (state.status == AuthStatus.error) {
+          Snacksoo.show(
+            context,
+            message: state.message ?? 'An error occurred',
+            type: TopSnackBarType.error,
+          );
+        }
+      },
       builder: (context, state) {
         return Form(
           key: formKey,
@@ -43,13 +62,26 @@ class _SignupTabState extends State<SignupTab> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 8),
-                RoleDropdown(
-                  selectedRole: _selectedRole,
-                  onRoleChanged: (role) {
-                    setState(() {
-                      _selectedRole = role;
-                    });
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RoleChip(
+                      label: 'Individual',
+                      icon: Icons.person_outline,
+                      value: 'individual',
+                      selectedRole: _selectedRole ?? 'individual',
+                      onSelected: (role) =>
+                          setState(() => _selectedRole = role),
+                    ),
+                    RoleChip(
+                      label: 'Company',
+                      icon: Icons.business_outlined,
+                      value: 'company',
+                      selectedRole: _selectedRole ?? 'individual',
+                      onSelected: (role) =>
+                          setState(() => _selectedRole = role),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24),
 
@@ -97,7 +129,7 @@ class _SignupTabState extends State<SignupTab> {
                 const SizedBox(height: 24),
                 loadingBtn(
                   text: 'Create Account',
-                  isLoading: state is AuthLoading,
+                  isLoading: state.status == AuthStatus.loading,
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       context.read<AuthCubit>().signUpUser(
@@ -123,87 +155,6 @@ class _SignupTabState extends State<SignupTab> {
           ),
         );
       },
-    );
-  }
-}
-
-// ===============================================================
-// ROLE DROPDOWN (CHOICE CHIP)
-// ===============================================================
-class RoleDropdown extends StatelessWidget {
-  final String? selectedRole;
-  final ValueChanged<String?> onRoleChanged;
-
-  const RoleDropdown({
-    super.key,
-    required this.selectedRole,
-    required this.onRoleChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 12,
-      children: [
-        ChoiceChip(
-          avatar: Icon(
-            Icons.person_outline,
-            size: 20,
-            color: selectedRole == 'individual' ? Colors.blue : Colors.grey,
-          ),
-          label: const Text('Individual'),
-          selected: selectedRole == 'individual',
-          onSelected: (selected) {
-            onRoleChanged(selected ? 'individual' : null);
-          },
-          selectedColor: Colors.blue.withAlpha(20),
-          checkmarkColor: Colors.blue,
-          labelStyle: TextStyle(
-            color: selectedRole == 'individual' ? Colors.blue : Colors.grey,
-            fontWeight: selectedRole == 'individual'
-                ? FontWeight.bold
-                : FontWeight.normal,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(
-              color: selectedRole == 'individual'
-                  ? Colors.blue
-                  : Colors.grey.withAlpha(30),
-            ),
-          ),
-        ),
-        ChoiceChip(
-          avatar: Icon(
-            Icons.business_outlined,
-            size: 20,
-            color: selectedRole == 'company' ? Colors.blue : Colors.grey,
-          ),
-          label: const Text('Company'),
-          selected: selectedRole == 'company',
-          onSelected: (selected) {
-            onRoleChanged(selected ? 'company' : null);
-          },
-          selectedColor: Colors.blue.withAlpha(20),
-          checkmarkColor: Colors.blue,
-          labelStyle: TextStyle(
-            color: selectedRole == 'company' ? Colors.blue : Colors.grey,
-            fontWeight: selectedRole == 'company'
-                ? FontWeight.bold
-                : FontWeight.normal,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(
-              color: selectedRole == 'company'
-                  ? Colors.blue
-                  : Colors.grey.withAlpha(30),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

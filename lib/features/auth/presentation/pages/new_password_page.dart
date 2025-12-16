@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/snacksoo.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -15,21 +16,22 @@ class NewPasswordPage extends StatelessWidget {
 
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthAuthenticated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Password updated successfully!'),
-              backgroundColor: Colors.green,
-            ),
+        if (state.status == AuthStatus.authenticated) {
+          Snacksoo.show(
+            context,
+            message: 'Password updated successfully!',
+            type: TopSnackBarType.success,
           );
           Future.delayed(const Duration(seconds: 1)).then((_) {
             if (context.mounted) {
               context.go('/login');
             }
           });
-        } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+        } else if (state.status == AuthStatus.error) {
+          Snacksoo.show(
+            context,
+            message: state.message ?? 'An error occurred',
+            type: TopSnackBarType.error,
           );
         }
       },
@@ -126,7 +128,7 @@ class NewPasswordPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(
-                        onPressed: state is AuthLoading
+                        onPressed: state.status == AuthStatus.loading
                             ? null
                             : () {
                                 if (formKey.currentState!.validate()) {
@@ -143,7 +145,7 @@ class NewPasswordPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: state is AuthLoading
+                        child: state.status == AuthStatus.loading
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,

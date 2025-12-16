@@ -1,73 +1,64 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/user.dart';
 
-abstract class AuthState extends Equatable {
-  const AuthState();
-
-  @override
-  List<Object?> get props => [];
+enum AuthStatus {
+  initial,
+  loading,
+  authenticated,
+  unauthenticated,
+  error,
+  otpSent,
+  otpVerified,
+  passwordResetEmailSent,
+  passwordResetVerified,
 }
 
-class AuthInitial extends AuthState {}
-
-class AuthLoading extends AuthState {}
-
-class AuthAuthenticated extends AuthState {
-  final User user;
+class AuthState extends Equatable {
+  final AuthStatus status;
+  final User? user;
+  final String? message;
+  final String? email;
   final String? role;
-  final String userId; // <--- FIX: Added userId getter
+  final String? userId;
 
-  AuthAuthenticated(this.user, {this.role})
-    // FIX: Initialize userId using the User entity's ID
-    : userId = user.id;
+  const AuthState({
+    required this.status,
+    this.user,
+    this.message,
+    this.email,
+    this.role,
+    this.userId,
+  });
 
-  @override
-  List<Object?> get props => [user, role, userId];
-}
+  factory AuthState.initial() => const AuthState(status: AuthStatus.initial);
 
-class AuthUnauthenticated extends AuthState {}
+  factory AuthState.loading() => const AuthState(status: AuthStatus.loading);
 
-class AuthError extends AuthState {
-  final String message;
+  factory AuthState.authenticated(User user, {String? role}) => AuthState(
+    status: AuthStatus.authenticated,
+    user: user,
+    role: role ?? user.role,
+    userId: user.id,
+  );
 
-  const AuthError(this.message);
+  factory AuthState.unauthenticated() =>
+      const AuthState(status: AuthStatus.unauthenticated);
 
-  @override
-  List<Object?> get props => [message];
-}
+  factory AuthState.error(String message) =>
+      AuthState(status: AuthStatus.error, message: message);
 
-class OTPSent extends AuthState {
-  final String email;
+  factory AuthState.otpSent(String email) =>
+      AuthState(status: AuthStatus.otpSent, email: email);
 
-  const OTPSent(this.email);
+  factory AuthState.otpVerified(User user) =>
+      AuthState(status: AuthStatus.otpVerified, user: user);
 
-  @override
-  List<Object?> get props => [email];
-}
+  factory AuthState.passwordResetEmailSent(String email) =>
+      AuthState(status: AuthStatus.passwordResetEmailSent, email: email);
 
-class OTPVerified extends AuthState {
-  final User user;
-
-  const OTPVerified(this.user);
-
-  @override
-  List<Object?> get props => [user];
-}
-
-class PasswordResetEmailSent extends AuthState {
-  final String email;
-
-  const PasswordResetEmailSent(this.email);
+  factory AuthState.passwordResetVerified(User user) =>
+      AuthState(status: AuthStatus.passwordResetVerified, user: user);
 
   @override
-  List<Object?> get props => [email];
-}
-
-class PasswordResetVerified extends AuthState {
-  final User user;
-
-  const PasswordResetVerified(this.user);
-
-  @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [status, user, message, email, role, userId];
 }
