@@ -52,6 +52,7 @@ class _SignupTabState extends State<SignupTab> {
             message: state.message ?? 'An error occurred',
             type: TopSnackBarType.error,
           );
+          context.push('/otp-verification', extra: state.email);
         }
       },
       builder: (context, state) {

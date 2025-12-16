@@ -45,4 +45,14 @@ class Validators {
     }
     return null;
   }
+
+  static String? validateOTP(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter OTP code';
+    }
+    if (value.length != 6) {
+      return 'OTP must be 6 digits';
+    }
+    return null;
+  }
 }

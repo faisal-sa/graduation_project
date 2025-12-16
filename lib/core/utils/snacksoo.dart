@@ -3,57 +3,57 @@ import 'package:flutter/material.dart';
 /// ---------------------------------------------------------------------------
 /// ENUM
 /// ---------------------------------------------------------------------------
-/// نوع السناك بار
-/// هذا الملف لا يعرف أي State أو Cubit
-/// فقط نوع العرض (لون / أيقونة)
+/// Snack bar type
+/// This file doesn't know any State or Cubit
+/// Only the display type (color / icon)
 enum TopSnackBarType { success, error, info }
 
 /// ---------------------------------------------------------------------------
 /// PUBLIC API
 /// ---------------------------------------------------------------------------
-/// هذه هي الواجهة الوحيدة التي يستدعيها الـ UI
-/// TopSnackBar.show(...)
+/// This is the only interface called by the UI
+/// Snacksoo.show(...)
 ///
-/// ملاحظة مهمة:
-/// - هذا الكلاس "غبي"
-/// - لا يعرف BLoC
-/// - لا يعرف enum status
-/// - فقط يعرض رسالة
+/// Important note:
+/// - This class is "dumb"
+/// - Doesn't know BLoC
+/// - Doesn't know enum status
+/// - Only displays a message
 class Snacksoo {
-  /// نحتفظ بالـ OverlayEntry الحالي
-  /// حتى نزيله إذا تم عرض SnackBar جديد
+  /// We keep the current OverlayEntry
+  /// To remove it if a new SnackBar is shown
   static OverlayEntry? _entry;
 
-  /// الدالة الرئيسية لعرض السناك بار
+  /// Main function to display the snack bar
   static void show(
     BuildContext context, {
     required String message,
     TopSnackBarType type = TopSnackBarType.info,
     Duration duration = const Duration(seconds: 3),
   }) {
-    /// إذا كان هناك SnackBar ظاهر
-    /// قم بإزالته أولًا (منع التكرار)
+    /// If there is a visible SnackBar
+    /// Remove it first (prevent duplication)
     _entry?.remove();
 
-    /// الحصول على الـ Overlay الخاص بالصفحة الحالية
+    /// Get the Overlay of the current page
     final overlay = Overlay.of(context);
 
-    /// إنشاء OverlayEntry
+    /// Create OverlayEntry
     _entry = OverlayEntry(
       builder: (_) => _TopSnackBarWidget(
         message: message,
         type: type,
         duration: duration,
         onDismissed: () {
-          /// عند انتهاء الأنيميشن
-          /// نقوم بإزالة الـ entry من الشاشة
+          /// When the animation ends
+          /// We remove the entry from the screen
           _entry?.remove();
           _entry = null;
         },
       ),
     );
 
-    /// إضافة الـ OverlayEntry إلى الشاشة
+    /// Add the OverlayEntry to the screen
     overlay.insert(_entry!);
   }
 }
@@ -61,13 +61,13 @@ class Snacksoo {
 /// ---------------------------------------------------------------------------
 /// INTERNAL WIDGET
 /// ---------------------------------------------------------------------------
-/// هذا الودجت خاص بالسناك بار فقط
-/// مسؤول عن:
-/// - الأنيميشن
-/// - الشكل
-/// - الإخفاء التلقائي
+/// This widget is specific to the snack bar only
+/// Responsible for:
+/// - Animation
+/// - Appearance
+/// - Auto-hide
 ///
-/// لا يُستخدم مباشرة من الخارج
+/// Not used directly from outside
 class _TopSnackBarWidget extends StatefulWidget {
   final String message;
   final TopSnackBarType type;
@@ -88,41 +88,41 @@ class _TopSnackBarWidget extends StatefulWidget {
 /// ---------------------------------------------------------------------------
 /// STATE + ANIMATION
 /// ---------------------------------------------------------------------------
-/// نستخدم StatefulWidget لأن:
-/// - AnimationController يحتاج lifecycle
+/// We use StatefulWidget because:
+/// - AnimationController needs lifecycle
 /// - initState / dispose
 class _TopSnackBarWidgetState extends State<_TopSnackBarWidget>
     with SingleTickerProviderStateMixin {
-  /// يتحكم بالأنيميشن (دخول / خروج)
+  /// Controls the animation (enter / exit)
   late final AnimationController _controller;
 
-  /// أنيميشن الحركة من الأعلى للأسفل
+  /// Animation movement from top to bottom
   late final Animation<Offset> _offsetAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    /// إنشاء AnimationController
+    /// Create AnimationController
     _controller = AnimationController(
-      vsync: this, // لمنع استهلاك غير ضروري
+      vsync: this, // To prevent unnecessary consumption
       duration: const Duration(milliseconds: 400),
     );
 
-    /// Tween يحدد الحركة:
-    /// begin: خارج الشاشة من الأعلى
-    /// end: مكانه الطبيعي
+    /// Tween defines the movement:
+    /// begin: Outside the screen from the top
+    /// end: Its natural position
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0, -1),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
-    /// تشغيل أنيميشن الدخول
+    /// Start entry animation
     _controller.forward();
 
-    /// بعد مدة محددة:
-    /// - نشغل أنيميشن الخروج
-    /// - ثم نخبر الكلاس الخارجي لإزالة Overlay
+    /// After a specified duration:
+    /// - Start exit animation
+    /// - Then notify the external class to remove Overlay
     Future.delayed(widget.duration, () async {
       await _controller.reverse();
       widget.onDismissed();
@@ -131,13 +131,13 @@ class _TopSnackBarWidgetState extends State<_TopSnackBarWidget>
 
   @override
   void dispose() {
-    /// مهم جدًا:
-    /// إيقاف الـ controller لتجنب memory leaks
+    /// Very important:
+    /// Stop the controller to avoid memory leaks
     _controller.dispose();
     super.dispose();
   }
 
-  /// تحديد لون السناك بار حسب النوع
+  /// Determine snack bar color based on type
   Color get _backgroundColor {
     switch (widget.type) {
       case TopSnackBarType.success:
@@ -149,7 +149,7 @@ class _TopSnackBarWidgetState extends State<_TopSnackBarWidget>
     }
   }
 
-  /// أيقونة حسب النوع (قابلة للتطوير لاحقًا)
+  /// Icon based on type (can be extended later)
   IconData get _icon {
     switch (widget.type) {
       case TopSnackBarType.success:
@@ -164,13 +164,13 @@ class _TopSnackBarWidgetState extends State<_TopSnackBarWidget>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      /// نضمن عدم التداخل مع النوتش
+      /// Ensure no overlap with the notch
       child: Align(
         alignment: Alignment.topCenter,
         child: SlideTransition(
           position: _offsetAnimation,
           child: Material(
-            /// ضروري للظل و الـ elevation
+            /// Necessary for shadow and elevation
             color: Colors.transparent,
             child: Container(
               margin: const EdgeInsets.all(16),

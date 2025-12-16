@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/utils/snacksoo.dart';
+import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/loading_button.dart';
+import '../../../../core/widgets/app_text_field.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -74,7 +77,7 @@ class OTPVerificationPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -88,85 +91,35 @@ class OTPVerificationPage extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 48),
-                        TextFormField(
+                        AppTextField(
+                          label: 'OTP Code',
                           controller: otpController,
-                          decoration: const InputDecoration(
-                            labelText: 'OTP Code',
-                            labelStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            hintStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-
-                              fontWeight: FontWeight.w300,
-                            ),
-                            hintText: 'Enter 6-digit code',
-                          ),
-
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            letterSpacing: 6,
-                            fontWeight: FontWeight.bold,
-                          ),
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           maxLength: 6,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter OTP code';
-                            }
-                            if (value.length != 6) {
-                              return 'OTP must be 6 digits';
-                            }
-                            return null;
-                          },
+                          style: const TextStyle(
+                            fontSize: 16,
+                            letterSpacing: 6,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          hintText: 'Enter 6-digit code',
+                          validator: Validators.validateOTP,
                         ),
                         const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: state.status == AuthStatus.loading
-                              ? null
-                              : () {
-                                  if (formKey.currentState!.validate()) {
-                                    context.read<AuthCubit>().verifyOTPCode(
-                                      email: email,
-                                      token: otpController.text.trim(),
-                                    );
-                                  }
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: state.status == AuthStatus.loading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  'Verify OTP',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                        loadingBtn(
+                          text: 'Verify OTP',
+                          isLoading: state.status == AuthStatus.loading,
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              context.read<AuthCubit>().verifyOTPCode(
+                                email: email,
+                                token: otpController.text.trim(),
+                              );
+                            }
+                          },
                         ),
                         const SizedBox(height: 16),
                         TextButton(
