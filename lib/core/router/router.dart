@@ -1,5 +1,5 @@
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:graduation_project/core/exports/app_exports.dart';
+import 'package:graduation_project/core/services/gemini_service.dart';
 import 'package:graduation_project/features/CRinfo/presentation/cubit/cr_info_cubit.dart';
 import 'package:graduation_project/features/auth/presentation/pages/new_password_page.dart';
 import 'package:graduation_project/features/auth/presentation/pages/rest_passord_page.dart';
@@ -116,7 +116,7 @@ final GoRouter router = GoRouter(
                     return BlocProvider(
                       create: (context) {
                         final cubit = MatchStrengthCubit(
-                          model: serviceLocator.get<GenerativeModel>(),
+                          geminiService: serviceLocator.get<GeminiService>(), 
                         );
                         cubit.analyzeProfile(currentUser);
                         return cubit;

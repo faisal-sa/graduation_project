@@ -1,20 +1,19 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:graduation_project/core/exports/app_exports.dart';
+import 'package:graduation_project/core/services/gemini_service.dart';
 import 'package:graduation_project/features/individuals/shared/user/domain/entities/user_entity.dart';
 import 'package:injectable/injectable.dart';
 
-
 @injectable
 class AIDataSource {
-  final GenerativeModel model;
+  final GeminiService _geminiService;
 
-  AIDataSource(this.model);
+  AIDataSource(this._geminiService);
 
   Future<UserEntity> extractResume(Uint8List pdfBytes) async {
-final promptText = """
+    final promptText = """
       You are a data extraction assistant.
       Analyze the attached resume PDF.
       Extract the following fields and return them in a raw JSON format:
@@ -30,21 +29,21 @@ final promptText = """
       3. Fix any capitalization issues in names.
     """;
 
-    final prompt = TextPart(promptText);
+    // Call the Dio service passing the PDF bytes
+    final responseText = await _geminiService.generateContent(
+      prompt: promptText,
+      binaryData: pdfBytes,
+      mimeType: 'application/pdf',
+      model: 'gemini-2.5-flash',
+    );
 
-    final pdfPart = InlineDataPart('application/pdf', pdfBytes);
-
-    final response = await model.generateContent([
-      Content.multi([prompt, pdfPart]),
-    ]);
-
-    final responseText = response.text;
     debugPrint("AI response to Resume upload:\n $responseText");
     if (responseText == null || responseText.isEmpty) {
       throw Exception("AI returned empty response");
     }
 
     try {
+      // Clean up markdown just in case, though the prompt says not to use it
       String cleanJson = responseText
           .replaceAll('```json', '')
           .replaceAll('```', '')

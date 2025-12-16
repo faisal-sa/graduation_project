@@ -1,17 +1,21 @@
 
 import 'dart:convert';
 
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/core/services/gemini_service.dart';
 import 'package:graduation_project/features/individuals/match_strength/cubit/match_strength_state.dart';
 import 'package:graduation_project/features/individuals/shared/user/domain/entities/user_entity.dart';
 import 'package:injectable/injectable.dart';
 
+
+
 @injectable
 class MatchStrengthCubit extends Cubit<MatchStrengthState> {
-  final GenerativeModel model; 
+  final GeminiService _geminiService;
 
-  MatchStrengthCubit({required this.model}) : super(MatchStrengthInitial());
+  MatchStrengthCubit({required GeminiService geminiService})
+      : _geminiService = geminiService,
+        super(MatchStrengthInitial());
 
   Future<void> analyzeProfile(UserEntity userEntity) async {
     emit(MatchStrengthLoading());
@@ -19,20 +23,16 @@ class MatchStrengthCubit extends Cubit<MatchStrengthState> {
     try {
       final jobTitle = userEntity.jobTitle.isNotEmpty ? userEntity.jobTitle : "General Role";
 
-      // 1. Prepare Data (Include Skills and Certs now!)
       final experienceString = userEntity.workExperiences.isNotEmpty
           ? userEntity.workExperiences
-                .map(
-                  (e) =>
-                      "Role: ${e.jobTitle} at ${e.companyName}. Description: ${e.responsibilities.join(', ')}",
-                )
-                .join("\n")
+              .map((e) => "Role: ${e.jobTitle} at ${e.companyName}. Description: ${e.responsibilities.join(', ')}")
+              .join("\n")
           : "No specific work experience listed.";
 
       final educationString = userEntity.educations.isNotEmpty
           ? userEntity.educations
-                .map((e) => "Degree: ${e.fieldOfStudy} at ${e.institutionName}")
-                .join("\n")
+              .map((e) => "Degree: ${e.fieldOfStudy} at ${e.institutionName}")
+              .join("\n")
           : "No formal education listed.";
 
       final skillsString = userEntity.skills.isNotEmpty
@@ -41,11 +41,10 @@ class MatchStrengthCubit extends Cubit<MatchStrengthState> {
 
       final certString = userEntity.certifications.isNotEmpty
           ? userEntity.certifications
-                .map((c) => "${c.name} from ${c.issuingInstitution}")
-                .join("\n")
+              .map((c) => "${c.name} from ${c.issuingInstitution}")
+              .join("\n")
           : "No certifications.";
 
-      // 2. Construct Enhanced Prompt
       final prompt = '''
         Act as an expert ATS (Applicant Tracking System) AI. 
         Analyze this candidate for the target role: "$jobTitle".
@@ -68,32 +67,28 @@ class MatchStrengthCubit extends Cubit<MatchStrengthState> {
             {
               "issue": "Specific missing hard skill or gap (Max 6 words)",
               "action": "Specific 3-5 word recommendation (e.g. 'Learn SQL', 'Get PMP Cert')"
-            },
-            {
-              "issue": "Another gap",
-              "action": "Actionable advice"
             }
           ]
         }
       ''';
 
-      // 3. Call AI
-      final content = [Content.text(prompt)];
-      final response = await model.generateContent(content);
+      // Call Dio Service
+      final responseText = await _geminiService.generateContent(
+        prompt: prompt,
+        model: 'gemini-2.5-flash',
+        // We enforce JSON MIME type to help the model, even without a strict schema object here
+        enforceJson: true, 
+      );
       
-      final responseText = response.text;
       if (responseText == null) {
         emit(const MatchStrengthError("Could not generate analysis."));
         return;
       }
 
-      // 4. Robust Parsing
-      // Removes ```json and ``` and trims whitespace
       final cleanedJson = responseText
           .replaceAll(RegExp(r'```json|```'), '')
           .trim();
 
-      // Find the first '{' and last '}' to ensure we only parse the JSON object
       final startIndex = cleanedJson.indexOf('{');
       final endIndex = cleanedJson.lastIndexOf('}');
 
@@ -105,7 +100,7 @@ class MatchStrengthCubit extends Cubit<MatchStrengthState> {
       final data = jsonDecode(jsonString);
 
       emit(MatchStrengthLoaded(
-          score: (data['score'] as num).toInt(),
+        score: (data['score'] as num).toInt(),
         strengths: List<String>.from(data['strengths'] ?? []),
         improvements: List<Map<String, String>>.from(
           (data['improvements'] as List).map((item) => {

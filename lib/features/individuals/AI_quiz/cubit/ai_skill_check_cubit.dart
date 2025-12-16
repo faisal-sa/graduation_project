@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/cubit/ai_skill_check_state.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/models/quiz_question.dart';

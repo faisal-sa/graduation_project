@@ -1,38 +1,34 @@
 import 'dart:convert';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:graduation_project/core/services/gemini_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter/foundation.dart';
 import '../models/ai_score_model.dart';
 
+
 @lazySingleton
 class AiRemoteDataSource {
-  late final GenerativeModel _model;
+  final GeminiService _geminiService;
 
-  AiRemoteDataSource() {
-    _model = FirebaseAI.googleAI().generativeModel(
-      model: 'gemini-2.5-flash',
-      generationConfig: GenerationConfig(
-        responseMimeType: 'application/json',
-        responseSchema: _getJsonSchema(),
-      ),
-    );
-  }
+  AiRemoteDataSource(this._geminiService);
 
-  Schema _getJsonSchema() {
-    return Schema.object(
-      properties: {
-        'score': Schema.integer(description: 'Matching score (0-100)'),
-        'summary': Schema.string(description: 'Candidate fit summary'),
-        'pros': Schema.array(
-          items: Schema.string(description: 'A key strength of the candidate'),
-        ),
-        'cons': Schema.array(
-          items: Schema.string(
-            description: 'A key weakness or missing requirement',
-          ),
-        ),
+  /// Defines the Schema as a raw Map for the REST API
+  Map<String, dynamic> _getJsonSchema() {
+    return {
+      "type": "OBJECT",
+      "properties": {
+        "score": {"type": "INTEGER", "description": "Matching score (0-100)"},
+        "summary": {"type": "STRING", "description": "Candidate fit summary"},
+        "pros": {
+          "type": "ARRAY",
+          "items": {"type": "STRING", "description": "A key strength of the candidate"}
+        },
+        "cons": {
+          "type": "ARRAY",
+          "items": {"type": "STRING", "description": "A key weakness or missing requirement"}
+        }
       },
-    );
+      "required": ["score", "summary", "pros", "cons"]
+    };
   }
 
   Future<AiScoreModel> analyzeCandidate({
@@ -53,11 +49,15 @@ $jobStr
 **Candidate Data JSON:**
 $candidateStr
 
-CRITICAL INSTRUCTION: Generate ONLY a JSON object that strictly adheres to the provided schema. Do not include any pre-amble, explanation, or markdown formatting.
+CRITICAL INSTRUCTION: Generate ONLY a JSON object that strictly adheres to the provided schema.
 ''';
 
-    final response = await _model.generateContent([Content.text(prompt)]);
-    final responseText = response.text;
+    final responseText = await _geminiService.generateContent(
+      prompt: prompt,
+      model: 'gemini-2.5-flash',
+      jsonSchema: _getJsonSchema(), // Pass the raw schema map
+      enforceJson: true,
+    );
 
     if (responseText == null || responseText.isEmpty) {
       throw Exception('AI returned empty or null response text.');
@@ -69,5 +69,7 @@ CRITICAL INSTRUCTION: Generate ONLY a JSON object that strictly adheres to the p
 }
 
 Map<String, dynamic> _decodeJson(String text) {
-  return jsonDecode(text) as Map<String, dynamic>;
+  // If the API returns valid JSON, we might not need to clean, but safe to keep logic simple
+  String cleanText = text.replaceAll(RegExp(r'```json|```'), '').trim();
+  return jsonDecode(cleanText) as Map<String, dynamic>;
 }

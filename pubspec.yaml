@@ -36,8 +36,6 @@ dependencies:
   qr_flutter: ^4.1.0
   flutter_hooks: ^0.21.3+1
   syncfusion_flutter_pdf: ^31.2.15
-  firebase_core: ^4.2.1
-  firebase_ai: ^3.6.0
   webview_flutter: ^4.13.0
   flutter_credit_card: ^4.1.0
   u_credit_card: ^1.4.0
@@ -49,6 +47,7 @@ dependencies:
   uuid: ^4.5.2
   toastification: ^3.0.3
   chewie: ^1.13.0
+  google_generative_ai: ^0.4.7
 
 dev_dependencies:
   flutter_test:

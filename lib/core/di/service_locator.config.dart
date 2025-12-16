@@ -9,7 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:firebase_ai/firebase_ai.dart' as _i187;
+import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -231,6 +231,7 @@ import '../../features/payment/domain/usecases/process_payment_usecase.dart'
 import '../../features/payment/export_payment.dart' as _i903;
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
 import '../env_config/env_config.dart' as _i113;
+import '../services/gemini_service.dart' as _i846;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -249,12 +250,7 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.singleton<_i32.AiLocalDataSource>(() => _i32.AiLocalDataSource());
-    gh.lazySingleton<_i187.GenerativeModel>(
-      () => registerModule.generativeModel,
-    );
-    gh.lazySingleton<_i1065.AiRemoteDataSource>(
-      () => _i1065.AiRemoteDataSource(),
-    );
+    gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
     gh.factory<_i706.UserLocalDataSource>(
       () => _i706.UserLocalDataSource(gh<_i460.SharedPreferences>()),
     );
@@ -279,9 +275,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i83.UserRemoteDataSource>(
       () => _i83.UserRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
-    gh.factory<_i441.AIDataSource>(
-      () => _i441.AIDataSource(gh<_i187.GenerativeModel>()),
-    );
     gh.lazySingleton<_i309.CandidateRepository>(
       () =>
           _i265.CandidateRepositoryImpl(gh<_i149.CandidateRemoteDataSource>()),
@@ -295,12 +288,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i861.CrInfoRepository>(
       () => _i319.CrInfoRepositoryImpl(gh<_i697.WathqRemoteDataSource>()),
     );
-    gh.lazySingleton<_i369.UserRepository>(
-      () => _i468.UserRepositoryImpl(
-        remoteDataSource: gh<_i83.UserRemoteDataSource>(),
-        localDataSource: gh<_i706.UserLocalDataSource>(),
-        aiDataSource: gh<_i441.AIDataSource>(),
-      ),
+    gh.lazySingleton<_i846.GeminiService>(
+      () => _i846.GeminiService(gh<_i361.Dio>()),
+    );
+    gh.factory<_i441.AIDataSource>(
+      () => _i441.AIDataSource(gh<_i846.GeminiService>()),
+    );
+    gh.lazySingleton<_i1065.AiRemoteDataSource>(
+      () => _i1065.AiRemoteDataSource(gh<_i846.GeminiService>()),
+    );
+    gh.factory<_i406.MatchStrengthCubit>(
+      () => _i406.MatchStrengthCubit(geminiService: gh<_i846.GeminiService>()),
     );
     gh.lazySingleton<_i281.JobPreferencesRemoteDataSource>(
       () =>
@@ -308,9 +306,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i161.AuthRemoteDataSource>(
       () => _i161.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.factory<_i406.MatchStrengthCubit>(
-      () => _i406.MatchStrengthCubit(model: gh<_i187.GenerativeModel>()),
     );
     gh.factory<_i57.GetCandidateProfileUseCase>(
       () => _i57.GetCandidateProfileUseCase(gh<_i309.CandidateRepository>()),
@@ -342,24 +337,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i32.AiLocalDataSource>(),
       ),
     );
-    gh.factory<_i736.CacheUser>(
-      () => _i736.CacheUser(gh<_i369.UserRepository>()),
-    );
-    gh.factory<_i54.FetchUserProfile>(
-      () => _i54.FetchUserProfile(gh<_i369.UserRepository>()),
-    );
-    gh.factory<_i188.GetCachedUser>(
-      () => _i188.GetCachedUser(gh<_i369.UserRepository>()),
-    );
-    gh.factory<_i188.ParseResumeWithAI>(
-      () => _i188.ParseResumeWithAI(gh<_i369.UserRepository>()),
-    );
-    gh.factory<_i318.SyncUserToRemote>(
-      () => _i318.SyncUserToRemote(gh<_i369.UserRepository>()),
-    );
-    gh.factory<_i939.UpdateUser>(
-      () => _i939.UpdateUser(gh<_i369.UserRepository>()),
-    );
     gh.lazySingleton<_i377.SkillsLanguagesRemoteDataSource>(
       () =>
           _i377.SkillsLanguagesRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -373,15 +350,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1005.WorkExperienceRemoteDataSource>(
       () =>
           _i1005.WorkExperienceRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i792.UserCubit>(
-      () => _i792.UserCubit(
-        gh<_i188.GetCachedUser>(),
-        gh<_i736.CacheUser>(),
-        gh<_i54.FetchUserProfile>(),
-        gh<_i188.ParseResumeWithAI>(),
-        gh<_i454.SupabaseClient>(),
-      ),
     );
     gh.lazySingleton<_i33.AddEducationUseCase>(
       () => _i33.AddEducationUseCase(gh<_i916.EducationRepository>()),
@@ -437,6 +405,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i923.UpdateCompanyProfile>(
       () => _i923.UpdateCompanyProfile(gh<_i786.CompanyRepository>()),
+    );
+    gh.lazySingleton<_i369.UserRepository>(
+      () => _i468.UserRepositoryImpl(
+        remoteDataSource: gh<_i83.UserRemoteDataSource>(),
+        localDataSource: gh<_i706.UserLocalDataSource>(),
+        aiDataSource: gh<_i441.AIDataSource>(),
+      ),
     );
     gh.lazySingleton<_i216.BasicInfoRepository>(
       () =>
@@ -542,8 +517,35 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i757.WorkExperienceRepository>(),
       ),
     );
+    gh.factory<_i736.CacheUser>(
+      () => _i736.CacheUser(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i54.FetchUserProfile>(
+      () => _i54.FetchUserProfile(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i188.GetCachedUser>(
+      () => _i188.GetCachedUser(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i188.ParseResumeWithAI>(
+      () => _i188.ParseResumeWithAI(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i318.SyncUserToRemote>(
+      () => _i318.SyncUserToRemote(gh<_i369.UserRepository>()),
+    );
+    gh.factory<_i939.UpdateUser>(
+      () => _i939.UpdateUser(gh<_i369.UserRepository>()),
+    );
     gh.factory<_i758.SkillsLanguagesCubit>(
       () => _i758.SkillsLanguagesCubit(gh<_i736.SkillsLanguagesRepository>()),
+    );
+    gh.lazySingleton<_i792.UserCubit>(
+      () => _i792.UserCubit(
+        gh<_i188.GetCachedUser>(),
+        gh<_i736.CacheUser>(),
+        gh<_i54.FetchUserProfile>(),
+        gh<_i188.ParseResumeWithAI>(),
+        gh<_i454.SupabaseClient>(),
+      ),
     );
     gh.factory<_i111.GetCurrentUser>(
       () => _i111.GetCurrentUser(gh<_i787.AuthRepository>()),
