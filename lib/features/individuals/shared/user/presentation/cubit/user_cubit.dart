@@ -257,12 +257,8 @@ class UserCubit extends Cubit<UserState> {
         return;
       }
 
-      // 1. Extract Data via AI
       final extractedUser = await _parseResumeWithAI(fileBytes);
 
-      // 2. Merge with existing user data
-      // Note: We use Set to avoid exact string duplicates in Skills/Languages
-      // For Lists (Work/Edu), we append. 
       final updatedUser = state.user.copyWith(
         firstName: extractedUser.firstName.isNotEmpty ? extractedUser.firstName : state.user.firstName,
         lastName: extractedUser.lastName.isNotEmpty ? extractedUser.lastName : state.user.lastName,
@@ -272,20 +268,16 @@ class UserCubit extends Cubit<UserState> {
         location: extractedUser.location.isNotEmpty ? extractedUser.location : state.user.location,
         summary: extractedUser.summary.isNotEmpty ? extractedUser.summary : state.user.summary,
         
-        // Append lists
         workExperiences: [...state.user.workExperiences, ...extractedUser.workExperiences],
         educations: [...state.user.educations, ...extractedUser.educations],
         certifications: [...state.user.certifications, ...extractedUser.certifications],
         
-        // Merge and Deduplicate basic strings
         skills: {...state.user.skills, ...extractedUser.skills}.toList(),
         languages: {...state.user.languages, ...extractedUser.languages}.toList(),
       );
 
-      // 3. Update State
       emit(state.copyWith(user: updatedUser, isResumeLoading: false));
       
-      // 4. Update Supabase
       debugPrint("Auto-saving extracted resume data to Supabase...");
       await _updateUser(updatedUser);
       debugPrint("Supabase update complete.");

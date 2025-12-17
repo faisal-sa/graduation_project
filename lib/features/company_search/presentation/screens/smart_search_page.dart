@@ -108,6 +108,7 @@ class _SmartSearchPageState extends State<SmartSearchPage> {
           IconButton(
             onPressed: () {
               context.read<AuthCubit>().signOutUser();
+              context.go("/auth");
             },
             icon: Icon(Icons.exit_to_app, size: 24.r),
           ),

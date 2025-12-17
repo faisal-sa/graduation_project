@@ -251,9 +251,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i32.AiLocalDataSource>(() => _i32.AiLocalDataSource());
     gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
-    gh.factory<_i706.UserLocalDataSource>(
-      () => _i706.UserLocalDataSource(gh<_i460.SharedPreferences>()),
-    );
     gh.lazySingleton<_i950.AboutMeRemoteDataSource>(
       () => _i950.AboutMeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
@@ -321,6 +318,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i916.EducationRepository>(
       () => _i9.EducationRepositoryImpl(gh<_i31.EducationRemoteDataSource>()),
+    );
+    gh.factory<_i706.UserLocalDataSource>(
+      () => _i706.UserLocalDataSource(
+        gh<_i460.SharedPreferences>(),
+        gh<_i454.SupabaseClient>(),
+      ),
     );
     gh.lazySingleton<_i1046.AboutMeRepository>(
       () => _i506.AboutMeRepositoryImpl(

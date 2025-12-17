@@ -76,7 +76,7 @@ class AIDataSourceImpl implements AIDataSource {
       prompt: promptText,
       binaryData: pdfBytes,
       mimeType: 'application/pdf',
-      model: 'gemini-2.5-flash', 
+      model: 'gemini-2.5-flash-lite', 
     );
 
     if (responseText == null || responseText.isEmpty) {

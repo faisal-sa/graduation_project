@@ -50,7 +50,7 @@ class GeminiService {
         if (jsonSchema != null) "response_schema": jsonSchema,
       };
     }
-    const int maxRetries = 1;
+    const int maxRetries = 0;
     int retryDelay = 10000; 
 
     for (int attempt = 0; attempt <= maxRetries; attempt++) {

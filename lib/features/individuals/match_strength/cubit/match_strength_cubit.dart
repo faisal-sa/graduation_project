@@ -74,7 +74,7 @@ class MatchStrengthCubit extends Cubit<MatchStrengthState> {
 
       final responseText = await _geminiService.generateContent(
         prompt: prompt,
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.5-flash-lite',
         enforceJson: true, 
       );
       
