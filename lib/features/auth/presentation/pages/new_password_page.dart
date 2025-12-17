@@ -1,7 +1,28 @@
+// ============================================================================
+//                           NEW PASSWORD PAGE
+// ============================================================================
+// This page allows users to set a new password after successfully verifying
+// their password reset OTP code.
+//
+// FLOW:
+// 1. User enters new password and confirms it
+// 2. Form validates both fields (password length, matching passwords)
+// 3. On submit, calls AuthCubit.updateUserPassword()
+// 4. On success, shows success message and redirects to login page
+// 5. On error, displays error message via snackbar
+//
+// VALIDATION:
+// - New password must be at least 6 characters
+// - Confirm password must match the new password
+// ============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/utils/snacksoo.dart';
+import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/loading_button.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -10,24 +31,29 @@ class NewPasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Controllers for password input fields
     final newPasswordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
     return BlocConsumer<AuthCubit, AuthState>(
+      // Listens to auth state changes and handles navigation/feedback
       listener: (context, state) {
+        // Password update successful - show success and redirect to login
         if (state.status == AuthStatus.authenticated) {
           Snacksoo.show(
             context,
             message: 'Password updated successfully!',
             type: TopSnackBarType.success,
           );
+          // Small delay before navigation to let user see success message
           Future.delayed(const Duration(seconds: 1)).then((_) {
             if (context.mounted) {
               context.go('/login');
             }
           });
         } else if (state.status == AuthStatus.error) {
+          // Show error message if password update fails
           Snacksoo.show(
             context,
             message: state.message ?? 'An error occurred',
@@ -75,92 +101,39 @@ class NewPasswordPage extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
-                      TextFormField(
+                      // New password input field
+                      AppTextField(
+                        label: 'New Password',
                         controller: newPasswordController,
-                        decoration: const InputDecoration(
-                          labelText: 'New Password',
-                          labelStyle: TextStyle(color: Colors.grey),
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                        ),
-                        style: const TextStyle(color: Colors.black),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your new password';
-                          }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
-                          return null;
-                        },
+                        obscure: true, // Hide password characters
+                        validator: Validators.validatePassword,
                       ),
                       const SizedBox(height: 16),
-                      TextFormField(
+                      // Confirm password input field
+                      AppTextField(
+                        label: 'Confirm Password',
                         controller: confirmPasswordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Confirm Password',
-                          labelStyle: TextStyle(color: Colors.grey),
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                        ),
-                        style: const TextStyle(color: Colors.black),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please confirm your password';
-                          }
-                          if (value != newPasswordController.text) {
-                            return 'Passwords do not match';
-                          }
-                          return null;
-                        },
+                        obscure: true, // Hide password characters
+                        validator: (value) =>
+                            Validators.validateConfirmPassword(
+                              value,
+                              newPasswordController.text,
+                            ),
                       ),
                       const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: state.status == AuthStatus.loading
-                            ? null
-                            : () {
-                                if (formKey.currentState!.validate()) {
-                                  context.read<AuthCubit>().updateUserPassword(
-                                    newPassword: newPasswordController.text,
-                                  );
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: state.status == AuthStatus.loading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Text(
-                                'Update Password',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      // Submit button to update password
+                      loadingBtn(
+                        text: 'Update Password',
+                        onPressed: () {
+                          // Validate form before submitting
+                          if (formKey.currentState!.validate()) {
+                            // Call cubit to update password
+                            context.read<AuthCubit>().updateUserPassword(
+                              newPassword: newPasswordController.text,
+                            );
+                          }
+                        },
+                        isLoading: state.status == AuthStatus.loading,
                       ),
                     ],
                   ),

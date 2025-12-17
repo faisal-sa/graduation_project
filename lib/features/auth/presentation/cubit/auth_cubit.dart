@@ -2,22 +2,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecasesAbstract/no_params.dart';
-import '../../domain/usecases/login.dart';
-import '../../domain/usecases/sign_out.dart';
-import '../../domain/usecases/sign_up.dart';
-import '../../domain/usecases/send_otp.dart';
-import '../../domain/usecases/resend_otp.dart';
-import '../../domain/usecases/verify_otp.dart';
-import '../../domain/usecases/reset_password.dart';
-import '../../domain/usecases/send_password_reset_otp.dart';
-import '../../domain/usecases/verify_password_reset_otp.dart';
-import '../../domain/usecases/update_password.dart';
-import '../../domain/usecases/get_current_user.dart';
+import '../../domain/usecases/usecases.dart';
 import '../../../CRinfo/domain/usecases/get_cr_info.dart';
 import 'auth_state.dart';
 
+/// AuthCubit manages the authentication state and actions with business logic
+/// and state emission for the UI.
 @injectable
 class AuthCubit extends Cubit<AuthState> {
+  // Use cases injected into AuthCubit for performing respective operations
   final SignUp signUp;
   final Login login;
   final SignOut signOut;
@@ -31,6 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
   final UpdatePassword updatePassword;
   final GetCrInfo getCrInfo;
 
+  /// Constructor with dependency injection, always checks authentication status at start
   AuthCubit({
     required this.signUp,
     required this.login,
@@ -48,51 +42,64 @@ class AuthCubit extends Cubit<AuthState> {
     checkAuthStatus();
   }
 
+  //================== CR Validation Functions =================== //
+  //
+  /// Checks if a user is currently authenticated and update state accordingly
   Future<void> checkAuthStatus() async {
-    emit(AuthState.loading());
+    emit(AuthState.loading()); // Indicate that auth status check is in progress
     final result = await getCurrentUser(NoParams());
     result.when(
       (user) {
         if (user != null) {
-          emit(AuthState.authenticated(user));
+          emit(AuthState.authenticated(user)); // User is authenticated
         } else {
-          emit(AuthState.unauthenticated());
+          emit(AuthState.unauthenticated()); // No user found, unauthenticated
         }
       },
       (error) {
-        emit(AuthState.unauthenticated());
+        emit(AuthState.unauthenticated()); // On error, treat as unauthenticated
       },
     );
   }
 
+  //================== Error Message Functions =================== //
+  //
+  /// Helper method to get a user-friendly error message from a Failure instance
   String _getErrorMessage(Failure failure) {
     if (failure is ServerFailure) {
-      return failure.message;
+      return failure.message; // Show server-specific error
     } else if (failure is CacheFailure) {
-      return failure.message;
+      return failure.message; // Show cache-specific error
     }
-    return 'An unexpected error occurred';
+    return 'An unexpected error occurred'; // Default error
   }
 
-  /// Validates if a CR number is valid by checking if it returns valid CR info
-  /// Returns true if valid, false if invalid
+  //================== CR Validation Functions =================== //
+  //
+  /// Checks if a CR number is valid by fetching CR info.
+  /// Returns true if valid, false otherwise.
   Future<bool> validateCrNumber(String crNumber) async {
     print('[CR Validation] Starting validation for CR number: $crNumber');
     try {
       print('[CR Validation] Calling getCrInfo API...');
       final crInfo = await getCrInfo(crNumber);
       print('[CR Validation] CR number is VALID. Got response: ${crInfo.name}');
-      // If no exception is thrown, CR number is valid
+      // Successful call means CR number is valid
       return true;
     } catch (e) {
       print('[CR Validation] CR number is INVALID. Error: $e');
       print('[CR Validation] Error type: ${e.runtimeType}');
       print('[CR Validation] Error details: ${e.toString()}');
-      // If exception is thrown, CR number is invalid
+      // Exception means CR number is invalid
       return false;
     }
   }
 
+  //================== Sign Up Functions =================== //
+  //
+  /// Handles the sign-up flow.
+  /// If role is 'Company', validates the CR number before proceeding.
+  /// Emits loading, error, or OTP-sent/auth states as appropriate.
   Future<void> signUpUser({
     required String email,
     required String password,
@@ -104,7 +111,7 @@ class AuthCubit extends Cubit<AuthState> {
     print('[SignUp] Role: $role');
     print('[SignUp] CR Number: $crNumber');
 
-    // Validate CR number if role is Company
+    // Validate CR number only for Company role
     if (role == 'Company' && crNumber != null && crNumber.isNotEmpty) {
       print('[SignUp] Company role detected, validating CR number...');
       final isValid = await validateCrNumber(crNumber);
@@ -134,16 +141,16 @@ class AuthCubit extends Cubit<AuthState> {
       (success) async {
         print('[SignUp] SignUp successful! User ID: ${success.id}');
         print('[SignUp] Resending OTP to email: $email');
-        // Resend OTP after successful signup (for signup type)
+        // Send OTP after successful signup for email verification
         final otpResult = await resendOTP(ResendOTPParams(email: email));
         otpResult.when(
           (success) {
             print('[SignUp] OTP sent successfully');
-            emit(AuthState.otpSent(email));
+            emit(AuthState.otpSent(email)); // Move to OTP verification state
           },
           (error) {
-            // Silently proceed to OTP verification even if resend fails
-            // User can request OTP again from the verification page
+            // Move to verification state even if OTP sending fails,
+            // user can resend OTP from that page
             print(
               '[SignUp] OTP resend failed, but proceeding to verification page',
             );
@@ -154,28 +161,34 @@ class AuthCubit extends Cubit<AuthState> {
       (error) async {
         print('[SignUp] SignUp failed: ${_getErrorMessage(error)}');
         print('[SignUp] Error type: ${error.runtimeType}');
-        emit(AuthState.error(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error))); // Show signup error
       },
     );
   }
 
+  //================== Sign In Functions =================== //
+  //
+  /// Handles sign-in, emits either loading, authenticated, or error state
   Future<void> signInUser({
     required String email,
     required String password,
   }) async {
-    emit(AuthState.loading());
+    emit(AuthState.loading()); // Indicate login in progress
     final result = await login(LoginParams(email: email, password: password));
 
     result.when(
       (user) {
-        emit(AuthState.authenticated(user, role: user.role));
+        emit(AuthState.authenticated(user, role: user.role)); // Login success
       },
       (error) {
-        emit(AuthState.error(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error))); // Show login error
       },
     );
   }
 
+  //================== Send OTP Functions =================== //
+  //
+  /// Sends a new OTP to the given email for verification, handles states
   Future<void> sendOTPToEmail(String email) async {
     emit(AuthState.loading());
 
@@ -183,14 +196,17 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.when(
       (success) {
-        emit(AuthState.otpSent(email));
+        emit(AuthState.otpSent(email)); // OTP sent state
       },
       (error) {
-        emit(AuthState.error(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error))); // Handle send OTP error
       },
     );
   }
 
+  //================== Resend OTP Functions =================== //
+  //
+  /// Resends OTP to the user's email, emits state for success/error
   Future<void> resendOTPToEmail(String email) async {
     emit(AuthState.loading());
 
@@ -198,14 +214,17 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.when(
       (success) {
-        emit(AuthState.otpSent(email));
+        emit(AuthState.otpSent(email)); // OTP resent
       },
       (error) {
-        emit(AuthState.error(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error))); // Resend failed
       },
     );
   }
 
+  //================== Verify OTP Functions =================== //
+  //
+  /// Verifies the provided OTP code. Emits loading, authenticated, or error
   Future<void> verifyOTPCode({
     required String email,
     required String token,
@@ -216,14 +235,18 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.when(
       (user) {
-        emit(AuthState.authenticated(user, role: user.role));
+        emit(AuthState.authenticated(user, role: user.role)); // OTP correct
       },
       (error) {
-        emit(AuthState.error(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error))); // Wrong OTP, or error
       },
     );
   }
 
+  //================== Password Reset Functions =================== //
+  //
+  /// Sends a password reset OTP to the provided email.
+  /// Trims email, emits relevant state.
   Future<void> sendPasswordResetOTPToEmail({required String email}) async {
     emit(AuthState.loading());
     final result = await sendPasswordResetOTP(
@@ -236,6 +259,9 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
+  //================== Verify Password Reset OTP Functions =================== //
+  //
+  /// Verifies the password reset OTP code. Emits either verified or error state.
   Future<void> verifyPasswordResetOTPCode({
     required String email,
     required String token,
@@ -251,6 +277,9 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
+  //================== Update Password Functions =================== //
+  //
+  /// Updates the user's password. If successful, reauthenticates and updates state.
   Future<void> updateUserPassword({required String newPassword}) async {
     emit(AuthState.loading());
     final result = await updatePassword(
@@ -263,15 +292,18 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
+  //================== Sign Out Functions =================== //
+  //
+  /// Signs the user out and emits either unauthenticated or error state.
   Future<void> signOutUser() async {
     emit(AuthState.loading());
     final result = await signOut(NoParams());
     result.when(
       (success) {
-        emit(AuthState.unauthenticated());
+        emit(AuthState.unauthenticated()); // Sign out successful
       },
       (error) {
-        emit(AuthState.error(_getErrorMessage(error)));
+        emit(AuthState.error(_getErrorMessage(error))); // Sign out failed
       },
     );
   }
