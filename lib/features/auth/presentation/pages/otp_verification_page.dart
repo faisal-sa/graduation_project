@@ -56,7 +56,7 @@ class OTPVerificationPage extends StatelessWidget {
             foregroundColor: Colors.white,
             backgroundColor: Colors.blue,
             leading: IconButton(
-              onPressed: () => context.pop(),
+              onPressed: () => context.go('/auth'),
               icon: const Icon(Icons.arrow_back),
             ),
           ),

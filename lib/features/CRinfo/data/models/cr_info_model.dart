@@ -46,30 +46,44 @@ class CrInfoModel extends Equatable {
   });
 
   factory CrInfoModel.fromJson(Map<String, dynamic> json) {
-    return CrInfoModel(
-      crNationalNumber: json['crNationalNumber'] as String,
-      crNumber: json['crNumber'] as String,
-      versionNo: json['versionNo'] as int,
-      name: json['name'] as String,
-      companyDuration: json['companyDuration'] as String?,
-      isMain: json['isMain'] as bool,
-      issueDateGregorian: json['issueDateGregorian'] as String,
-      issueDateHijri: json['issueDateHijri'] as String,
-      mainCrNationalNumber: json['mainCrNationalNumber'] as String?,
-      mainCrNumber: json['mainCrNumber'] as String?,
-      inLiquidationProcess: json['inLiquidationProcess'] as bool,
-      hasEcommerce: json['hasEcommerce'] as bool,
-      headquarterCityId: json['headquarterCityId'] as int,
-      headquarterCityName: json['headquarterCityName'] as String,
-      isLicenseBased: json['isLicenseBased'] as bool,
-      entityType: EntityTypeModel.fromJson(
-        json['entityType'] as Map<String, dynamic>,
-      ),
-      status: StatusModel.fromJson(json['status'] as Map<String, dynamic>),
-      activities: (json['activities'] as List<dynamic>)
-          .map((e) => ActivityModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+    try {
+      return CrInfoModel(
+        crNationalNumber: json['crNationalNumber']?.toString() ?? '',
+        crNumber: json['crNumber']?.toString() ?? '',
+        versionNo: json['versionNo'] as int? ?? 0,
+        name: json['name']?.toString() ?? '',
+        companyDuration: json['companyDuration']?.toString(),
+        isMain: json['isMain'] as bool? ?? false,
+        issueDateGregorian: json['issueDateGregorian']?.toString() ?? '',
+        issueDateHijri: json['issueDateHijri']?.toString() ?? '',
+        mainCrNationalNumber: json['mainCrNationalNumber']?.toString(),
+        mainCrNumber: json['mainCrNumber']?.toString(),
+        inLiquidationProcess: json['inLiquidationProcess'] as bool? ?? false,
+        hasEcommerce: json['hasEcommerce'] as bool? ?? false,
+        headquarterCityId: json['headquarterCityId'] as int? ?? 0,
+        headquarterCityName: json['headquarterCityName']?.toString() ?? '',
+        isLicenseBased: json['isLicenseBased'] as bool? ?? false,
+        entityType: json['entityType'] != null
+            ? EntityTypeModel.fromJson(
+                json['entityType'] as Map<String, dynamic>,
+              )
+            : EntityTypeModel(id: 0, name: '', characters: []),
+        status: json['status'] != null
+            ? StatusModel.fromJson(json['status'] as Map<String, dynamic>)
+            : StatusModel(id: 0, name: ''),
+        activities: json['activities'] != null
+            ? (json['activities'] as List<dynamic>)
+                  .map((e) => ActivityModel.fromJson(e as Map<String, dynamic>))
+                  .toList()
+            : [],
+      );
+    } catch (e, stackTrace) {
+      print('[CrInfoModel] Error parsing JSON: $e');
+      print('[CrInfoModel] Stack trace: $stackTrace');
+      print('[CrInfoModel] JSON keys: ${json.keys.toList()}');
+      print('[CrInfoModel] JSON data: $json');
+      rethrow;
+    }
   }
 
   CrInfo toEntity() {

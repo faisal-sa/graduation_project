@@ -52,7 +52,6 @@ class _SignupTabState extends State<SignupTab> {
             message: state.message ?? 'An error occurred',
             type: TopSnackBarType.error,
           );
-          context.push('/otp-verification', extra: state.email);
         }
       },
       builder: (context, state) {
@@ -132,14 +131,22 @@ class _SignupTabState extends State<SignupTab> {
                   text: 'Create Account',
                   isLoading: state.status == AuthStatus.loading,
                   onPressed: () {
+                    print('[UI] Signup button pressed');
                     if (formKey.currentState!.validate()) {
+                      print('[UI] Form validation passed');
+                      print('[UI] Calling signUpUser...');
                       context.read<AuthCubit>().signUpUser(
                         email: emailController.text.trim(),
                         password: passwordController.text,
                         role: _selectedRole == 'company'
                             ? 'Company'
                             : 'Individual',
+                        crNumber: _selectedRole == 'company'
+                            ? crNumberController.text
+                            : null,
                       );
+                    } else {
+                      print('[UI] Form validation failed');
                     }
                   },
                 ),

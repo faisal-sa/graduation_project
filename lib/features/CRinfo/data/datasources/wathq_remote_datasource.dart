@@ -15,7 +15,7 @@ class WathqRemoteDataSourceImpl implements WathqRemoteDataSource {
         BaseOptions(
           baseUrl: 'https://api.wathq.sa',
           headers: {
-            'ApiKey': 'Gt2I30EQ6YaSAbe4vN9kcwlypG9cWp98',
+            'ApiKey': 'SOr9SSFpDLQKgDb6wq2sdBccqNKVvNop',
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
@@ -35,16 +35,24 @@ class WathqRemoteDataSourceImpl implements WathqRemoteDataSource {
         throw Exception('Response data is null');
       }
 
+      print('[Wathq API] Response received: ${response.data}');
       return CrInfoModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       if (e.response != null) {
+        print(
+          '[Wathq API] DioException: ${e.response?.statusCode} - ${e.response?.statusMessage}',
+        );
+        print('[Wathq API] Response data: ${e.response?.data}');
         throw Exception(
           'Failed to fetch CR info: ${e.response?.statusCode} - ${e.response?.statusMessage}',
         );
       } else {
+        print('[Wathq API] Network error: ${e.message}');
         throw Exception('Network error: ${e.message}');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('[Wathq API] Error parsing CR info: $e');
+      print('[Wathq API] Stack trace: $stackTrace');
       throw Exception('Error parsing CR info: ${e.toString()}');
     }
   }

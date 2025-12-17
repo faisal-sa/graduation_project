@@ -15,6 +15,57 @@ class AuthRepositoryImpl implements AuthRepository {
   /// Extracts a user-friendly error message from exceptions
   String _getErrorMessage(dynamic error, String defaultMessage) {
     if (error is supabase.AuthException) {
+      // Handle rate limit errors specifically (statusCode can be int or String)
+      final statusCode = error.statusCode?.toString() ?? '';
+      if (statusCode == '429' ||
+          error.message.toLowerCase().contains('rate') ||
+          error.message.toLowerCase().contains('seconds') ||
+          error.message.toLowerCase().contains('too many')) {
+        // Extract wait time from message if available
+        final waitTimeMatch = RegExp(
+          r'(\d+)\s*seconds?',
+        ).firstMatch(error.message);
+        if (waitTimeMatch != null) {
+          final seconds = waitTimeMatch.group(1);
+          return 'Please wait $seconds seconds before trying again. This helps protect your account security.';
+        }
+        return 'Too many requests. Please wait a moment before trying again.';
+      }
+      return error.message;
+    } else if (error is Exception) {
+      final message = error.toString();
+      // Extract meaningful message from exception
+      if (message.contains('Sign up failed')) {
+        return 'Failed to create account. Please try again.';
+      } else if (message.contains('Sign in failed')) {
+        return 'Invalid email or password. Please check your credentials.';
+      } else if (message.contains('OTP verification failed')) {
+        return 'Invalid OTP code. Please try again.';
+      } else if (message.contains('Password reset')) {
+        return 'Failed to reset password. Please try again.';
+      } else if (message.contains('Password update failed')) {
+        return 'Failed to update password. Please try again.';
+      } else if (message.contains('network') ||
+          message.contains('connection')) {
+        return 'Network error. Please check your internet connection.';
+      } else if (message.contains('rate') || message.contains('seconds')) {
+        return 'Too many requests. Please wait a moment before trying again.';
+      }
+      // Return the exception message if it's clear, otherwise use default
+      return message
+          .replaceFirst('Exception: ', '')
+          .replaceFirst('Error: ', '');
+    }
+    return defaultMessage;
+  }
+
+  /// Extracts error message without rate limit transformation (for OTP operations)
+  String _getErrorMessageWithoutRateLimit(
+    dynamic error,
+    String defaultMessage,
+  ) {
+    if (error is supabase.AuthException) {
+      // Just return the original message without rate limit transformation
       return error.message;
     } else if (error is Exception) {
       final message = error.toString();
@@ -47,14 +98,22 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     required String role,
   }) async {
+    print('[Repository] signUp called');
+    print('[Repository] Email: $email, Role: $role');
     try {
+      print('[Repository] Calling remoteDataSource.signUp...');
       final userModel = await remoteDataSource.signUp(
         email: email,
         password: password,
         role: role,
       );
+      print('[Repository] RemoteDataSource signUp successful');
+      print('[Repository] User ID: ${userModel.id}');
       return Success(userModel.toEntity());
     } catch (e) {
+      print('[Repository] signUp failed with error: $e');
+      print('[Repository] Error type: ${e.runtimeType}');
+      print('[Repository] Error stack: ${StackTrace.current}');
       return Error(
         ServerFailure(
           _getErrorMessage(e, 'Failed to create account. Please try again.'),
@@ -108,7 +167,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       return Error(
         ServerFailure(
-          _getErrorMessage(
+          _getErrorMessageWithoutRateLimit(
             e,
             'Failed to send verification code. Please try again.',
           ),
@@ -125,7 +184,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       return Error(
         ServerFailure(
-          _getErrorMessage(
+          _getErrorMessageWithoutRateLimit(
             e,
             'Failed to resend verification code. Please try again.',
           ),

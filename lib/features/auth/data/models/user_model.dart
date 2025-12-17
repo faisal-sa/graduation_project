@@ -6,12 +6,14 @@ class UserModel extends Equatable {
   final String email;
   final String role;
   final String? phone;
+  final String? crNumber;
 
   const UserModel({
     required this.id,
     required this.email,
     required this.role,
     this.phone,
+    this.crNumber,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class UserModel extends Equatable {
       email: json['email'] as String,
       role: json['role'] as String? ?? 'user',
       phone: json['phone'] as String?,
+      crNumber: json['crNumber'] as String?,
     );
   }
 

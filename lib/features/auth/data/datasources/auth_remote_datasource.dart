@@ -45,23 +45,40 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     required String role,
   }) async {
-    final response = await _supabase.auth.signUp(
-      email: email,
-      password: password,
-      emailRedirectTo: null,
-      data: {'role': role},
-    );
+    print('[DataSource] signUp called');
+    print('[DataSource] Email: $email, Role: $role');
+    try {
+      print('[DataSource] Calling Supabase auth.signUp...');
+      final response = await _supabase.auth.signUp(
+        email: email,
+        password: password,
+        emailRedirectTo: null,
+        data: {'role': role},
+      );
+      print('[DataSource] Supabase response received');
+      print('[DataSource] Response user: ${response.user?.id}');
+      print('[DataSource] Response session: ${response.session != null}');
 
-    if (response.user == null) {
-      throw Exception('Sign up failed: User is null');
+      if (response.user == null) {
+        print('[DataSource] User is null in response');
+        throw Exception('Sign up failed: User is null');
+      }
+
+      print('[DataSource] Creating UserModel...');
+      final userModel = UserModel(
+        id: response.user!.id,
+        email: response.user!.email ?? email,
+        phone: response.user!.phone,
+        role: role,
+      );
+      print('[DataSource] UserModel created successfully');
+      return userModel;
+    } catch (e) {
+      print('[DataSource] signUp failed with error: $e');
+      print('[DataSource] Error type: ${e.runtimeType}');
+      print('[DataSource] Error stack: ${StackTrace.current}');
+      rethrow;
     }
-
-    return UserModel(
-      id: response.user!.id,
-      email: response.user!.email ?? email,
-      phone: response.user!.phone,
-      role: role,
-    );
   }
 
   @override

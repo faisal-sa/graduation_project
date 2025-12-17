@@ -18,13 +18,13 @@ class EntityTypeModel extends Equatable {
 
   factory EntityTypeModel.fromJson(Map<String, dynamic> json) {
     return EntityTypeModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: json['id'] as int? ?? 0,
+      name: json['name']?.toString() ?? '',
       formId: json['formId'] as int?,
-      formName: json['formName'] as String?,
+      formName: json['formName']?.toString(),
       characters:
           (json['characters'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e?.toString() ?? '')
               .toList() ??
           [],
     );

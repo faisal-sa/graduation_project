@@ -13,6 +13,7 @@ import '../../domain/usecases/send_password_reset_otp.dart';
 import '../../domain/usecases/verify_password_reset_otp.dart';
 import '../../domain/usecases/update_password.dart';
 import '../../domain/usecases/get_current_user.dart';
+import '../../../CRinfo/domain/usecases/get_cr_info.dart';
 import 'auth_state.dart';
 
 @injectable
@@ -28,6 +29,7 @@ class AuthCubit extends Cubit<AuthState> {
   final SendPasswordResetOTP sendPasswordResetOTP;
   final VerifyPasswordResetOTP verifyPasswordResetOTP;
   final UpdatePassword updatePassword;
+  final GetCrInfo getCrInfo;
 
   AuthCubit({
     required this.signUp,
@@ -41,6 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
     required this.sendPasswordResetOTP,
     required this.verifyPasswordResetOTP,
     required this.updatePassword,
+    required this.getCrInfo,
   }) : super(AuthState.initial()) {
     checkAuthStatus();
   }
@@ -71,30 +74,86 @@ class AuthCubit extends Cubit<AuthState> {
     return 'An unexpected error occurred';
   }
 
+  /// Validates if a CR number is valid by checking if it returns valid CR info
+  /// Returns true if valid, false if invalid
+  Future<bool> validateCrNumber(String crNumber) async {
+    print('[CR Validation] Starting validation for CR number: $crNumber');
+    try {
+      print('[CR Validation] Calling getCrInfo API...');
+      final crInfo = await getCrInfo(crNumber);
+      print('[CR Validation] CR number is VALID. Got response: ${crInfo.name}');
+      // If no exception is thrown, CR number is valid
+      return true;
+    } catch (e) {
+      print('[CR Validation] CR number is INVALID. Error: $e');
+      print('[CR Validation] Error type: ${e.runtimeType}');
+      print('[CR Validation] Error details: ${e.toString()}');
+      // If exception is thrown, CR number is invalid
+      return false;
+    }
+  }
+
   Future<void> signUpUser({
     required String email,
     required String password,
     required String role,
+    required String? crNumber,
   }) async {
+    print('[SignUp] Starting signup process');
+    print('[SignUp] Email: $email');
+    print('[SignUp] Role: $role');
+    print('[SignUp] CR Number: $crNumber');
+
+    // Validate CR number if role is Company
+    if (role == 'Company' && crNumber != null && crNumber.isNotEmpty) {
+      print('[SignUp] Company role detected, validating CR number...');
+      final isValid = await validateCrNumber(crNumber);
+      print('[SignUp] CR validation result: $isValid');
+      if (!isValid) {
+        print('[SignUp] CR validation failed, aborting signup');
+        emit(AuthState.error('Invalid CR number. Please check and try again.'));
+        return;
+      }
+      print('[SignUp] CR validation passed, proceeding with signup');
+    } else {
+      print(
+        '[SignUp] No CR validation needed (role: $role, crNumber: $crNumber)',
+      );
+    }
+
+    print('[SignUp] Emitting loading state...');
     emit(AuthState.loading());
+
+    print('[SignUp] Calling signUp usecase...');
     final signUpResult = await signUp(
       SignUpParams(email: email, password: password, role: role),
     );
 
+    print('[SignUp] SignUp result received');
     await signUpResult.when(
       (success) async {
+        print('[SignUp] SignUp successful! User ID: ${success.id}');
+        print('[SignUp] Resending OTP to email: $email');
         // Resend OTP after successful signup (for signup type)
         final otpResult = await resendOTP(ResendOTPParams(email: email));
         otpResult.when(
           (success) {
+            print('[SignUp] OTP sent successfully');
             emit(AuthState.otpSent(email));
           },
           (error) {
-            emit(AuthState.error(_getErrorMessage(error)));
+            // Silently proceed to OTP verification even if resend fails
+            // User can request OTP again from the verification page
+            print(
+              '[SignUp] OTP resend failed, but proceeding to verification page',
+            );
+            emit(AuthState.otpSent(email));
           },
         );
       },
       (error) async {
+        print('[SignUp] SignUp failed: ${_getErrorMessage(error)}');
+        print('[SignUp] Error type: ${error.runtimeType}');
         emit(AuthState.error(_getErrorMessage(error)));
       },
     );

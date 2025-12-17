@@ -593,21 +593,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i170.BasicInfoCubit>(
       () => _i170.BasicInfoCubit(gh<_i700.SaveBasicInfoUseCase>()),
     );
-    gh.factory<_i117.AuthCubit>(
-      () => _i117.AuthCubit(
-        signUp: gh<_i190.SignUp>(),
-        login: gh<_i428.Login>(),
-        signOut: gh<_i568.SignOut>(),
-        getCurrentUser: gh<_i111.GetCurrentUser>(),
-        sendOTP: gh<_i727.SendOTP>(),
-        resendOTP: gh<_i152.ResendOTP>(),
-        verifyOTP: gh<_i975.VerifyOTP>(),
-        resetPasswordOTP: gh<_i1066.ResetPassword>(),
-        sendPasswordResetOTP: gh<_i665.SendPasswordResetOTP>(),
-        verifyPasswordResetOTP: gh<_i500.VerifyPasswordResetOTP>(),
-        updatePassword: gh<_i455.UpdatePassword>(),
-      ),
-    );
     gh.factory<_i916.BookmarksBloc>(
       () => _i916.BookmarksBloc(
         gh<_i814.GetBookmarksUseCase>(),
@@ -621,6 +606,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i989.DeleteWorkExperienceUseCase>(),
         gh<_i718.AddWorkExperienceUseCase>(),
         gh<_i1033.UpdateWorkExperienceUseCase>(),
+      ),
+    );
+    gh.factory<_i117.AuthCubit>(
+      () => _i117.AuthCubit(
+        signUp: gh<_i190.SignUp>(),
+        login: gh<_i428.Login>(),
+        signOut: gh<_i568.SignOut>(),
+        getCurrentUser: gh<_i111.GetCurrentUser>(),
+        sendOTP: gh<_i727.SendOTP>(),
+        resendOTP: gh<_i152.ResendOTP>(),
+        verifyOTP: gh<_i975.VerifyOTP>(),
+        resetPasswordOTP: gh<_i1066.ResetPassword>(),
+        sendPasswordResetOTP: gh<_i665.SendPasswordResetOTP>(),
+        verifyPasswordResetOTP: gh<_i500.VerifyPasswordResetOTP>(),
+        updatePassword: gh<_i455.UpdatePassword>(),
+        getCrInfo: gh<_i333.GetCrInfo>(),
       ),
     );
     return this;
