@@ -32,7 +32,7 @@ final getIt = GetIt.instance;
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
+  initialLocation: '/otp-verification',
   routes: [
     GoRoute(path: '/auth', builder: (context, state) => const AuthHead()),
     GoRoute(

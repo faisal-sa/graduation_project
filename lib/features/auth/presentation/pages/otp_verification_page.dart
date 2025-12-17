@@ -9,39 +9,51 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
+/// OTPVerificationPage is responsible for verifying the user's OTP code.
+/// It displays a form for OTP entry and provides feedback through Snacksoo notifications.
+/// Navigation is handled based on authentication success and user role.
 class OTPVerificationPage extends StatelessWidget {
   final String email;
 
+  /// [email] is the user's email address where the OTP was sent.
   const OTPVerificationPage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
+    // Controller for the OTP text field.
     final otpController = TextEditingController();
+    // Key for validating the form.
     final formKey = GlobalKey<FormState>();
 
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
+        // Success: User authenticated with OTP.
         if (state.status == AuthStatus.authenticated) {
           Snacksoo.show(
             context,
             message: 'OTP verified successfully!',
             type: TopSnackBarType.success,
           );
-          // Navigate based on user role
+          // Navigate based on user role.
           final role = state.role?.toLowerCase() ?? '';
           if (role == 'company') {
+            // If the user is a company, go to onboarding.
             context.go('/company/onboarding-router');
           } else {
-            // Individual users go to insights page
+            // Individuals go to the insights page.
             context.go('/insights');
           }
-        } else if (state.status == AuthStatus.error) {
+        }
+        // Error occurred during OTP verification.
+        else if (state.status == AuthStatus.error) {
           Snacksoo.show(
             context,
             message: state.message ?? 'An error occurred',
             type: TopSnackBarType.error,
           );
-        } else if (state.status == AuthStatus.otpSent) {
+        }
+        // OTP was resent successfully.
+        else if (state.status == AuthStatus.otpSent) {
           Snacksoo.show(
             context,
             message: 'OTP has been resent to your email',
@@ -52,9 +64,8 @@ class OTPVerificationPage extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Verify OTP'),
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.blue,
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.white,
             leading: IconButton(
               onPressed: () => context.go('/auth'),
               icon: const Icon(Icons.arrow_back),
@@ -69,9 +80,12 @@ class OTPVerificationPage extends StatelessWidget {
                   child: Form(
                     key: formKey,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        // User verification icon.
+                        Icon(Icons.verified_user, size: 64, color: Colors.blue),
+                        SizedBox(height: 13),
+                        // Title text.
                         const Text(
                           'Verify OTP',
                           style: TextStyle(
@@ -82,6 +96,7 @@ class OTPVerificationPage extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
+                        // Instruction displaying the email to which OTP was sent.
                         Text(
                           'We\'ve sent a verification code to\n$email',
                           style: const TextStyle(
@@ -91,6 +106,7 @@ class OTPVerificationPage extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 48),
+                        // OTP entry field with number formatting.
                         AppTextField(
                           label: 'OTP Code',
                           controller: otpController,
@@ -109,10 +125,12 @@ class OTPVerificationPage extends StatelessWidget {
                           validator: Validators.validateOTP,
                         ),
                         const SizedBox(height: 24),
+                        // Submit button for verifying the OTP.
                         loadingBtn(
                           text: 'Verify OTP',
                           isLoading: state.status == AuthStatus.loading,
                           onPressed: () {
+                            // Validate form and attempt OTP verification.
                             if (formKey.currentState!.validate()) {
                               context.read<AuthCubit>().verifyOTPCode(
                                 email: email,
@@ -122,6 +140,7 @@ class OTPVerificationPage extends StatelessWidget {
                           },
                         ),
                         const SizedBox(height: 16),
+                        // Button for resending the OTP to the user's email.
                         TextButton(
                           onPressed: state.status == AuthStatus.loading
                               ? null

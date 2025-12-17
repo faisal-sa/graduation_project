@@ -12,9 +12,10 @@
 - validateConfirmPassword
 - validateOTP
 
-and more , it can be scaled up to more validators as needed
+  !! it can be scaled up to more validators as needed !!
 
 RULES & GUIDELINES:
+
 1. Do NOT create validators outside this file.
 
 

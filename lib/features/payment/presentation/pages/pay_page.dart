@@ -57,13 +57,10 @@ class PayPage extends StatelessWidget {
               break;
 
             case PaymentStatus.initial:
-              // TODO: Handle this case.
               throw UnimplementedError();
             case PaymentStatus.loading:
-              // TODO: Handle this case.
               throw UnimplementedError();
             case PaymentStatus.failure:
-              // TODO: Handle this case.
               throw UnimplementedError();
           }
         },

@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/utils/snacksoo.dart';
+import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/loading_button.dart';
+import '../../../../core/widgets/app_text_field.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -54,9 +57,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Reset Password'),
-            backgroundColor: Colors.white,
             foregroundColor: Colors.black,
+            backgroundColor: Colors.white,
           ),
           body: Container(
             color: Colors.white,
@@ -97,146 +99,55 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       ),
                       const SizedBox(height: 32),
                       if (!_otpSent) ...[
-                        TextFormField(
+                        AppTextField(
+                          label: 'Email',
                           controller: emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.black),
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            if (!value.contains('@')) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
+                          validator: Validators.validateEmail,
                         ),
                         const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: state.status == AuthStatus.loading
-                              ? null
-                              : () {
-                                  if (formKey.currentState!.validate()) {
-                                    context
-                                        .read<AuthCubit>()
-                                        .sendPasswordResetOTPToEmail(
-                                          email: emailController.text.trim(),
-                                        );
-                                  }
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: state.status == AuthStatus.loading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  'Send OTP',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                        loadingBtn(
+                          text: 'Send OTP',
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              context
+                                  .read<AuthCubit>()
+                                  .sendPasswordResetOTPToEmail(
+                                    email: emailController.text.trim(),
+                                  );
+                            }
+                          },
+                          isLoading: state.status == AuthStatus.loading,
                         ),
                       ] else ...[
-                        TextFormField(
+                        AppTextField(
+                          label: 'OTP Code',
                           controller: otpController,
-                          decoration: const InputDecoration(
-                            labelText: 'OTP Code',
-                            labelStyle: TextStyle(color: Colors.grey),
-                            border: OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            hintText: 'Enter 6-digit code',
-                          ),
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            letterSpacing: 6,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          hintText: 'Enter 6-digit code',
+
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           maxLength: 6,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter OTP code';
-                            }
-                            if (value.length != 6) {
-                              return 'OTP must be 6 digits';
-                            }
-                            return null;
-                          },
+                          validator: Validators.validateOTP,
                         ),
                         const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: state.status == AuthStatus.loading
-                              ? null
-                              : () {
-                                  if (formKey.currentState!.validate()) {
-                                    context
-                                        .read<AuthCubit>()
-                                        .verifyPasswordResetOTPCode(
-                                          email:
-                                              _email ??
-                                              emailController.text.trim(),
-                                          token: otpController.text.trim(),
-                                        );
-                                  }
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: state.status == AuthStatus.loading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  'Verify OTP',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                        loadingBtn(
+                          text: 'Verify OTP',
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              context
+                                  .read<AuthCubit>()
+                                  .verifyPasswordResetOTPCode(
+                                    email:
+                                        _email ?? emailController.text.trim(),
+                                    token: otpController.text.trim(),
+                                  );
+                            }
+                          },
+                          isLoading: state.status == AuthStatus.loading,
                         ),
                         const SizedBox(height: 16),
                         TextButton(
