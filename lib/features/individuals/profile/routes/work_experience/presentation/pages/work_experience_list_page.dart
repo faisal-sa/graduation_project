@@ -8,7 +8,6 @@ import 'package:graduation_project/features/individuals/profile/routes/work_expe
 import 'package:graduation_project/features/individuals/profile/routes/work_experience/presentation/widgets/add_work_experience_modal.dart';
 import 'package:graduation_project/features/individuals/profile/routes/work_experience/presentation/widgets/experience_card.dart';
 import 'package:graduation_project/features/individuals/shared/user/presentation/cubit/user_cubit.dart';
-import 'package:graduation_project/features/individuals/shared/widgets/responsive_constraints.dart';
 
 class WorkExperienceListPage extends StatelessWidget {
   const WorkExperienceListPage({super.key});

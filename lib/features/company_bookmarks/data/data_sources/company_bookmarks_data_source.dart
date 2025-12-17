@@ -16,7 +16,7 @@ class BookmarksRemoteDataSource {
     try {
       return call();
     } on PostgrestException catch (e) {
-      throw SupabaseException(e.message ?? 'Database error occurred.');
+      throw SupabaseException(e.message );
     } catch (e) {
       throw SupabaseException('Unexpected error: ${e.toString()}');
     }

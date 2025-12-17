@@ -33,15 +33,15 @@ abstract class JobPreferencesModel with _$JobPreferencesModel {
 
   factory JobPreferencesModel.fromEntity(JobPreferencesEntity entity) {
     return JobPreferencesModel(
-      targetRoles: entity.targetRoles ?? [],
+      targetRoles: entity.targetRoles ,
       minSalary: entity.minSalary,
       maxSalary: entity.maxSalary,
       salaryCurrency: entity.salaryCurrency,
       currentWorkStatus: entity.currentWorkStatus,
-      employmentTypes: entity.employmentTypes ?? [],
-      workModes: entity.workModes ?? [],
-      canRelocate: entity.canRelocate ?? false,
-      canStartImmediately: entity.canStartImmediately ?? false,
+      employmentTypes: entity.employmentTypes ,
+      workModes: entity.workModes ,
+      canRelocate: entity.canRelocate ,
+      canStartImmediately: entity.canStartImmediately ,
       noticePeriodDays: entity.noticePeriodDays,
     );
   }

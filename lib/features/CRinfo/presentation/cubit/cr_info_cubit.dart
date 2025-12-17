@@ -1,4 +1,3 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/exports/app_exports.dart';
 import 'package:injectable/injectable.dart';
 import '../../domain/usecases/get_cr_info.dart';
