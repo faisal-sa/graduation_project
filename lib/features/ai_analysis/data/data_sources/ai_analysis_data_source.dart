@@ -53,7 +53,7 @@ CRITICAL INSTRUCTION: Generate ONLY a JSON object that strictly adheres to the p
 
     final responseText = await _geminiService.generateContent(
       prompt: prompt,
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
       jsonSchema: _getJsonSchema(),
       enforceJson: true,
     );

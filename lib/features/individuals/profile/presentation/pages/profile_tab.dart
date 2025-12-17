@@ -39,42 +39,54 @@ class ProfileTab extends StatelessWidget {
                 const SizedBox(height: 30),
                 const ProfileCompletionBar(),
                 const SizedBox(height: 30),
-
-                ProfileMenuItem(
+ProfileMenuItem(
                   icon: Icons.person_outline,
                   title: 'Basic Information',
+                  subtitle: "Manage personal details and contact info",
                   onTap: () => context.read<ProfileCubit>().onBasicInfoTapped(),
                 ),
                 ProfileMenuItem(
                   icon: Icons.badge_outlined,
                   title: 'About Me',
+                  subtitle: "Professional summary and brief video",
+
                   onTap: () => context.read<ProfileCubit>().onAboutMeTapped(),
                 ),
                 ProfileMenuItem(
                   icon: Icons.work_outline,
                   title: 'Work Experience',
+                  subtitle: "Job history, roles, and achievements",
+
                   onTap: () =>
                       context.read<ProfileCubit>().onWorkExperienceTapped(),
                 ),
                 ProfileMenuItem(
                   icon: Icons.school_outlined,
                   title: 'Education',
+                  subtitle: "Degrees, institutions, and graduation dates",
+
                   onTap: () => context.read<ProfileCubit>().onEducationTapped(),
                 ),
                 ProfileMenuItem(
                   icon: Icons.school_outlined,
                   title: 'Certifications',
+                  subtitle: "Licenses, workshops, and credentials",
+
                   onTap: () =>
                       context.read<ProfileCubit>().onCertificationsTapped(),
                 ),
                 ProfileMenuItem(
                   icon: Icons.translate,
                   title: 'Skills & Languages',
+                  subtitle: "Technical skills and language proficiency",
+
                   onTap: () => context.read<ProfileCubit>().onSkillsTapped(),
                 ),
                 ProfileMenuItem(
                   icon: Icons.description_outlined,
                   title: 'Job Preferences',
+                  subtitle: "Desired roles, salary, and work type",
+
                   onTap: () =>
                       context.read<ProfileCubit>().onJobPreferencesTapped(),
                 ),

@@ -15,7 +15,7 @@ class GeminiService {
 
   Future<String?> generateContent({
     required String prompt,
-    String model = 'gemini-2.5-flash',
+    String model = 'gemini-2.5-flash-lite',
     Uint8List? binaryData,
     String? mimeType,
     Map<String, dynamic>? jsonSchema,
@@ -50,8 +50,8 @@ class GeminiService {
         if (jsonSchema != null) "response_schema": jsonSchema,
       };
     }
-    const int maxRetries = 0;
-    int retryDelay = 1000; 
+    const int maxRetries = 1;
+    int retryDelay = 10000; 
 
     for (int attempt = 0; attempt <= maxRetries; attempt++) {
       try {

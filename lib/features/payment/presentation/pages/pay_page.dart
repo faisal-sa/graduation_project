@@ -89,12 +89,7 @@ class PayPage extends StatelessWidget {
                           ? null
                           : context.read<PaymentCubit>().submitPayment,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                          255,
-                          123,
-                          43,
-                          181,
-                        ),
+                        backgroundColor: const Color(0xff2791f0),
                         foregroundColor: Colors.white,
                         elevation: 2,
                         shadowColor: const Color.fromARGB(66, 24, 1, 74),

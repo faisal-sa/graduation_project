@@ -13,6 +13,7 @@ import 'package:graduation_project/features/company_portal/presentation/screens/
 import 'package:graduation_project/features/company_search/presentation/blocs/bloc/search_bloc.dart';
 import 'package:graduation_project/features/company_search/presentation/screens/candidate_results_page.dart';
 import 'package:graduation_project/features/company_search/presentation/screens/company_search_page.dart';
+import 'package:graduation_project/features/company_search/presentation/screens/smart_search_page.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/pages/ai_skill_check_page.dart';
 import 'package:graduation_project/features/individuals/profile/routes/job_preferences/presentation/cubit/job_preferences_cubit.dart';
 import 'package:graduation_project/features/individuals/profile/routes/skills_languages/presentation/cubit/skills_languages_cubit.dart';
@@ -342,15 +343,29 @@ GoRoute(
       },
     ),
 
-    GoRoute(
+GoRoute(
       path: '/company/search',
-      name: 'company-search',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<SearchBloc>(),
-        child: const CompanySearchPage(),
-      ),
+      name: 'company-search', 
+      builder: (context, state) {
+        return BlocProvider(
+          create: (_) => getIt<SearchBloc>(),
+          child: const SmartSearchPage(),
+        );
+      },
       routes: [
-        // 4a. SEARCH RESULTS
+        GoRoute(
+          path: 'advanced',
+          name: 'company-search-advanced',
+          builder: (context, state) {
+            final searchBloc = state.extra as SearchBloc;
+
+            return BlocProvider.value(
+              value: searchBloc,
+              child: const CompanySearchPage(),
+            );
+          },
+        ),
+
         GoRoute(
           path: 'search-results',
           name: 'company-search-results',
@@ -366,6 +381,7 @@ GoRoute(
             );
           },
         ),
+
 
         GoRoute(
           path: 'candidate-details/:id',

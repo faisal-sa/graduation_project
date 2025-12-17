@@ -151,7 +151,7 @@ class _CandidateRichCardState extends State<CandidateRichCard> {
                                 : Icons.bookmark_border_rounded,
                             key: ValueKey(isBookmarked),
                             color: isBookmarked
-                                ? widget.primaryColor
+                                ? Colors.blue
                                 : Colors.grey[400],
                             size: 24,
                           ),

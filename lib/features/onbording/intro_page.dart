@@ -66,7 +66,7 @@ class _IntroPageState extends State<IntroPage> {
                         Icon(
                           page['icon'] as IconData,
                           size: 120,
-                          color: Colors.blue,
+                          color: Color(0xff366fed),
                         ),
                         const SizedBox(height: 32),
                         Text(
@@ -107,7 +107,9 @@ class _IntroPageState extends State<IntroPage> {
                   width: _currentPage == index ? 60 : 30,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: _currentPage == index ? Colors.blue : Colors.grey,
+                    color: _currentPage == index
+                        ? Color(0xff366fed)
+                        : Colors.grey,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 );
@@ -133,7 +135,7 @@ class _IntroPageState extends State<IntroPage> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Color(0xff366fed),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
