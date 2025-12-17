@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RoleChip extends StatelessWidget {
   const RoleChip({
@@ -23,10 +24,10 @@ class RoleChip extends StatelessWidget {
       showCheckmark: false,
       avatar: Icon(
         icon,
-        size: 22,
+        size: 22.spMin,
         color: isSelected ? Colors.blue : Colors.grey.shade600,
       ),
-      label: Text(label, style: const TextStyle(fontSize: 15)),
+      label: Text(label, style: TextStyle(fontSize: 15.spMin)),
       selected: isSelected,
       onSelected: (_) => onSelected(value),
       selectedColor: Colors.blue.withAlpha(15),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/shared/data/domain/entities/candidate_entity.dart';
 
 class CandidateRichCard extends StatefulWidget {
@@ -206,21 +207,24 @@ class _CandidateRichCardState extends State<CandidateRichCard> {
                   const SizedBox(width: 4),
                   Text(
                     widget.candidate.city ?? "Remote",
-                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    style: TextStyle(
+                      fontSize: 13.spMin,
+                      color: Colors.grey[600],
+                    ),
                   ),
                   const Spacer(),
                   Text(
                     "View Profile",
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.spMin,
                       fontWeight: FontWeight.bold,
-                      color: widget.primaryColor,
+                      color: Color(0xff3368e5),
                     ),
                   ),
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 12,
-                    color: widget.primaryColor,
+                    color: Color(0xff3368e5),
                   ),
                 ],
               ),

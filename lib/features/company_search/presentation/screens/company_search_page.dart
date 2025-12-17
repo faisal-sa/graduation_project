@@ -135,12 +135,12 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
           child: ElevatedButton(
             onPressed: () => _performSearch(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor,
+              backgroundColor: Color(0xff225be3),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 24),
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
               ),
               shadowColor: primaryColor.withAlpha(128),
             ),
@@ -257,7 +257,7 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
                           horizontal: 20,
                           vertical: 4,
                         ),
-                        activeThumbColor: primaryColor,
+                        activeThumbColor: Color(0xff3368e5),
                         trackOutlineColor: WidgetStateProperty.all(
                           Colors.transparent,
                         ),
@@ -392,10 +392,12 @@ class _CompanySearchPageState extends State<CompanySearchPage> {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? primaryColor : const Color(0xFFF5F7FA),
+                  color: isSelected
+                      ? Color(0xff3368e5)
+                      : const Color(0xFFF5F7FA),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? primaryColor : Colors.transparent,
+                    color: isSelected ? Colors.white : Colors.transparent,
                   ),
                 ),
                 child: Text(

@@ -87,7 +87,7 @@ class _CompanyOnboardingRouterPageState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(),
+              CircularProgressIndicator(color: Color(0xff3368e5)),
               SizedBox(height: 16),
               Text('Checking company status...'),
             ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/exports/app_exports.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CompanySettingsPage extends StatelessWidget {
   const CompanySettingsPage({super.key});
@@ -137,8 +139,9 @@ class CompanySettingsPage extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
+                        serviceLocator.get<SupabaseClient>().auth.signOut();
                         Navigator.pop(context); 
-                        context.go('/login');
+                        context.go('/auth');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,

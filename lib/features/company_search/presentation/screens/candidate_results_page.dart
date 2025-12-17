@@ -56,7 +56,7 @@ class CandidateResultsPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator.adaptive(),
+                    CircularProgressIndicator(color: Color(0xff3368e5)),
                     SizedBox(height: 16),
                     Text(
                       "Finding best matches...",
@@ -106,13 +106,13 @@ class CandidateResultsPage extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: primaryColor.withAlpha(26),
+                          color: Color(0xff3368e5).withAlpha(26),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           "${candidates.length} Found",
                           style: TextStyle(
-                            color: primaryColor,
+                            color: Color(0xff3368e5),
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
