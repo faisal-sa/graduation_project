@@ -15,10 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CertificationModel {
 
- String get id; String get name;@JsonKey(name: 'issuing_institution') String get issuingInstitution;@JsonKey(name: 'issue_date') DateTime get issueDate;@JsonKey(name: 'expiration_date') DateTime? get expirationDate;@JsonKey(name: 'credential_url') String? get credentialUrl;// File/Local fields ignored in JSON
-@JsonKey(includeFromJson: false, includeToJson: false) File? get credentialFile;// In your provided snippet, userId was a field in the model.
-// If you want it part of the constructor but not the Entity interface:
-@JsonKey(name: 'user_id') String get userId;
+ String get id; String get name;@JsonKey(name: 'issuing_institution') String get issuingInstitution;@JsonKey(name: 'issue_date') DateTime get issueDate;@JsonKey(name: 'expiration_date') DateTime? get expirationDate;@JsonKey(name: 'credential_url') String? get credentialUrl;@JsonKey(includeFromJson: false, includeToJson: false) File? get credentialFile;@JsonKey(name: 'user_id') String get userId;
 /// Create a copy of CertificationModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -228,10 +225,7 @@ class _CertificationModel extends CertificationModel {
 @override@JsonKey(name: 'issue_date') final  DateTime issueDate;
 @override@JsonKey(name: 'expiration_date') final  DateTime? expirationDate;
 @override@JsonKey(name: 'credential_url') final  String? credentialUrl;
-// File/Local fields ignored in JSON
 @override@JsonKey(includeFromJson: false, includeToJson: false) final  File? credentialFile;
-// In your provided snippet, userId was a field in the model.
-// If you want it part of the constructor but not the Entity interface:
 @override@JsonKey(name: 'user_id') final  String userId;
 
 /// Create a copy of CertificationModel

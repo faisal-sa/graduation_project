@@ -15,8 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobPreferencesModel {
 
-@JsonKey(name: 'target_roles') List<String> get targetRoles;@JsonKey(name: 'min_salary') num? get minSalary;// Changed to num to allow int/double
-@JsonKey(name: 'max_salary') num? get maxSalary;@JsonKey(name: 'salary_currency') String? get salaryCurrency;@JsonKey(name: 'current_work_status') String? get currentWorkStatus;@JsonKey(name: 'employment_types') List<String> get employmentTypes;@JsonKey(name: 'work_modes') List<String> get workModes;@JsonKey(name: 'can_relocate') bool get canRelocate;@JsonKey(name: 'can_start_immediately') bool get canStartImmediately;@JsonKey(name: 'notice_period_days') int? get noticePeriodDays;
+@JsonKey(name: 'target_roles') List<String> get targetRoles;@JsonKey(name: 'min_salary') num? get minSalary;@JsonKey(name: 'max_salary') num? get maxSalary;@JsonKey(name: 'salary_currency') String? get salaryCurrency;@JsonKey(name: 'current_work_status') String? get currentWorkStatus;@JsonKey(name: 'employment_types') List<String> get employmentTypes;@JsonKey(name: 'work_modes') List<String> get workModes;@JsonKey(name: 'can_relocate') bool get canRelocate;@JsonKey(name: 'can_start_immediately') bool get canStartImmediately;@JsonKey(name: 'notice_period_days') int? get noticePeriodDays;
 /// Create a copy of JobPreferencesModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -230,7 +229,6 @@ class _JobPreferencesModel extends JobPreferencesModel {
 }
 
 @override@JsonKey(name: 'min_salary') final  num? minSalary;
-// Changed to num to allow int/double
 @override@JsonKey(name: 'max_salary') final  num? maxSalary;
 @override@JsonKey(name: 'salary_currency') final  String? salaryCurrency;
 @override@JsonKey(name: 'current_work_status') final  String? currentWorkStatus;

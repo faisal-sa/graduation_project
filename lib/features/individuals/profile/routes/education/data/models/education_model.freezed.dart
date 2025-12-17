@@ -15,8 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EducationModel {
 
- String get id;@JsonKey(name: 'degree_type') String get degreeType;@JsonKey(name: 'institution_name') String get institutionName;@JsonKey(name: 'field_of_study') String get fieldOfStudy;@JsonKey(name: 'start_date') DateTime get startDate;@JsonKey(name: 'end_date') DateTime get endDate; String? get gpa; List<String> get activities;@JsonKey(name: 'graduation_certificate_url') String? get graduationCertificateUrl;@JsonKey(name: 'academic_record_url') String? get academicRecordUrl;// Fields that are not part of the JSON payload
-@JsonKey(includeFromJson: false, includeToJson: false) dynamic get graduationCertificateBytes;@JsonKey(includeFromJson: false, includeToJson: false) String? get graduationCertificateName;@JsonKey(includeFromJson: false, includeToJson: false) dynamic get academicRecordBytes;@JsonKey(includeFromJson: false, includeToJson: false) String? get academicRecordName;
+ String get id;@JsonKey(name: 'degree_type') String get degreeType;@JsonKey(name: 'institution_name') String get institutionName;@JsonKey(name: 'field_of_study') String get fieldOfStudy;@JsonKey(name: 'start_date') DateTime get startDate;@JsonKey(name: 'end_date') DateTime get endDate; String? get gpa; List<String> get activities;@JsonKey(name: 'graduation_certificate_url') String? get graduationCertificateUrl;@JsonKey(name: 'academic_record_url') String? get academicRecordUrl;@JsonKey(includeFromJson: false, includeToJson: false) dynamic get graduationCertificateBytes;@JsonKey(includeFromJson: false, includeToJson: false) String? get graduationCertificateName;@JsonKey(includeFromJson: false, includeToJson: false) dynamic get academicRecordBytes;@JsonKey(includeFromJson: false, includeToJson: false) String? get academicRecordName;
 /// Create a copy of EducationModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -242,7 +241,6 @@ class _EducationModel extends EducationModel {
 
 @override@JsonKey(name: 'graduation_certificate_url') final  String? graduationCertificateUrl;
 @override@JsonKey(name: 'academic_record_url') final  String? academicRecordUrl;
-// Fields that are not part of the JSON payload
 @override@JsonKey(includeFromJson: false, includeToJson: false) final  dynamic graduationCertificateBytes;
 @override@JsonKey(includeFromJson: false, includeToJson: false) final  String? graduationCertificateName;
 @override@JsonKey(includeFromJson: false, includeToJson: false) final  dynamic academicRecordBytes;

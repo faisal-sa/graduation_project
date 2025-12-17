@@ -198,8 +198,8 @@ import '../../features/individuals/profile/routes/work_experience/domain/usecase
     as _i1033;
 import '../../features/individuals/profile/routes/work_experience/presentation/cubit/work_experience_cubit.dart'
     as _i906;
-import '../../features/individuals/shared/user/data/datasources/AI_datasource.dart'
-    as _i441;
+import '../../features/individuals/shared/user/data/datasources/ai_datasource.dart'
+    as _i307;
 import '../../features/individuals/shared/user/data/datasources/user_local_datasource.dart'
     as _i706;
 import '../../features/individuals/shared/user/data/datasources/user_remote_datasource.dart'
@@ -291,9 +291,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i846.GeminiService>(
       () => _i846.GeminiService(gh<_i361.Dio>()),
     );
-    gh.factory<_i441.AIDataSource>(
-      () => _i441.AIDataSource(gh<_i846.GeminiService>()),
-    );
     gh.lazySingleton<_i1065.AiRemoteDataSource>(
       () => _i1065.AiRemoteDataSource(gh<_i846.GeminiService>()),
     );
@@ -375,6 +372,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i281.JobPreferencesRemoteDataSource>(),
       ),
     );
+    gh.lazySingleton<_i307.AIDataSource>(
+      () => _i307.AIDataSourceImpl(gh<_i846.GeminiService>()),
+    );
     gh.lazySingleton<_i787.AuthRepository>(
       () => _i153.AuthRepositoryImpl(gh<_i161.AuthRemoteDataSource>()),
     );
@@ -405,13 +405,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i923.UpdateCompanyProfile>(
       () => _i923.UpdateCompanyProfile(gh<_i786.CompanyRepository>()),
-    );
-    gh.lazySingleton<_i369.UserRepository>(
-      () => _i468.UserRepositoryImpl(
-        remoteDataSource: gh<_i83.UserRemoteDataSource>(),
-        localDataSource: gh<_i706.UserLocalDataSource>(),
-        aiDataSource: gh<_i441.AIDataSource>(),
-      ),
     );
     gh.lazySingleton<_i216.BasicInfoRepository>(
       () =>
@@ -460,6 +453,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i476.AddCandidateBookmark>(
       () => _i476.AddCandidateBookmark(gh<_i731.BookmarksRepository>()),
+    );
+    gh.lazySingleton<_i369.UserRepository>(
+      () => _i468.UserRepositoryImpl(
+        remoteDataSource: gh<_i83.UserRemoteDataSource>(),
+        localDataSource: gh<_i706.UserLocalDataSource>(),
+        aiDataSource: gh<_i307.AIDataSource>(),
+      ),
     );
     gh.factory<_i401.CompanyBloc>(
       () => _i401.CompanyBloc(

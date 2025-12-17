@@ -15,13 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserEntity {
 
- String get firstName; String get lastName; String get jobTitle; String get phoneNumber; String get email; String get location;// Ensure all keys match DB columns or use @JsonKey
-@JsonKey(name: 'about_me') String get summary;@JsonKey(name: 'intro_video_url') String? get videoUrl;// Explicitly map if DB is different
- String? get avatarUrl;// Children lists (handled automatically if DB returns nested arrays)
- List<WorkExperience> get workExperiences; List<Education> get educations; List<Certification> get certifications; List<String> get skills; List<String> get languages;// THE MAGIC FIX:
-// 1. readValue: _readRoot passes the entire DB response to JobPreferencesEntity
-// 2. JobPreferencesEntity extracts 'min_salary', etc. from that root map
-@JsonKey(readValue: _readRoot) JobPreferencesEntity get jobPreferences;
+ String get firstName; String get lastName; String get jobTitle; String get phoneNumber; String get email; String get location;@JsonKey(name: 'about_me') String get summary;@JsonKey(name: 'intro_video_url') String? get videoUrl; String? get avatarUrl; List<WorkExperience> get workExperiences; List<Education> get educations; List<Certification> get certifications; List<String> get skills; List<String> get languages;@JsonKey(readValue: _readRoot) JobPreferencesEntity get jobPreferences;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -247,14 +241,10 @@ class _UserEntity implements UserEntity {
 @override@JsonKey() final  String phoneNumber;
 @override@JsonKey() final  String email;
 @override@JsonKey() final  String location;
-// Ensure all keys match DB columns or use @JsonKey
 @override@JsonKey(name: 'about_me') final  String summary;
 @override@JsonKey(name: 'intro_video_url') final  String? videoUrl;
-// Explicitly map if DB is different
 @override final  String? avatarUrl;
-// Children lists (handled automatically if DB returns nested arrays)
  final  List<WorkExperience> _workExperiences;
-// Children lists (handled automatically if DB returns nested arrays)
 @override@JsonKey() List<WorkExperience> get workExperiences {
   if (_workExperiences is EqualUnmodifiableListView) return _workExperiences;
   // ignore: implicit_dynamic_type
@@ -289,9 +279,6 @@ class _UserEntity implements UserEntity {
   return EqualUnmodifiableListView(_languages);
 }
 
-// THE MAGIC FIX:
-// 1. readValue: _readRoot passes the entire DB response to JobPreferencesEntity
-// 2. JobPreferencesEntity extracts 'min_salary', etc. from that root map
 @override@JsonKey(readValue: _readRoot) final  JobPreferencesEntity jobPreferences;
 
 /// Create a copy of UserEntity

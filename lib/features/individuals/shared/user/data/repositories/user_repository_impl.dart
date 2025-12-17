@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:graduation_project/features/individuals/shared/user/data/datasources/AI_datasource.dart';
+import 'package:graduation_project/features/individuals/shared/user/data/datasources/ai_datasource.dart';
 import 'package:graduation_project/features/individuals/shared/user/data/datasources/user_local_datasource.dart';
 import 'package:graduation_project/features/individuals/shared/user/data/datasources/user_remote_datasource.dart';
 import 'package:graduation_project/features/individuals/shared/user/domain/entities/user_entity.dart';

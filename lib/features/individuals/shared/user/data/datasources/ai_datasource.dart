@@ -6,14 +6,20 @@ import 'package:graduation_project/core/services/gemini_service.dart';
 import 'package:graduation_project/features/individuals/shared/user/domain/entities/user_entity.dart';
 import 'package:injectable/injectable.dart';
 
-@injectable
-class AIDataSource {
+
+abstract class AIDataSource {
+  Future<UserEntity> extractResume(Uint8List pdfBytes);
+}
+
+@LazySingleton(as: AIDataSource) 
+class AIDataSourceImpl implements AIDataSource {
   final GeminiService _geminiService;
 
-  AIDataSource(this._geminiService);
+  AIDataSourceImpl(this._geminiService);
 
+  @override
   Future<UserEntity> extractResume(Uint8List pdfBytes) async {
-    final promptText = """
+    const promptText = """
       You are a data extraction assistant.
       Analyze the attached resume PDF.
       Extract the following fields and return them in a raw JSON format:
@@ -33,15 +39,17 @@ class AIDataSource {
       prompt: promptText,
       binaryData: pdfBytes,
       mimeType: 'application/pdf',
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
     );
 
     debugPrint("AI response to Resume upload:\n $responseText");
+    
     if (responseText == null || responseText.isEmpty) {
       throw Exception("AI returned empty response");
     }
 
     try {
+      // Clean up markdown formatting if Gemini adds it
       String cleanJson = responseText
           .replaceAll('```json', '')
           .replaceAll('```', '')
@@ -57,6 +65,7 @@ class AIDataSource {
         summary: data['summary'] ?? '',
       );
     } catch (e) {
+      debugPrint("JSON Parse Error: $e");
       throw Exception("Failed to parse AI JSON: $e");
     }
   }

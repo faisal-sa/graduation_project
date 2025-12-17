@@ -15,9 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Certification {
 
- String get id; String get name; String get issuingInstitution; DateTime get issueDate; DateTime? get expirationDate; String? get credentialUrl;// --- ADD THIS FIELD ---
-// We ignore this for JSON because a File object cannot be serialized directly.
-@JsonKey(includeFromJson: false, includeToJson: false) File? get credentialFile;
+ String get id; String get name; String get issuingInstitution; DateTime get issueDate; DateTime? get expirationDate; String? get credentialUrl;@JsonKey(includeFromJson: false, includeToJson: false) File? get credentialFile;
 /// Create a copy of Certification
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -226,8 +224,6 @@ class _Certification implements Certification {
 @override final  DateTime issueDate;
 @override final  DateTime? expirationDate;
 @override final  String? credentialUrl;
-// --- ADD THIS FIELD ---
-// We ignore this for JSON because a File object cannot be serialized directly.
 @override@JsonKey(includeFromJson: false, includeToJson: false) final  File? credentialFile;
 
 /// Create a copy of Certification
